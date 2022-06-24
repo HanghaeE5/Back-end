@@ -30,7 +30,7 @@ jobs:
       - name: make application-aws.properties
         if: true # branch가 develop일 때
         run: |
-          # spring의 resources 경로로 이동
+          # spring의 resources 경로로 이동 
           cd ./src/main/resources
           touch ./application-aws.properties
           # GitHub-Actions에서 설정한 값을 application-aws.properties 파일에 쓰기
