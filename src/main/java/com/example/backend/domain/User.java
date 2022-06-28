@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 public class User extends BaseTime{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -30,10 +30,11 @@ public class User extends BaseTime{
     private List<String> role = new ArrayList<>();
 
     @Builder
-    public User(String email, String nick, String password){
+    public User(String email, String nick, String password, List<String> role){
         this.email = email;
         this.nick = nick;
         this.password = password;
+        this.role = role;
     }
 
     public User(){}
