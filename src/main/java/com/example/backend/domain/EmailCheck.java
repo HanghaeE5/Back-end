@@ -1,6 +1,7 @@
 package com.example.backend.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -8,17 +9,24 @@ import javax.persistence.*;
 @Getter
 public class EmailCheck extends BaseTime{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String email;
 
     private String code;
 
+    @Column(columnDefinition = "varchar(2) default 'N'")
+    private String confirmYn;
+
     @Builder
     public EmailCheck(String email, String code){
         this.email = email;
         this.code = code;
+    }
+
+    public void verificationCompleted(String confirmYn){
+        this.confirmYn = confirmYn;
     }
 
     public EmailCheck() {

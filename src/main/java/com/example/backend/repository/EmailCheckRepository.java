@@ -8,5 +8,5 @@ import java.util.List;
 public interface EmailCheckRepository extends JpaRepository<EmailCheck, Long> {
 
     List<EmailCheck> findByEmailOrderByCreatedDateDesc(String email);
-
+    void deleteByEmail(String email);
 }
