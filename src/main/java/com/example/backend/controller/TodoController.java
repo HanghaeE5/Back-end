@@ -4,9 +4,12 @@ import com.example.backend.dto.request.TodoRequestDto;
 import com.example.backend.dto.response.TodoResponseDto;
 import com.example.backend.service.TodoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -18,14 +21,15 @@ public class TodoController {
 
     // 목록 조회
     @GetMapping("/todo")
-    public ResponseEntity<TodoResponseDto> getTodoList(
+    public ResponseEntity<Page<TodoResponseDto>> getTodoList(
             @RequestParam String filter,
             @RequestParam Integer page,
+            @RequestParam Integer size,
             @RequestParam String sort,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        TodoResponseDto responseDto = todoService.getTodoList(userDetails, filter, page, sort);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        Page<TodoResponseDto> responseDtoList = todoService.getTodoList(userDetails, filter, page, size, sort);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
 

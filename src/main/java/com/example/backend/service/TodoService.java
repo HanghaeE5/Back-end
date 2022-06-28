@@ -7,12 +7,16 @@ import com.example.backend.dto.response.TodoResponseDto;
 import com.example.backend.repository.BoardRepository;
 import com.example.backend.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +26,23 @@ public class TodoService {
     private final BoardRepository boardRepository;
 
 
-    public TodoResponseDto getTodoList(UserDetailsImpl userDetails, String filter, Integer page, String sort) {
+    public Page<TodoResponseDto> getTodoList(UserDetailsImpl userDetails, String filter, Integer page, Integer size, String sort) {
 
 
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(sort));
+        Page<Todo> todoPage;
 
-
+        if (Objects.equals(filter, "all")) {
+            // 일단 스크롤 먼저 하기 위해 넣어놓음
+            todoPage = todoRepository.findAll(pageable);
+        } else if (Objects.equals(filter, "doingList")) {
+            // 일단 스크롤 먼저 하기 위해 넣어놓음
+            todoPage = todoRepository.findAllByTodoDate(pageable);
+        } else {
+            // 일단 스크롤 먼저 하기 위해 넣어놓음
+            todoPage = todoRepository.findByAllByCategory(pageable);
+        }
+        return todoPage.map(TodoResponseDto::new);
     }
 
 

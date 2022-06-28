@@ -33,7 +33,7 @@ public class Todo extends Timestamped {
     @JoinColumn(nullable = false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(nullable = true)
     private Board board;
 
