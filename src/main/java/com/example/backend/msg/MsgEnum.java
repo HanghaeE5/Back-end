@@ -1,4 +1,4 @@
-package com.example.backend.user.dto;
+package com.example.backend.msg;
 
 public enum MsgEnum {
     dupleEmail("중복된 이메일 입니다."),
@@ -11,10 +11,14 @@ public enum MsgEnum {
     dupleNick("중복된 닉네임 입니다."),
     availableNick("사용 가능한 닉네임 입니다."),
     registerSuccess("회원가입 완료 하였습니다."),
+    socialRegisterSuccess("회원가입/로그인 완료 하였습니다."),
     jwtHeaderName("Authorization"),
     userNotFound("사용자를 찾을 수 없습니다."),
     loginSuccess("로그인 완료"),
-    confirmEmailPwd("이메일 또는 비밀번호를 확인해주세요.");
+    confirmEmailPwd("이메일 또는 비밀번호를 확인해주세요."),
+
+    loginRequired("로그인이 필요합니다"),
+    nicknameRequired("닉네임을 작성해야 합니다.");
 
     final private String msg;
     public String getMsg() {

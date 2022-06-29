@@ -1,7 +1,7 @@
 package com.example.backend.user.security;
 
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.domain.User;
-import com.example.backend.user.dto.MsgEnum;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +20,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(MsgEnum.userNotFound.getMsg()));
 
-        return new UserDetailsImpl(user.getEmail(), user.getRole(), user.getPassword());
+        return new UserDetailsImpl(user.getEmail(), user.getRole(), user.getPassword(), user.getNick());
     }
 }
