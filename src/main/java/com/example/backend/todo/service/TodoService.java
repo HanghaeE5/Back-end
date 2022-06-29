@@ -32,17 +32,20 @@ public class TodoService {
 
     public Page<TodoResponseDto> getTodoList(UserDetailsImpl userDetails, String filter, Integer page, Integer size, String sort) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("todoDate").ascending());
+        Pageable pageable;
+
+        if (sort == "asc") {
+            pageable = PageRequest.of(page, size, Sort.by("todoDate").ascending());
+        } else {
+            pageable = PageRequest.of(page, size, Sort.by("todoDate").descending());
+        }
         Page<Todo> todoPage;
 
         if (Objects.equals(filter, "all")) {
-            // 일단 스크롤 먼저 하기 위해 넣어놓음
             todoPage = todoRepository.findAllTodo(pageable);
         } else if (Objects.equals(filter, "doingList")) {
-            // 일단 스크롤 먼저 하기 위해 넣어놓음
             todoPage = todoRepository.findAllByTodoStateTrue(pageable);
         } else {
-            // 일단 스크롤 먼저 하기 위해 넣어놓음
             todoPage = todoRepository.findAllByTodoStateFalse(pageable);
         }
 
