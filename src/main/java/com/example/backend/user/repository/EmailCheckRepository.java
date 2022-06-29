@@ -1,6 +1,6 @@
-package com.example.backend.repository;
+package com.example.backend.user.repository;
 
-import com.example.backend.domain.EmailCheck;
+import com.example.backend.user.domain.EmailCheck;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.backend.domain;
+package com.example.backend.user.domain;
 
 import lombok.Builder;
 import lombok.Getter;

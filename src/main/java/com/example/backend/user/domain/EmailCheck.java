@@ -1,7 +1,6 @@
-package com.example.backend.domain;
+package com.example.backend.user.domain;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 

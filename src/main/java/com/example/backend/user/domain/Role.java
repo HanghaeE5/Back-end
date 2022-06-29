@@ -1,4 +1,4 @@
-package com.example.backend.domain;
+package com.example.backend.user.domain;
 
 public enum Role {
     USER("ROLE_USER"),

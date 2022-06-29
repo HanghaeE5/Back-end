@@ -1,7 +1,7 @@
-package com.example.backend.security;
+package com.example.backend.user.security;
 
-import com.example.backend.domain.User;
-import com.example.backend.dto.MsgEnum;
+import com.example.backend.user.domain.User;
+import com.example.backend.user.dto.MsgEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

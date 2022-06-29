@@ -1,15 +1,15 @@
-package com.example.backend.service;
+package com.example.backend.user.service;
 
-import com.example.backend.domain.EmailCheck;
-import com.example.backend.domain.Role;
-import com.example.backend.domain.User;
-import com.example.backend.dto.MsgEnum;
-import com.example.backend.dto.RequestEmailCheckDto;
-import com.example.backend.dto.RequestLoginDto;
-import com.example.backend.dto.RequestRegisterDto;
-import com.example.backend.repository.EmailCheckRepository;
-import com.example.backend.repository.UserRepository;
-import com.example.backend.security.JwtTokenProvider;
+import com.example.backend.user.domain.EmailCheck;
+import com.example.backend.user.domain.Role;
+import com.example.backend.user.domain.User;
+import com.example.backend.user.dto.MsgEnum;
+import com.example.backend.user.dto.RequestEmailCheckDto;
+import com.example.backend.user.dto.RequestLoginDto;
+import com.example.backend.user.dto.RequestRegisterDto;
+import com.example.backend.user.repository.EmailCheckRepository;
+import com.example.backend.user.repository.UserRepository;
+import com.example.backend.user.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

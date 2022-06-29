@@ -1,8 +1,8 @@
-package com.example.backend.controller;
+package com.example.backend.user.controller;
 
-import com.example.backend.dto.MsgEnum;
-import com.example.backend.dto.RequestLoginDto;
-import com.example.backend.service.UserService;
+import com.example.backend.user.dto.MsgEnum;
+import com.example.backend.user.dto.RequestLoginDto;
+import com.example.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

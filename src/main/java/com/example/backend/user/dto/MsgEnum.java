@@ -1,4 +1,4 @@
-package com.example.backend.dto;
+package com.example.backend.user.dto;
 
 public enum MsgEnum {
     dupleEmail("중복된 이메일 입니다."),

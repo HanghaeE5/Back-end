@@ -1,4 +1,4 @@
-package com.example.backend.security;
+package com.example.backend.user.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
