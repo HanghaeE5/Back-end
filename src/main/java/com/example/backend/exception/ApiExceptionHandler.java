@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice //RestController의 예외처리에 대해서 AOP를 적용하기 위해 사용
-public class ApiException extends RuntimeException{
+public class ApiExceptionHandler extends RuntimeException{
 
     @ExceptionHandler(MethodArgumentNotValidException.class) //예외가 발생한 요청을 처리하기 위해
     public ResponseEntity<String> handleMethodNotValidException(MethodArgumentNotValidException e){
@@ -19,6 +19,14 @@ public class ApiException extends RuntimeException{
 
         return ResponseEntity.badRequest().body(message[0]);
     }
+
+    // 커스텀 예외처리
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+        ErrorCode code = e.getCode();
+        return ErrorResponse.of(code);
+    }
+
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleArgumentException(IllegalArgumentException e) {

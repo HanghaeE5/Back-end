@@ -1,6 +1,7 @@
 package com.example.backend.user.controller;
 
-import com.example.backend.user.dto.MsgEnum;
+import com.example.backend.exception.ErrorCode;
+import com.example.backend.exception.MsgEnum;
 import com.example.backend.user.dto.RequestLoginDto;
 import com.example.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody RequestLoginDto loginDto){
         return ResponseEntity.ok()
-                .header(MsgEnum.jwtHeaderName.getMsg(), userService.login(loginDto))
-                .body(MsgEnum.loginSuccess.getMsg());
+                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.login(loginDto))
+                .body(MsgEnum.LOGIN_SUCCESS.getMsg());
     }
 }

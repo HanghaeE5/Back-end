@@ -1,5 +1,7 @@
 package com.example.backend.todo.service;
 
+import com.example.backend.exception.CustomException;
+import com.example.backend.exception.ErrorCode;
 import com.example.backend.user.domain.Board;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.user.domain.User;
@@ -59,14 +61,14 @@ public class TodoService {
         List<Todo> todoList = new ArrayList<>();
 
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자가 존재하지 않음")
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         if (requestDto.getBoardId() != null) {
             Board board = boardRepository.findById(requestDto.getBoardId()).orElseThrow(
-                    () -> new IllegalArgumentException("해당 게시글 존재하지 않음")
+                    () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
             );
             for (String todoDate : requestDto.getTodoDateList()) {
                 Date date = formatter.parse(todoDate);
@@ -115,13 +117,13 @@ public class TodoService {
     private Todo getTodo(Integer id, UserDetailsImpl userDetails) {
 
         Todo todo = todoRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글 존재하지 않음")
+                () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자가 존재하지 않음")
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         if (!Objects.equals(todo.getUser().getId(), user.getId())) {
-            throw new IllegalArgumentException("게시글 작성자가 아닙니다");
+            throw new CustomException(ErrorCode.INCORRECT_USERID);
         }
         return todo;
 
