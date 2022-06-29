@@ -1,7 +1,6 @@
 package com.example.backend.validate;
-
-import com.example.backend.dto.MsgEnum;
-import com.example.backend.security.UserDetailsImpl;
+import com.example.backend.msg.MsgEnum;
+import com.example.backend.user.security.UserDetailsImpl;
 
 public class UserValidation {
     public static void loginCheck(UserDetailsImpl userDetails) {

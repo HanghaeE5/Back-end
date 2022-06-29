@@ -1,6 +1,6 @@
 package com.example.backend.user.security;
 
-import com.example.backend.domain.User;
+import com.example.backend.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,8 +1,6 @@
 package com.example.backend.todo.domain;
 
-import com.example.backend.user.domain.BaseTime;
-import com.example.backend.user.domain.Board;
-import com.example.backend.user.domain.Category;
+import com.example.backend.common.BaseTime;
 import com.example.backend.user.domain.User;
 import com.example.backend.todo.dto.TodoRequestDto;
 import lombok.Getter;

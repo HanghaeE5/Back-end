@@ -1,5 +1,6 @@
 package com.example.backend.user.domain;
 
+import com.example.backend.common.BaseTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class User extends BaseTime{
+public class User extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
