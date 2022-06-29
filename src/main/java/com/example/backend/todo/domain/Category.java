@@ -1,4 +1,4 @@
-package com.example.backend.user.domain;
+package com.example.backend.todo.domain;
 
 public enum Category {
     STUDY, EXERCISE;

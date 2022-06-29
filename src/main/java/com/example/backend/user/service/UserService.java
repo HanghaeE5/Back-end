@@ -1,13 +1,15 @@
 package com.example.backend.user.service;
 
-import com.example.backend.exception.MsgEnum;
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.domain.EmailCheck;
 import com.example.backend.user.domain.Role;
 import com.example.backend.user.domain.User;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.user.dto.RequestEmailCheckDto;
+
+import com.example.backend.user.dto.EmailCheckRequestDto;
+import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.dto.RequestLoginDto;
-import com.example.backend.user.dto.RequestRegisterDto;
 import com.example.backend.user.repository.EmailCheckRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.security.JwtTokenProvider;
@@ -65,7 +67,7 @@ public class UserService {
     }
 
     @Transactional
-    public String emailCertificationCheck(RequestEmailCheckDto emailCheckDto) {
+    public String emailCertificationCheck(EmailCheckRequestDto emailCheckDto) {
         List<EmailCheck> emailCheck = getEmailCheckList(emailCheckDto.getEmail());
         EmailCheck firstValue = emailCheck.get(0);
         if (firstValue.getCode().equals(emailCheckDto.getCode())){
@@ -78,7 +80,7 @@ public class UserService {
 
     }
 
-    public String nickCheck(RequestRegisterDto registerDto) {
+    public String nickCheck(RegisterRequestDto registerDto) {
         //중복 닉네임 체크
         dupleNickCheck(registerDto.getNick());
 
@@ -86,7 +88,7 @@ public class UserService {
     }
 
     @Transactional
-    public String register(RequestRegisterDto registerDto) {
+    public String register(RegisterRequestDto registerDto) {
         //이메일 중복
         dupleEmailCheck(registerDto.getEmail());
         //닉네임 중복
@@ -139,6 +141,18 @@ public class UserService {
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException(ErrorCode.CONFIRM_EMAIL_PWD.getMsg());
         }
+        return jwtTokenProvider.createAccessToken(user);
+    }
+
+    @Transactional
+    public String addNick(String email, String nick) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException(MsgEnum.userNotFound.getMsg()));
+
+        dupleNickCheck(nick);
+        user.addNick(nick);
+
         return jwtTokenProvider.createAccessToken(user);
     }
 }

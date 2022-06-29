@@ -2,6 +2,7 @@ package com.example.backend.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,6 +37,11 @@ public class ApiExceptionHandler extends RuntimeException{
 
     @ExceptionHandler(MailException.class)
     public ResponseEntity<String> mailException(MailException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<String> usernameNotFoundException(UsernameNotFoundException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 

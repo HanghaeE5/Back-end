@@ -1,12 +1,13 @@
 package com.example.backend.user.domain;
 
+import com.example.backend.common.BaseTime;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class EmailCheck extends BaseTime{
+public class EmailCheck extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

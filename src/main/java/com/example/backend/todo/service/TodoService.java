@@ -7,7 +7,6 @@ import com.example.backend.todo.domain.Todo;
 import com.example.backend.user.domain.User;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
-import com.example.backend.user.repository.BoardRepository;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.security.UserDetailsImpl;

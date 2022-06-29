@@ -1,8 +1,7 @@
 package com.example.backend.user.security;
 
-import com.example.backend.exception.MsgEnum;
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.domain.User;
-import com.example.backend.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -28,10 +27,10 @@ public class JwtTokenProvider {
     private String secretKey;
 
     // 인증 토큰 유효시간 300분
-    private long accessTokenValidTime = 3000 * 60 * 1000L;
+    private final long accessTokenValidTime = 300 * 60 * 1000L;
 
     // 재발급 토큰 유효시간 300분
-    private long refreshTokenValidTime = 300 * 60 * 1000L;
+//    private final long refreshTokenValidTime = 300 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
 
@@ -59,15 +58,16 @@ public class JwtTokenProvider {
                 // signature 에 들어갈 secret값 세팅
                 .compact();
     }
-    public String createRefreshToken() {
-        Date now = new Date();
-        return Jwts.builder()
-                .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + refreshTokenValidTime)) // set Expire Time
-                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
-                // signature 에 들어갈 secret값 세팅
-                .compact();
-    }
+//    리프레시 토큰 적용시 사용
+//    public String createRefreshToken() {
+//        Date now = new Date();
+//        return Jwts.builder()
+//                .setIssuedAt(now) // 토큰 발행 시간 정보
+//                .setExpiration(new Date(now.getTime() + refreshTokenValidTime)) // set Expire Time
+//                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
+//                // signature 에 들어갈 secret값 세팅
+//                .compact();
+//    }
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {

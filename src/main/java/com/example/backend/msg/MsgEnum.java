@@ -1,5 +1,4 @@
-package com.example.backend.exception;
-
+package com.example.backend.msg;
 
 public enum MsgEnum {
 
@@ -10,7 +9,9 @@ public enum MsgEnum {
     AVAILABLE_NICK("사용 가능한 닉네임 입니다."),
     REGISTER_SUCCESS("회원가입 완료 하였습니다."),
     JWT_HEADER_NAME("Authorization"),
-    LOGIN_SUCCESS("로그인 완료");
+    LOGIN_SUCCESS("로그인 완료"),
+    LOGIN_REQUIRED("로그인이 필요합니다"),
+    NICKNAME_REQUIRED("닉네임을 작성해야 합니다.");
 
 
     final private String msg;

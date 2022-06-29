@@ -1,5 +1,6 @@
 package com.example.backend.user.domain;
 
+import com.example.backend.common.BaseTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class User extends BaseTime{
+public class User extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -17,14 +18,16 @@ public class User extends BaseTime{
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String nick;
 
     @Column(nullable = false)
     private String password;
 
-    @Column
     private String profile;
+
+    @Column(unique = true)
+    private Long kakaoId;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> role = new ArrayList<>();
@@ -35,6 +38,24 @@ public class User extends BaseTime{
         this.nick = nick;
         this.password = password;
         this.role = role;
+        this.kakaoId = null;
+    }
+
+    @Builder
+    public User(String password, String email, List<String> role, Long kakaoId){
+        this.email = email;
+        this.nick = null;
+        this.password = password;
+        this.role = role;
+        this.kakaoId = kakaoId;
+    }
+
+    public void userToKakaoUser(Long kakaoId){
+        this.kakaoId = kakaoId;
+    }
+
+    public void addNick(String nick){
+        this.nick = nick;
     }
 
     public User(){}
