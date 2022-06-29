@@ -1,10 +1,9 @@
 package com.example.backend.dto;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
-public class RequestEmailCheckDto {
+public class EmailCheckRequestDto {
 
     private String email;
     private String code;

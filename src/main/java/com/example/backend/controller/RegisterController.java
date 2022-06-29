@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.RequestEmailCheckDto;
-import com.example.backend.dto.RequestRegisterDto;
+import com.example.backend.dto.EmailCheckRequestDto;
+import com.example.backend.dto.RegisterRequestDto;
 import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,28 +18,28 @@ public class RegisterController {
     final UserService userService;
 
     @PostMapping("/register/email")
-    public ResponseEntity<String> emailCertification(@RequestBody RequestRegisterDto registerDto){
+    public ResponseEntity<String> emailCertification(@RequestBody RegisterRequestDto registerDto){
         return ResponseEntity.ok(
                 userService.emailCertification(registerDto.getEmail())
         );
     }
 
     @PostMapping("/register/email-check")
-    public ResponseEntity<String> emailCertificationCheck(@RequestBody RequestEmailCheckDto emailCheckDto){
+    public ResponseEntity<String> emailCertificationCheck(@RequestBody EmailCheckRequestDto emailCheckDto){
         return ResponseEntity.ok(
                 userService.emailCertificationCheck(emailCheckDto)
         );
     }
 
     @PostMapping("/register/nick-check")
-    public ResponseEntity<String> nickCheck(@RequestBody RequestRegisterDto registerDto){
+    public ResponseEntity<String> nickCheck(@RequestBody RegisterRequestDto registerDto){
         return ResponseEntity.ok(
                 userService.nickCheck(registerDto)
         );
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RequestRegisterDto registerDto){
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDto registerDto){
         return ResponseEntity.ok(
                 userService.register(registerDto)
         );

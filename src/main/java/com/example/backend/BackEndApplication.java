@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @PropertySources({ @PropertySource("classpath:application-aws.properties") })
 public class BackEndApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(BackEndApplication.class, args);
     }
