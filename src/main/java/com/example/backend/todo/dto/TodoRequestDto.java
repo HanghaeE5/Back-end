@@ -1,12 +1,12 @@
 package com.example.backend.todo.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Date;
 import java.util.List;
 
 @Getter
+@Setter
 public class TodoRequestDto {
 
     private String content;
