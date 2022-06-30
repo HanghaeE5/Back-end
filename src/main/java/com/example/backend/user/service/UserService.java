@@ -1,11 +1,12 @@
 package com.example.backend.user.service;
 
-
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.domain.EmailCheck;
 import com.example.backend.user.domain.Role;
 import com.example.backend.user.domain.User;
+import com.example.backend.exception.ErrorCode;
+
 import com.example.backend.user.dto.EmailCheckRequestDto;
-import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.dto.RequestLoginDto;
 import com.example.backend.user.repository.EmailCheckRepository;
@@ -46,7 +47,7 @@ public class UserService {
         SimpleMailMessage simpleMessage = new SimpleMailMessage();
         simpleMessage.setFrom(adminMail);
         simpleMessage.setTo(email);
-        simpleMessage.setSubject(MsgEnum.emailTitle.getMsg());
+        simpleMessage.setSubject(MsgEnum.EMAIL_TITLE.getMsg());
 
         String code = ThreadLocalRandom.current().nextInt(100000, 1000000)+"";
 
@@ -57,11 +58,11 @@ public class UserService {
 
         emailCheckRepository.save(emailCheck);
 
-        simpleMessage.setText(MsgEnum.emailContentFront.getMsg()+ code);
+        simpleMessage.setText(MsgEnum.EMAIL_CONTENT_FRONT.getMsg()+ code);
 
         javaMailSender.send(simpleMessage);
 
-        return MsgEnum.emailSend.getMsg();
+        return MsgEnum.EMAIL_SEND.getMsg();
     }
 
     @Transactional
@@ -71,10 +72,10 @@ public class UserService {
         if (firstValue.getCode().equals(emailCheckDto.getCode())){
             //인증 완료시 Y로 바꾸기
             firstValue.verificationCompleted("Y");
-            return MsgEnum.correctEmailCode.getMsg();
+            return MsgEnum.CORRECT_EMAIL_CODE.getMsg();
         }
 
-        throw new IllegalArgumentException(MsgEnum.incorrectEmailCode.getMsg());
+        throw new IllegalArgumentException(ErrorCode.INCORRECT_EMAIL_CODE.getMsg());
 
     }
 
@@ -82,7 +83,7 @@ public class UserService {
         //중복 닉네임 체크
         dupleNickCheck(registerDto.getNick());
 
-        return MsgEnum.availableNick.getMsg();
+        return MsgEnum.AVAILABLE_NICK.getMsg();
     }
 
     @Transactional
@@ -94,7 +95,7 @@ public class UserService {
         //인증 메일 보냈나 확인
         List<EmailCheck> emailChecks = getEmailCheckList(registerDto.getEmail());
         if (emailChecks.get(0).getConfirmYn().equals("N")){
-            throw new IllegalArgumentException(MsgEnum.incorrectEmailCode.getMsg());
+            throw new IllegalArgumentException(ErrorCode.INCORRECT_EMAIL_CODE.getMsg());
         }
 
         User user = User.builder()
@@ -109,35 +110,35 @@ public class UserService {
         //인증한 이메일 삭제
         emailCheckRepository.deleteByEmail(user.getEmail());
 
-        return MsgEnum.registerSuccess.getMsg();
+        return MsgEnum.REGISTER_SUCCESS.getMsg();
     }
 
     private void dupleEmailCheck(String email) {
         if(userRepository.findByEmail(email).isPresent()){
-            throw new IllegalArgumentException(MsgEnum.dupleEmail.getMsg());
+            throw new IllegalArgumentException(ErrorCode.DUPLE_EMAIL.getMsg());
         }
     }
 
     private void dupleNickCheck(String nick) {
         if(userRepository.findByNick(nick).isPresent()){
-            throw new IllegalArgumentException(MsgEnum.dupleNick.getMsg());
+            throw new IllegalArgumentException(ErrorCode.DUPLE_NICK.getMsg());
         }
     }
 
     private List<EmailCheck> getEmailCheckList(String email) {
         List<EmailCheck> emailCheck = emailCheckRepository.findByEmailOrderByCreatedDateDesc(email);
         if (emailCheck.size() == 0){
-            throw new IllegalArgumentException(MsgEnum.incorrectEmailCode.getMsg());
+            throw new IllegalArgumentException(ErrorCode.INCORRECT_EMAIL_CODE.getMsg());
         }
         return emailCheck;
     }
 
     public String login(RequestLoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException(MsgEnum.confirmEmailPwd.getMsg()));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorCode.CONFIRM_EMAIL_PWD.getMsg()));
 
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException(MsgEnum.confirmEmailPwd.getMsg());
+            throw new IllegalArgumentException(ErrorCode.CONFIRM_EMAIL_PWD.getMsg());
         }
         return jwtTokenProvider.createAccessToken(user);
     }
@@ -146,7 +147,7 @@ public class UserService {
     public String addNick(String email, String nick) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException(MsgEnum.userNotFound.getMsg()));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorCode.USER_NOT_FOUND.getMsg()));
 
         dupleNickCheck(nick);
         user.addNick(nick);

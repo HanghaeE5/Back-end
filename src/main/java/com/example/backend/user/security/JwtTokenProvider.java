@@ -85,7 +85,7 @@ public class JwtTokenProvider {
 
     // Request의 Header에서 token 값을 가져옵니다. "Access-Token" : "TOKEN값'
     public String accessResolveToken(HttpServletRequest request) {
-        return request.getHeader(MsgEnum.jwtHeaderName.getMsg());
+        return request.getHeader(MsgEnum.JWT_HEADER_NAME.getMsg());
     }
 
     // 토큰의 유효성 + 만료일자 확인
