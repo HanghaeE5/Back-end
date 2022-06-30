@@ -5,7 +5,7 @@ import com.example.backend.user.security.UserDetailsImpl;
 public class UserValidation {
     public static void loginCheck(UserDetailsImpl userDetails) {
         if(userDetails == null){
-            throw new IllegalArgumentException(MsgEnum.loginRequired.getMsg());
+            throw new IllegalArgumentException(MsgEnum.LOGIN_REQUIRED.getMsg());
         }
     }
 
@@ -13,7 +13,7 @@ public class UserValidation {
     public static void loginAndNickCheck(UserDetailsImpl userDetails) {
         loginCheck(userDetails);
         if(userDetails.getNick() == null){
-            throw new IllegalArgumentException(MsgEnum.nicknameRequired.getMsg());
+            throw new IllegalArgumentException(MsgEnum.NICKNAME_REQUIRED.getMsg());
         }
     }
 }

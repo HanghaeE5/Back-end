@@ -1,8 +1,8 @@
 package com.example.backend.user.controller;
 
+import com.example.backend.msg.MsgEnum;
 
 import com.example.backend.user.domain.User;
-import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.dto.RequestLoginDto;
 import com.example.backend.user.security.UserDetailsImpl;
@@ -27,8 +27,8 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody RequestLoginDto loginDto){
         return ResponseEntity.ok()
-                .header(MsgEnum.jwtHeaderName.getMsg(), userService.login(loginDto))
-                .body(MsgEnum.loginSuccess.getMsg());
+                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.login(loginDto))
+                .body(MsgEnum.LOGIN_SUCCESS.getMsg());
     }
 
     @GetMapping("/login/kakao/callback")
@@ -44,7 +44,7 @@ public class LoginController {
 
         response.sendRedirect(
         "http://localhost:3000?"
-                +MsgEnum.jwtHeaderName.getMsg()
+                +MsgEnum.JWT_HEADER_NAME.getMsg()
                 +"="
                 +token
                 +nickCheck
@@ -56,8 +56,8 @@ public class LoginController {
             @RequestBody RegisterRequestDto registerRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         UserValidation.loginCheck(userDetails);
         return ResponseEntity.ok()
-                    .header(MsgEnum.jwtHeaderName.getMsg(), userService.addNick(userDetails.getUsername(),registerRequestDto.getNick()))
-                    .body(MsgEnum.socialRegisterSuccess.getMsg());
+                    .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.addNick(userDetails.getUsername(),registerRequestDto.getNick()))
+                    .body(MsgEnum.SOCIAL_REGISTER_SUCCESS.getMsg());
     }
 
 }
