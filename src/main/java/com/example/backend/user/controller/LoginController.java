@@ -51,6 +51,12 @@ public class LoginController {
         );
     }
 
+    @GetMapping("/login/oauth2/code/")
+    public void googleLogin(@RequestParam String code, HttpServletResponse response){
+
+    }
+
+
     @PutMapping("/register/social")
     public ResponseEntity<String> socialRegister(
             @RequestBody RegisterRequestDto registerRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
