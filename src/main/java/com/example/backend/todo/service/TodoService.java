@@ -1,8 +1,9 @@
 package com.example.backend.todo.service;
 
+import com.example.backend.board.domain.Board;
+import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
-import com.example.backend.user.domain.Board;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.user.domain.User;
 import com.example.backend.todo.dto.TodoRequestDto;

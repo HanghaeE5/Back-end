@@ -11,7 +11,8 @@ public enum MsgEnum {
     JWT_HEADER_NAME("Authorization"),
     LOGIN_SUCCESS("로그인 완료"),
     LOGIN_REQUIRED("로그인이 필요합니다"),
-    NICKNAME_REQUIRED("닉네임을 작성해야 합니다.");
+    NICKNAME_REQUIRED("닉네임을 작성해야 합니다."),
+    SOCIAL_REGISTER_SUCCESS("소셜 로그인 성공");
 
 
     final private String msg;

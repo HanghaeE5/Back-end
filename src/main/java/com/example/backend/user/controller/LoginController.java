@@ -44,7 +44,7 @@ public class LoginController {
 
         response.sendRedirect(
         "http://localhost:3000?"
-                +MsgEnum.jwtHeaderName.getMsg()
+                +MsgEnum.JWT_HEADER_NAME.getMsg()
                 +"="
                 +token
                 +nickCheck
@@ -56,8 +56,8 @@ public class LoginController {
             @RequestBody RegisterRequestDto registerRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         UserValidation.loginCheck(userDetails);
         return ResponseEntity.ok()
-                    .header(MsgEnum.jwtHeaderName.getMsg(), userService.addNick(userDetails.getUsername(),registerRequestDto.getNick()))
-                    .body(MsgEnum.socialRegisterSuccess.getMsg());
+                    .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.addNick(userDetails.getUsername(),registerRequestDto.getNick()))
+                    .body(MsgEnum.SOCIAL_REGISTER_SUCCESS.getMsg());
     }
 
 }

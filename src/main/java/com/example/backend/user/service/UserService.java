@@ -5,7 +5,6 @@ import com.example.backend.user.domain.EmailCheck;
 import com.example.backend.user.domain.Role;
 import com.example.backend.user.domain.User;
 import com.example.backend.exception.ErrorCode;
-import com.example.backend.user.dto.RequestEmailCheckDto;
 
 import com.example.backend.user.dto.EmailCheckRequestDto;
 import com.example.backend.user.dto.RegisterRequestDto;
@@ -148,7 +147,7 @@ public class UserService {
     public String addNick(String email, String nick) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException(MsgEnum.userNotFound.getMsg()));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorCode.USER_NOT_FOUND.getMsg()));
 
         dupleNickCheck(nick);
         user.addNick(nick);
