@@ -1,6 +1,5 @@
 package com.example.backend.user.service;
 
-import com.example.backend.user.domain.Role;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.dto.KakaoUserInfoDto;
 import com.example.backend.user.repository.UserRepository;

@@ -2,7 +2,6 @@ package com.example.backend.user.service;
 
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.domain.EmailCheck;
-import com.example.backend.user.domain.Role;
 import com.example.backend.user.domain.User;
 import com.example.backend.exception.ErrorCode;
 
@@ -153,5 +152,9 @@ public class UserService {
         user.addNick(nick);
 
         return jwtTokenProvider.createAccessToken(user);
+    }
+
+    public User getUser(String userId) {
+        return userRepository.findByUserId(userId);
     }
 }
