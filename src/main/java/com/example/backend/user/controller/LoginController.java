@@ -9,6 +9,7 @@ import com.example.backend.user.domain.User;
 import com.example.backend.user.domain.UserRefreshToken;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.dto.RequestLoginDto;
+import com.example.backend.user.oauth.entity.UserPrincipal;
 import com.example.backend.user.oauth.token.AuthToken;
 import com.example.backend.user.oauth.token.AuthTokenProvider;
 import com.example.backend.user.repository.UserRefreshTokenRepository;
@@ -80,39 +81,21 @@ public class LoginController {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-    @GetMapping("/login/kakao/callback")
-    public void kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException {
-        // authorizedCode: 카카오 서버로부터 받은 인가 코드
-        //jwt 토큰
-        User user = kakaoUserService.kakaoLogin(code);
-        String nickCheck = user.getNick() == null ? "&nick=N" : "&nick=Y";
-        String token = kakaoUserService.forceLogin(user);
+//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        //1. 닉네임이 입력 안됬을 경우, http://www.ohniga.com?Authorization=토큰값&nick=N
-        //2. 회원가입 완료, http://www.ohniga.com?Authorization=토큰값&nick=Y
-
-        response.sendRedirect(
-        "http://localhost:3000?"
-                +MsgEnum.JWT_HEADER_NAME.getMsg()
-                +"="
-                +token
-                +nickCheck
-        );
-    }
-
-    @GetMapping("/login/oauth2/code/")
-    public void googleLogin(@RequestParam String code, HttpServletResponse response){
-
+        return ApiResponse.success("token", accessToken.getToken());
     }
 
 
-    @PutMapping("/register/social")
-    public ResponseEntity<String> socialRegister(
-            @RequestBody RegisterRequestDto registerRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        UserValidation.loginCheck(userDetails);
-        return ResponseEntity.ok()
-                    .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.addNick(userDetails.getUsername(),registerRequestDto.getNick()))
-                    .body(MsgEnum.SOCIAL_REGISTER_SUCCESS.getMsg());
-    }
+//    @PutMapping("/register/social")
+//    public ResponseEntity<String> socialRegister(
+//            @RequestBody RegisterRequestDto registerRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        UserValidation.loginCheck(userDetails);
+//        return ResponseEntity.ok()
+//                    .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.addNick(userDetails.getUsername(),registerRequestDto.getNick()))
+//                    .body(MsgEnum.SOCIAL_REGISTER_SUCCESS.getMsg());
+//    }
 
 }
