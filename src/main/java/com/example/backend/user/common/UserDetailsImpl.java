@@ -1,10 +1,11 @@
-package com.example.backend.user.security;
+package com.example.backend.user.common;
 
-import com.example.backend.user.domain.User;
+import com.example.backend.user.domain.RoleType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,30 +13,25 @@ import java.util.stream.Collectors;
 public class UserDetailsImpl implements UserDetails {
 
     private final String email;
-    private final List<String> roles;
+    private final RoleType roles;
     private String password;
 
-    private String nick;
-
-    public UserDetailsImpl(String email, List<String> roles) {
+    public UserDetailsImpl(String email, RoleType roles) {
         this.email = email;
         this.roles = roles;
     }
 
-    public UserDetailsImpl(String email, List<String> roles, String password, String nick) {
+    public UserDetailsImpl(String email, RoleType roles, String password) {
         this.email = email;
         this.roles = roles;
         this.password = password;
-        this.nick = nick;
     }
 
-    public UserDetailsImpl(User user){
-        this.email = user.getEmail();
-        this.roles = user.getRole();
-    }
-
-    public String getNick() {
-        return nick;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority(roles.getCode()));
+        return authorities;
     }
 
     @Override
@@ -68,10 +64,5 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
+
 }

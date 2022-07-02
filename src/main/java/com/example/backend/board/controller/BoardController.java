@@ -1,7 +1,7 @@
 package com.example.backend.board.controller;
 
 import com.example.backend.board.service.BoardService;
-import com.example.backend.user.security.UserDetailsImpl;
+import com.example.backend.user.common.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

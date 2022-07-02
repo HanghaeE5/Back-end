@@ -2,8 +2,8 @@ package com.example.backend.todo.controller;
 
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
-import com.example.backend.user.security.UserDetailsImpl;
 import com.example.backend.todo.service.TodoService;
+import com.example.backend.user.common.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
