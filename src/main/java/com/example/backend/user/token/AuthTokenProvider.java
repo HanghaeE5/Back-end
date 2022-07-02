@@ -2,6 +2,7 @@ package com.example.backend.user.token;
 
 import com.example.backend.exception.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -39,7 +42,6 @@ public class AuthTokenProvider {
     }
 
     public Authentication getAuthentication(AuthToken authToken) {
-        log.info("getAuthToken");
         if(authToken.validate()) {
 
             Claims claims = authToken.getTokenClaims();
@@ -47,9 +49,8 @@ public class AuthTokenProvider {
                     Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
-
-            log.debug("claims subject := [{}]", claims.getSubject());
-            User principal = new User(claims.getSubject(), "", authorities);
+            String nick = claims.get("nick")!=null ? claims.get("nick").toString() : "";
+            User principal = new User(claims.getSubject(), nick, authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         } else {

@@ -1,10 +1,12 @@
 package com.example.backend.user.service;
 
+import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.config.AppProperties;
 import com.example.backend.user.domain.*;
 import com.example.backend.user.dto.EmailCheckRequestDto;
+import com.example.backend.user.dto.LoginRequestDto;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.dto.UserResponseDto;
 import com.example.backend.user.repository.EmailCheckRepository;
@@ -19,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,6 @@ public class UserService {
     private final EmailCheckRepository emailCheckRepository;
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
-    private final AuthenticationManager authenticationManager;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
 
@@ -147,20 +147,20 @@ public class UserService {
 
 
     @Transactional
-    public Map<String, String> login(AuthReqModel authReqModel) {
+    public Map<String, String> login(LoginRequestDto loginRequestDto) {
         //회원 있는지 없는지 체크
-        User user = userRepository.findByEmail(authReqModel.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException(ErrorCode.CONFIRM_EMAIL_PWD.getMsg()));
+        User user = userRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_EMAIL_PWD));
 
         //비밀번호 체크
-        if (!passwordEncoder.matches(authReqModel.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException(ErrorCode.CONFIRM_EMAIL_PWD.getMsg());
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            throw new CustomException(ErrorCode.CONFIRM_EMAIL_PWD);
         }
 
         //create accessToken
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
-                user.getUserId(),
+                user.getEmail(),
                 RoleType.USER.getCode(),
                 user.getUsername(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
@@ -174,10 +174,10 @@ public class UserService {
         );
 
         // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(user.getUserId());
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmail(user.getEmail());
         if (userRefreshToken == null) {
             // 없는 경우 새로 등록
-            userRefreshToken = new UserRefreshToken(user.getUserId(), refreshToken.getToken());
+            userRefreshToken = new UserRefreshToken(user.getEmail(), refreshToken.getToken());
             userRefreshTokenRepository.saveAndFlush(userRefreshToken);
         } else {
             // DB에 refresh 토큰 업데이트
@@ -204,7 +204,7 @@ public class UserService {
             throw new IllegalArgumentException(MsgEnum.NOT_EXPIRED_TOKEN_YET.getMsg());
         }
 
-        String userId = claims.getSubject();
+        String email = claims.getSubject();
         String username = claims.get("nick", String.class);
         RoleType roleType = RoleType.of(claims.get("role", String.class));
 
@@ -212,21 +212,19 @@ public class UserService {
         String refreshToken = HeaderUtil.getRefreshToken(request);
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
         if (!authRefreshToken.validate()) {
-            log.info("1");
-            throw new IllegalArgumentException(MsgEnum.INVALID_REFRESH_TOKEN.getMsg());
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken);
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmailAndRefreshToken(email, refreshToken);
         if (userRefreshToken == null) {
-            log.info("2");
-            throw new IllegalArgumentException(MsgEnum.INVALID_REFRESH_TOKEN.getMsg());
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         //새로운 AccessToken 생성
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(
-                userId,
+                email,
                 roleType.getCode(),
                 username,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
@@ -254,20 +252,18 @@ public class UserService {
     }
 
     @Transactional
-    public Map<String, String> addNick(String userId, String nick) {
+    public Map<String, String> addNick(String email, String nick) {
 
-        User user = userRepository.findByUserId(userId);
-        if (user == null){
-            throw new IllegalArgumentException(ErrorCode.USER_NOT_FOUND.getMsg());
-        }
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
 
         dupleNickCheck(nick);
-
         user.addNick(nick);
 
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(
-                userId,
+                email,
                 user.getRoleType().getCode(),
                 user.getUsername(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
@@ -279,10 +275,10 @@ public class UserService {
                 new Date(now.getTime() + refreshTokenExpiry)
         );
 
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmail(email);
         if (userRefreshToken == null) {
             // 없는 경우 새로 등록
-            userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
+            userRefreshToken = new UserRefreshToken(email, refreshToken.getToken());
             userRefreshTokenRepository.saveAndFlush(userRefreshToken);
         } else {
             // DB에 refresh 토큰 업데이트
@@ -295,9 +291,11 @@ public class UserService {
         return token;
     }
 
-    public UserResponseDto getUser(String userId) {
+    public UserResponseDto getUser(String email) {
         UserResponseDto userResponseDto = new UserResponseDto(
-            userRepository.findByUserId(userId)
+            userRepository.findByEmail(email).orElseThrow(
+                    () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+            )
         );
         return userResponseDto;
     }

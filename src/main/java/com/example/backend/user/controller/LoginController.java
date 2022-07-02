@@ -1,7 +1,7 @@
 package com.example.backend.user.controller;
 
 import com.example.backend.msg.MsgEnum;
-import com.example.backend.user.domain.AuthReqModel;
+import com.example.backend.user.dto.LoginRequestDto;
 import com.example.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -21,10 +22,10 @@ public class LoginController {
     final private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthReqModel authReqModel) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         log.info("/login");
 
-        Map<String, String> token = userService.login(authReqModel);
+        Map<String, String> token = userService.login(loginRequestDto);
 
         return ResponseEntity
                 .ok()

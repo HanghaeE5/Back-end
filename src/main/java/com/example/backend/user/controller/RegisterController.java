@@ -1,20 +1,17 @@
 package com.example.backend.user.controller;
 
 import com.example.backend.msg.MsgEnum;
-import com.example.backend.user.common.UserDetailsImpl;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.dto.EmailCheckRequestDto;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.service.UserService;
-import com.example.backend.validate.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
 
@@ -55,11 +52,8 @@ public class RegisterController {
     @PutMapping("/register/social")
     public ResponseEntity<String> socialRegister(
             @RequestBody RegisterRequestDto registerRequestDto){
-        org.springframework.security.core.userdetails.User principal =
-                (org.springframework.security.core.userdetails.User)
-                        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Map<String, String> token = userService.addNick(principal.getUsername(),registerRequestDto.getNick());
+        LoadUser.loginCheck();
+        Map<String, String> token = userService.addNick(LoadUser.getEmail(),registerRequestDto.getNick());
 
         return ResponseEntity.ok()
                     .header(MsgEnum.JWT_HEADER_NAME.getMsg(), token.get(MsgEnum.JWT_HEADER_NAME.getMsg()))

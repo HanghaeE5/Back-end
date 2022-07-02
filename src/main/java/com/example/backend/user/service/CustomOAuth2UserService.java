@@ -65,7 +65,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             if (optionalUser.isPresent()) {
                 //소셜로그인 할 수 있게 변경
                 savedUser = optionalUser.get();
-                refreshTokenRepository.deleteByUserId(userInfo.getEmail());
                 savedUser.updateSocialId(userInfo.getId(), providerType);
             }else{
                 //최초 가입
