@@ -5,14 +5,17 @@ import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.user.domain.User;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
+import com.example.backend.user.common.UserDetailsImpl;
+import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
-import com.example.backend.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,7 +125,7 @@ public class TodoService {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        if (!Objects.equals(todo.getUser().getId(), user.getId())) {
+        if (!Objects.equals(todo.getUser().getUserSeq(), user.getUserSeq())) {
             throw new CustomException(ErrorCode.INCORRECT_USERID);
         }
         return todo;
