@@ -1,15 +1,16 @@
 package com.example.backend.user.oauth.handler;
 
 import com.example.backend.user.config.AppProperties;
+import com.example.backend.user.domain.ProviderType;
+import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.domain.UserRefreshToken;
-import com.example.backend.user.oauth.entity.ProviderType;
-import com.example.backend.user.oauth.entity.RoleType;
 import com.example.backend.user.oauth.info.OAuth2UserInfo;
 import com.example.backend.user.oauth.info.OAuth2UserInfoFactory;
-import com.example.backend.user.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.backend.user.oauth.token.AuthToken;
-import com.example.backend.user.oauth.token.AuthTokenProvider;
+import com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.backend.user.repository.UserRefreshTokenRepository;
+import com.example.backend.user.repository.UserRepository;
+import com.example.backend.user.token.AuthToken;
+import com.example.backend.user.token.AuthTokenProvider;
 import com.example.backend.user.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -29,7 +30,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import static com.example.backend.user.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Component
 @RequiredArgsConstructor
@@ -38,6 +39,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRepository userRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
     @Override
@@ -72,10 +74,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
 
+        String username = userRepository.findByUserId(userInfo.getId()).getUsername();
+
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
                 roleType.getCode(),
+                username,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
@@ -97,13 +102,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
 //        쿠키에 넣지 않고 파라미터로 넘겨주는 방식으로 변경
-//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-//        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
+        String nickCheck = (username == null) ? "N" : "Y";
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("access", accessToken.getToken())
                 .queryParam("refresh", refreshToken.getToken())
+                .queryParam("nick", nickCheck)
                 .build().toUriString();
     }
 

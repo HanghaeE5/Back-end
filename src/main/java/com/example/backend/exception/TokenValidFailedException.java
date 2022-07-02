@@ -1,4 +1,4 @@
-package com.example.backend.user.oauth.exception;
+package com.example.backend.exception;
 
 public class TokenValidFailedException extends RuntimeException {
 

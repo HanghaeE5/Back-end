@@ -1,6 +1,5 @@
-package com.example.backend.user.oauth.entity;
+package com.example.backend.user.domain;
 
-import com.example.backend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package com.example.backend.user.oauth.token;
+package com.example.backend.user.token;
 
-import com.example.backend.user.oauth.exception.TokenValidFailedException;
+import com.example.backend.exception.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,8 @@ public class AuthTokenProvider {
         return new AuthToken(id, expiry, key);
     }
 
-    public AuthToken createAuthToken(String id, String role, Date expiry) {
-        return new AuthToken(id, role, expiry, key);
+    public AuthToken createAuthToken(String id, String role, String name, Date expiry) {
+        return new AuthToken(id, name, role, expiry, key);
     }
 
     public AuthToken convertAuthToken(String token) {

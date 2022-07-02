@@ -1,4 +1,4 @@
-package com.example.backend.user.oauth.entity;
+package com.example.backend.user.domain;
 
 import lombok.Getter;
 

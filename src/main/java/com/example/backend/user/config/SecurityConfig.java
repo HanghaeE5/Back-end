@@ -1,16 +1,17 @@
 package com.example.backend.user.config;
 
-import com.example.backend.user.oauth.entity.RoleType;
-import com.example.backend.user.oauth.exception.RestAuthenticationEntryPoint;
-import com.example.backend.user.oauth.filter.TokenAuthenticationFilter;
+import com.example.backend.exception.RestAuthenticationEntryPoint;
+import com.example.backend.filter.TokenAuthenticationFilter;
+import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.backend.user.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.example.backend.user.oauth.handler.TokenAccessDeniedHandler;
-import com.example.backend.user.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.backend.user.oauth.service.CustomOAuth2UserService;
-import com.example.backend.user.oauth.service.CustomUserDetailsService;
-import com.example.backend.user.oauth.token.AuthTokenProvider;
+import com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.backend.user.repository.UserRefreshTokenRepository;
+import com.example.backend.user.repository.UserRepository;
+import com.example.backend.user.service.CustomOAuth2UserService;
+import com.example.backend.user.service.CustomUserDetailsService;
+import com.example.backend.user.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
 
+    private final UserRepository userRepository;
+
     /*
      * UserDetailsService 설정
      * */
@@ -66,10 +69,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
+                .antMatchers("/refresh").permitAll()
                 .antMatchers("/register/**").permitAll()
                 .antMatchers("/refresh").permitAll()
+                .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/user/**").hasAnyAuthority(RoleType.USER.getCode())
@@ -136,6 +142,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 tokenProvider,
                 appProperties,
                 userRefreshTokenRepository,
+                userRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
     }
@@ -156,9 +163,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfig = new CorsConfiguration();
+        String[] exposedHeader = corsProperties.getExposedHeaders().split(",");
         corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
         corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
         corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
+        for (String expose : exposedHeader)
+            corsConfig.addExposedHeader(expose);
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(corsConfig.getMaxAge());
 

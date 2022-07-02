@@ -1,6 +1,5 @@
-package com.example.backend.user.security;
+package com.example.backend.user.common;
 
-import com.example.backend.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,27 +14,15 @@ public class UserDetailsImpl implements UserDetails {
     private final List<String> roles;
     private String password;
 
-    private String nick;
-
     public UserDetailsImpl(String email, List<String> roles) {
         this.email = email;
         this.roles = roles;
     }
 
-    public UserDetailsImpl(String email, List<String> roles, String password, String nick) {
+    public UserDetailsImpl(String email, List<String> roles, String password) {
         this.email = email;
         this.roles = roles;
         this.password = password;
-        this.nick = nick;
-    }
-
-    public UserDetailsImpl(User user){
-        this.email = user.getEmail();
-        this.roles = user.getRole();
-    }
-
-    public String getNick() {
-        return nick;
     }
 
     @Override

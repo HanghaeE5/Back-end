@@ -1,12 +1,13 @@
-package com.example.backend.user.oauth.service;
+package com.example.backend.user.service;
 
+import com.example.backend.exception.OAuthProviderMissMatchException;
+import com.example.backend.user.domain.ProviderType;
+import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.domain.User;
-import com.example.backend.user.oauth.entity.ProviderType;
-import com.example.backend.user.oauth.entity.RoleType;
-import com.example.backend.user.oauth.entity.UserPrincipal;
-import com.example.backend.user.oauth.exception.OAuthProviderMissMatchException;
+import com.example.backend.user.domain.UserPrincipal;
 import com.example.backend.user.oauth.info.OAuth2UserInfo;
 import com.example.backend.user.oauth.info.OAuth2UserInfoFactory;
+import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    private final UserRefreshTokenRepository refreshTokenRepository;
+
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User user = super.loadUser(userRequest);
 
@@ -46,7 +51,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
         User savedUser = userRepository.findByUserId(userInfo.getId());
-
+        //이미 가입된 회원
         if (savedUser != null) {
             if (providerType != savedUser.getProviderType()) {
                 throw new OAuthProviderMissMatchException(
@@ -54,45 +59,34 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                 " account. Please use your " + savedUser.getProviderType() + " account to login."
                 );
             }
-            updateUser(savedUser, userInfo);
         } else {
-            savedUser = createUser(userInfo, providerType);
+            //이미 로컬로 가입한 회원
+            Optional<User> optionalUser = userRepository.findByEmail(userInfo.getEmail());
+            if (optionalUser.isPresent()) {
+                //소셜로그인 할 수 있게 변경
+                savedUser = optionalUser.get();
+                refreshTokenRepository.deleteByUserId(userInfo.getEmail());
+                savedUser.updateSocialId(userInfo.getId(), providerType);
+            }else{
+                //최초 가입
+                savedUser = createUser(userInfo, providerType);
+            }
         }
 
         return UserPrincipal.create(savedUser, user.getAttributes());
     }
 
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
-        LocalDateTime now = LocalDateTime.now();
-        log.info(userInfo.toString());
-        log.info(userInfo.getEmail());
-        log.info(userInfo.getName());
-        log.info(userInfo.getId());
-        log.info(userInfo.getAttributes().toString());
         User user = new User(
                 userInfo.getId(),
-                userInfo.getName(),
                 userInfo.getEmail(),
                 "Y",
                 userInfo.getImageUrl(),
                 providerType,
-                RoleType.USER,
-                now,
-                now
+                RoleType.USER
         );
         log.info("before saveAndFlush");
         return userRepository.saveAndFlush(user);
     }
 
-    private User updateUser(User user, OAuth2UserInfo userInfo) {
-        if (userInfo.getName() != null && !user.getUsername().equals(userInfo.getName())) {
-            user.setUsername(userInfo.getName());
-        }
-
-        if (userInfo.getImageUrl() != null && !user.getProfileImageUrl().equals(userInfo.getImageUrl())) {
-            user.setProfileImageUrl(userInfo.getImageUrl());
-        }
-
-        return user;
-    }
 }

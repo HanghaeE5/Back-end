@@ -1,17 +1,12 @@
 package com.example.backend.user.domain;
 
-import com.example.backend.user.oauth.entity.ProviderType;
-import com.example.backend.user.oauth.entity.RoleType;
+import com.example.backend.common.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,20 +14,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "USER")
-public class User {
+public class User extends BaseTime {
     @JsonIgnore
     @Id
     @Column(name = "USER_SEQ")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userSeq;
 
-    @Column(name = "USER_ID", length = 64, unique = true)
-    @NotNull
+    @Column(name = "USER_ID", length = 64)
     @Size(max = 64)
     private String userId;
 
     @Column(name = "USERNAME", length = 100)
-    @NotNull
     @Size(max = 100)
     private String username;
 
@@ -67,37 +60,53 @@ public class User {
     @NotNull
     private RoleType roleType;
 
-    @Column(name = "CREATED_AT")
-    @NotNull
-    private LocalDateTime createdAt;
-
-    @Column(name = "MODIFIED_AT")
-    @NotNull
-    private LocalDateTime modifiedAt;
-
     public User(
-            @NotNull @Size(max = 64) String userId,
-            @NotNull @Size(max = 100) String username,
+            @Size(max = 64) String userId,
             @NotNull @Size(max = 512) String email,
             @NotNull @Size(max = 1) String emailVerifiedYn,
             @NotNull @Size(max = 512) String profileImageUrl,
             @NotNull ProviderType providerType,
-            @NotNull RoleType roleType,
-            @NotNull LocalDateTime createdAt,
-            @NotNull LocalDateTime modifiedAt
+            @NotNull RoleType roleType
     ) {
         this.userId = userId;
-        this.username = username;
         this.password = "NO_PASS";
         this.email = email != null ? email : "NO_EMAIL";
         this.emailVerifiedYn = emailVerifiedYn;
         this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
         this.providerType = providerType;
         this.roleType = roleType;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
+    @Builder
+    public User(
+            @Size(max = 100) String username,
+            @NotNull String password,
+            @NotNull @Size(max = 512) String email,
+            @NotNull ProviderType providerType,
+            @NotNull RoleType roleType
+    ) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.emailVerifiedYn = "Y";
+        this.profileImageUrl = "";
+        this.providerType = providerType;
+        this.roleType = roleType;
+        this.userId = email;
+    }
+
+    public void updateSocialId(
+            @Size(max = 64) String userId,
+            @NotNull ProviderType providerType
+            )
+    {
+        this.userId = userId;
+        this.providerType = providerType;
+    }
+
+    public void addNick(String username){
+        this.username = username;
+    }
 
 
 }

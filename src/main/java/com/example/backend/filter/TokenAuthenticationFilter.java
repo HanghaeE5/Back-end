@@ -1,7 +1,7 @@
-package com.example.backend.user.oauth.filter;
+package com.example.backend.filter;
 
-import com.example.backend.user.oauth.token.AuthToken;
-import com.example.backend.user.oauth.token.AuthTokenProvider;
+import com.example.backend.user.token.AuthToken;
+import com.example.backend.user.token.AuthTokenProvider;
 import com.example.backend.user.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +28,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         String tokenStr = HeaderUtil.getAccessToken(request);
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-
+        log.info(token.getToken());
         if (token.validate()) {
+            log.info("pass validate");
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

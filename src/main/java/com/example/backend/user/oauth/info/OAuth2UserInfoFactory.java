@@ -1,6 +1,6 @@
 package com.example.backend.user.oauth.info;
 
-import com.example.backend.user.oauth.entity.ProviderType;
+import com.example.backend.user.domain.ProviderType;
 import com.example.backend.user.oauth.info.impl.GoogleOAuth2UserInfo;
 import com.example.backend.user.oauth.info.impl.KakaoOAuth2UserInfo;
 import com.example.backend.user.oauth.info.impl.NaverOAuth2UserInfo;

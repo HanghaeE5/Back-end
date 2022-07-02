@@ -1,10 +1,11 @@
 package com.example.backend.user.controller;
 
-import com.example.backend.user.common.ApiResponse;
 import com.example.backend.user.domain.User;
+import com.example.backend.user.dto.UserResponseDto;
 import com.example.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +20,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ApiResponse getUser() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<UserResponseDto> getUser() {
+        org.springframework.security.core.userdetails.User principal =
+                (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        User user = userService.getUser(principal.getUsername());
-        log.info("user : {}" + user.toString());
-        return ApiResponse.success("user", user);
+        return ResponseEntity
+                .ok()
+                .body(userService.getUser(principal.getUsername()));
     }
 }

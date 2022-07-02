@@ -1,4 +1,4 @@
-package com.example.backend.user.oauth.repository;
+package com.example.backend.user.repository;
 
 import com.example.backend.user.utils.CookieUtil;
 import com.nimbusds.oauth2.sdk.util.StringUtils;

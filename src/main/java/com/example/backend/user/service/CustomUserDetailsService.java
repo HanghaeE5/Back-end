@@ -1,7 +1,7 @@
-package com.example.backend.user.oauth.service;
+package com.example.backend.user.service;
 
 import com.example.backend.user.domain.User;
-import com.example.backend.user.oauth.entity.UserPrincipal;
+import com.example.backend.user.domain.UserPrincipal;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -11,5 +11,6 @@ public class CorsProperties {
     private String allowedOrigins;
     private String allowedMethods;
     private String allowedHeaders;
+    private String exposedHeaders;
     private Long maxAge;
 }

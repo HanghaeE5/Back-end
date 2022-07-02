@@ -1,6 +1,6 @@
 package com.example.backend.user.oauth.handler;
 
-import com.example.backend.user.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.backend.user.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.example.backend.user.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Component
 @RequiredArgsConstructor

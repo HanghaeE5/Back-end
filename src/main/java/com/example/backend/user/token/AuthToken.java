@@ -1,4 +1,4 @@
-package com.example.backend.user.oauth.token;
+package com.example.backend.user.token;
 
 import io.jsonwebtoken.*;
 import lombok.Getter;
@@ -23,9 +23,9 @@ public class AuthToken {
         this.token = createAuthToken(id, expiry);
     }
 
-    AuthToken(String id, String role, Date expiry, Key key) {
+    AuthToken(String id, String name, String role, Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(id, role, expiry);
+        this.token = createAuthToken(id, role, name, expiry);
     }
 
     private String createAuthToken(String id, Date expiry) {
@@ -36,9 +36,10 @@ public class AuthToken {
                 .compact();
     }
 
-    private String createAuthToken(String id, String role, Date expiry) {
+    private String createAuthToken(String id, String role, String name, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
+                .claim("nick", name)
                 .claim(AUTHORITIES_KEY, role)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)

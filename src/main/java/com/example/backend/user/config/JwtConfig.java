@@ -1,6 +1,6 @@
 package com.example.backend.user.config;
 
-import com.example.backend.user.oauth.token.AuthTokenProvider;
+import com.example.backend.user.token.AuthTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
