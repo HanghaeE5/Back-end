@@ -52,7 +52,7 @@ public class TodoController {
     // done() 함수 만들어서 state 변경
     @PostMapping("/todo/{id}")
     public ResponseEntity<String> doneTodo(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         todoService.done(userDetails, id);
@@ -64,7 +64,7 @@ public class TodoController {
     // update() 함수로 수정
     @PutMapping("/todo/{id}")
     public ResponseEntity<String> updateTodo(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody TodoRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws ParseException {
@@ -77,7 +77,7 @@ public class TodoController {
     // id 로 삭제
     @DeleteMapping("todo/{id}")
     public ResponseEntity<String> deleteTodo(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         todoService.deleteTodo(userDetails, id);

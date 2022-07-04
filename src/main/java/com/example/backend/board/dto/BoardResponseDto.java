@@ -1,0 +1,26 @@
+package com.example.backend.board.dto;
+
+import com.example.backend.board.domain.Board;
+import lombok.Data;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Data
+public class BoardResponseDto {
+
+    private Long boardId;
+    private String boardContent;
+    private String imageUrl;
+    private String title;
+    private LocalDateTime boardCreatedDate;
+
+    public BoardResponseDto(Board board) {
+        this.boardId = board.getId();
+        this.boardContent = board.getContent();
+        this.imageUrl = board.getImageUrl();
+        this.title = board.getTitle();
+        this.boardCreatedDate = board.getCreatedDate();
+    }
+}

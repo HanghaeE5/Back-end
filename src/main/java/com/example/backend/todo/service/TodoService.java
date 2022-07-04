@@ -90,7 +90,7 @@ public class TodoService {
 
 
     @Transactional
-    public void done(UserDetailsImpl userDetails, Integer id) {
+    public void done(UserDetailsImpl userDetails, Long id) {
 
         Todo todo = getTodo(id, userDetails);
         todo.done();
@@ -99,7 +99,7 @@ public class TodoService {
 
 
     @Transactional
-    public void update(TodoRequestDto requestDto, UserDetailsImpl userDetails, Integer id) throws ParseException {
+    public void update(TodoRequestDto requestDto, UserDetailsImpl userDetails, Long id) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(requestDto.getTodoDate());
@@ -109,7 +109,7 @@ public class TodoService {
     }
 
 
-    public void deleteTodo(UserDetailsImpl userDetails, Integer id) {
+    public void deleteTodo(UserDetailsImpl userDetails, Long id) {
 
         getTodo(id, userDetails);
         todoRepository.deleteById(id);
@@ -117,7 +117,7 @@ public class TodoService {
     }
 
 
-    private Todo getTodo(Integer id, UserDetailsImpl userDetails) {
+    private Todo getTodo(Long id, UserDetailsImpl userDetails) {
 
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)

@@ -14,5 +14,6 @@ public class BoardRequestDto {
     private String category;
     private MultipartFile file;
     private TodoRequestDto todo;
+    private Long todoId;
 
 }
