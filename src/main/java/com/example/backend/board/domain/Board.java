@@ -21,7 +21,7 @@ public class Board extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     @Column
     private String title;

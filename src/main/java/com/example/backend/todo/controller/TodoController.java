@@ -3,6 +3,7 @@ package com.example.backend.todo.controller;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.service.TodoService;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.common.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,10 +28,10 @@ public class TodoController {
             @RequestParam String filter,
             @RequestParam Integer page,
             @RequestParam Integer size,
-            @RequestParam String sort,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam String sort
     ) {
-        Page<TodoResponseDto> responseDtoList = todoService.getTodoList(userDetails, filter, page, size, sort);
+        LoadUser.loginAndNickCheck();
+        Page<TodoResponseDto> responseDtoList = todoService.getTodoList(filter, page, size, sort);
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
@@ -40,10 +41,10 @@ public class TodoController {
     // boardId 유무에 따라 따로 저장
     @PostMapping("/todo")
     public ResponseEntity<String> postTodo(
-            @RequestBody TodoRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestBody TodoRequestDto requestDto
     ) throws ParseException {
-        todoService.saveList(requestDto, userDetails);
+        LoadUser.loginAndNickCheck();
+        todoService.saveList(requestDto, LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body("todo 를 추가했습니다");
     }
 
@@ -52,10 +53,10 @@ public class TodoController {
     // done() 함수 만들어서 state 변경
     @PostMapping("/todo/{id}")
     public ResponseEntity<String> doneTodo(
-            @PathVariable Integer id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @PathVariable Long id
     ) {
-        todoService.done(userDetails, id);
+        LoadUser.loginAndNickCheck();
+        todoService.done(LoadUser.getEmail(), id);
         return ResponseEntity.status(HttpStatus.OK).body("todo 를 완료했습니다");
     }
 
@@ -64,11 +65,11 @@ public class TodoController {
     // update() 함수로 수정
     @PutMapping("/todo/{id}")
     public ResponseEntity<String> updateTodo(
-            @PathVariable Integer id,
-            @RequestBody TodoRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @PathVariable Long id,
+            @RequestBody TodoRequestDto requestDto
     ) throws ParseException {
-        todoService.update(requestDto, userDetails, id);
+        LoadUser.loginAndNickCheck();
+        todoService.update(requestDto, LoadUser.getEmail(), id);
         return ResponseEntity.status(HttpStatus.OK).body("todo 를 수정했습니다");
     }
 
@@ -77,10 +78,10 @@ public class TodoController {
     // id 로 삭제
     @DeleteMapping("todo/{id}")
     public ResponseEntity<String> deleteTodo(
-            @PathVariable Integer id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @PathVariable Long id
     ) {
-        todoService.deleteTodo(userDetails, id);
+        LoadUser.loginAndNickCheck();
+        todoService.deleteTodo(LoadUser.getEmail(), id);
         return ResponseEntity.status(HttpStatus.OK).body("todo 를 삭제했습니다");
     }
 
