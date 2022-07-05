@@ -3,9 +3,13 @@ package com.example.backend.user.controller;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.dto.EmailCheckRequestDto;
+import com.example.backend.user.dto.EmailRequestDto;
+import com.example.backend.user.dto.NickRequestDto;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
@@ -21,43 +26,50 @@ public class RegisterController {
 
     final UserService userService;
 
+    @ApiOperation(value = "이메일 인증하기")
     @PostMapping("/register/email")
-    public ResponseEntity<String> emailCertification(@RequestBody RegisterRequestDto registerDto){
-        return ResponseEntity.ok(
-                userService.emailCertification(registerDto.getEmail())
-        );
+    public ResponseEntity<String> emailCertification(@Valid @RequestBody EmailRequestDto emailRequestDto){
+        return ResponseEntity.ok()
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(userService.emailCertification(emailRequestDto.getEmail()));
     }
 
+    @ApiOperation(value = "이메일 인증 확인")
     @PostMapping("/register/email-check")
-    public ResponseEntity<String> emailCertificationCheck(@RequestBody EmailCheckRequestDto emailCheckDto){
-        return ResponseEntity.ok(
-                userService.emailCertificationCheck(emailCheckDto)
-        );
+    public ResponseEntity<String> emailCertificationCheck(@Valid @RequestBody EmailCheckRequestDto emailCheckDto){
+        return ResponseEntity.ok()
+            .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+            .body(userService.emailCertificationCheck(emailCheckDto));
     }
 
+
+    @ApiOperation(value = "닉네임 중복 체크")
     @PostMapping("/register/nick-check")
-    public ResponseEntity<String> nickCheck(@RequestBody RegisterRequestDto registerDto){
-        return ResponseEntity.ok(
-                userService.nickCheck(registerDto)
-        );
+    public ResponseEntity<String> nickCheck(@Valid @RequestBody NickRequestDto registerDto){
+        return ResponseEntity.ok()
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(userService.nickCheck(registerDto));
     }
 
+    @ApiOperation(value = "로컬 회원가입")
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDto registerDto){
-        return ResponseEntity.ok(
-                userService.register(registerDto)
-        );
+        return ResponseEntity.ok()
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(userService.register(registerDto));
     }
 
+    @ApiOperation(value = "소셜 회원가입 - 닉네임 입력")
     @PutMapping("/register/social")
-    public ResponseEntity<String> socialRegister(
-            @RequestBody RegisterRequestDto registerRequestDto){
+    public ResponseEntity<String> socialRegister(@Valid @RequestBody NickRequestDto registerDto){
         LoadUser.loginCheck();
-        Map<String, String> token = userService.addNick(LoadUser.getEmail(),registerRequestDto.getNick());
+        System.out.println(LoadUser.getEmail());
+        Map<String, String> token = userService.addNick(LoadUser.getEmail(),registerDto.getNick());
 
         return ResponseEntity.ok()
                     .header(MsgEnum.JWT_HEADER_NAME.getMsg(), token.get(MsgEnum.JWT_HEADER_NAME.getMsg()))
                     .header(MsgEnum.REFRESH_HEADER_NAME.getMsg(), token.get(MsgEnum.REFRESH_HEADER_NAME.getMsg()))
+                    .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                     .body(MsgEnum.SOCIAL_REGISTER_SUCCESS.getMsg());
     }
 }
