@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail' // SMTP 관련
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // Oauth2
+    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0' // swagger
+    implementation'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2' //jwt
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
