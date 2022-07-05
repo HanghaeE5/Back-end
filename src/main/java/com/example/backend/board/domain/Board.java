@@ -1,8 +1,6 @@
 package com.example.backend.board.domain;
 
-import com.example.backend.board.dto.BoardRequestDto;
-import com.example.backend.common.BaseTime;
-import com.example.backend.todo.domain.Todo;
+import com.example.backend.common.domain.BaseTime;
 import com.example.backend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity

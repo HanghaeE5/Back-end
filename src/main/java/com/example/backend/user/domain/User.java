@@ -1,6 +1,6 @@
 package com.example.backend.user.domain;
 
-import com.example.backend.common.BaseTime;
+import com.example.backend.common.domain.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
