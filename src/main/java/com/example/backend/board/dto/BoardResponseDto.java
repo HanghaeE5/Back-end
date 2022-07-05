@@ -1,6 +1,7 @@
 package com.example.backend.board.dto;
 
 import com.example.backend.board.domain.Board;
+import com.example.backend.board.domain.Category;
 import lombok.Data;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public class BoardResponseDto {
     private String boardContent;
     private String imageUrl;
     private String title;
+    private Category category;
     private LocalDateTime boardCreatedDate;
 
     public BoardResponseDto(Board board) {
@@ -21,6 +23,7 @@ public class BoardResponseDto {
         this.boardContent = board.getContent();
         this.imageUrl = board.getImageUrl();
         this.title = board.getTitle();
+        this.category = board.getCategory();
         this.boardCreatedDate = board.getCreatedDate();
     }
 }

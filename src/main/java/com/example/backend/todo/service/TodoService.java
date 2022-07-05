@@ -8,7 +8,7 @@ import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
-import com.example.backend.user.common.UserDetailsImpl;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class TodoService {
     private final UserRepository userRepository;
 
 
-    public Page<TodoResponseDto> getTodoList(UserDetailsImpl userDetails, String filter, Integer page, Integer size, String sort) {
+    public Page<TodoResponseDto> getTodoList(String filter, Integer page, Integer size, String sort) {
 
         Pageable pageable;
 
@@ -59,11 +59,11 @@ public class TodoService {
     }
 
 
-    public void saveList(TodoRequestDto requestDto, UserDetailsImpl userDetails) throws ParseException {
+    public void saveList(TodoRequestDto requestDto, String email) throws ParseException {
 
         List<Todo> todoList = new ArrayList<>();
 
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
@@ -90,39 +90,40 @@ public class TodoService {
 
 
     @Transactional
-    public void done(UserDetailsImpl userDetails, Long id) {
+    public void done(Long id) {
 
-        Todo todo = getTodo(id, userDetails);
+        LoadUser.getEmail();
+        Todo todo = getTodo(id);
         todo.done();
 
     }
 
 
     @Transactional
-    public void update(TodoRequestDto requestDto, UserDetailsImpl userDetails, Long id) throws ParseException {
+    public void update(TodoRequestDto requestDto, Long id) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(requestDto.getTodoDate());
-        Todo todo = getTodo(id, userDetails);
+        Todo todo = getTodo(id);
         todo.update(requestDto, date);
 
     }
 
 
-    public void deleteTodo(UserDetailsImpl userDetails, Long id) {
+    public void deleteTodo(Long id) {
 
-        getTodo(id, userDetails);
+        getTodo(id);
         todoRepository.deleteById(id);
 
     }
 
 
-    private Todo getTodo(Long id, UserDetailsImpl userDetails) {
+    private Todo getTodo(Long id) {
 
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByEmail(LoadUser.getEmail()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         if (!Objects.equals(todo.getUser().getUserSeq(), user.getUserSeq())) {

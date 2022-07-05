@@ -3,7 +3,6 @@ package com.example.backend.board.domain;
 import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.common.BaseTime;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.user.common.UserDetailsImpl;
 import com.example.backend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +23,7 @@ public class Board extends BaseTime {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+
     @Column
     private String title;
 
@@ -31,9 +31,10 @@ public class Board extends BaseTime {
     private String content;
 
     @Column
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
-    @Column(nullable = true)
+    @Column
     private Long todoId;
 
     @Column
@@ -46,25 +47,22 @@ public class Board extends BaseTime {
     @JoinColumn(nullable = false)
     private User user;
 
-    public Board(BoardRequestDto requestDto, UserDetailsImpl user) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
-        this.todoId = requestDto.getTodoId();
-//        this.imageUrl = requestDto.getImage();
-//        this.user = user.getNick();
-    }
-//    public Board(BoardRequestDto requestDto) {
-//        this.title = requestDto.getTitle();
-//        this.content = requestDto.getContent();
-//        this.todoId = requestDto.getTodoId();
-//        this.imageUrl = requestDto.getImage();
-//        this.user = user;
-//    }
 
-    public void update(BoardRequestDto requestDto) {
+    public Board(BoardRequestDto requestDto, User user) {
+        this.category = requestDto.getCategory();
+        this.content = requestDto.getContent();
+        this.title = requestDto.getTitle();
+        this.todoId = requestDto.getTodoId();
+        this.user = user;
+//        this.imageUrl = requestDto.getImage();
+    }
+
+    public void update(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.todoId = requestDto.getTodoId();
+        this.category = requestDto.getCategory();
+        this.user = user;
 //        this.imageUrl = requestDto.getImage();
     }
 
