@@ -1,14 +1,11 @@
 package com.example.backend.chat.controller;
 
-import com.amazonaws.Response;
 import com.example.backend.chat.dto.ChatRoomRequestDto;
 import com.example.backend.chat.dto.ChatRoomResponseDto;
 import com.example.backend.chat.service.ChatRoomService;
-import com.example.backend.user.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +24,7 @@ public class ChatRoomController {
     }
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomResponseDto>> roomList() {
+    public ResponseEntity<List<ChatRoomResponseDto>> getRoomList() {
         List<ChatRoomResponseDto> responseDtoList = chatRoomService.findAllRoom();
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }

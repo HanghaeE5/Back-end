@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script th:inline="javascript">
+        function login() {
+            let email = $('#email').val();
+            let password = $('#password').val();
+            let datas = {
+                'email':email,
+                'password': password
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/login',
+                contentType: 'application/json',
+                data: JSON.stringify(datas),
+                success: function (data, textStatus, request) {
+
+                    localStorage.setItem('Authorization', request.getResponseHeader('Authorization'));
+                    console.log(data);
+                    console.log('Authorization : '+request.getResponseHeader('Authorization'))
+                    console.log('Refresh : '+request.getResponseHeader('Refresh'))
+
+                    alert("로그인 완료~");
+                },
+                error: function() {
+                    console.log('error')
+                    console.log(this.error)
+                }
+            })
+        }
+
+        function roomList() {
+            $.ajax({
+                type: 'GET',
+                url: '/mvc/room/list',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                },
+                success: function () {
+                    // alert("룸 리스트 이동 완료~")
+                }
+            })
+        }
+
+
+    </script>
+
+</head>
+<body>
+    <div>
+        <input sec:authorize="isAnonymous()" id="email" placeholder="이메일을 입력하세요">
+        <input sec:authorize="isAnonymous()" id="password" placeholder="비밀번호를 입력하세요">
+    </div>
+    <div>
+        <button sec:authorize="isAnonymous()" onclick="login()">로그인</button>
+    </div>
+
+    <div>
+        <button sec:authorize="isAuthenticated()" onclick="roomList()">roomList 이동</button>
+    </div>
+
+    <div sec:authorize="isAuthenticated()">
+
+    </div>
+
+
+<div>
+
+</div>
+</body>
+</html>
