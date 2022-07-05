@@ -33,7 +33,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        log.info("getRequestURI : " + request.getRequestURI());
+//        log.info("getRequestURI : " + request.getRequestURI());
         filterChain.doFilter(request, response);
     }
 }
