@@ -3,6 +3,7 @@ package com.example.backend.user.controller;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.dto.LoginRequestDto;
 import com.example.backend.user.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class LoginController {
     final private UserService userService;
 
+    @ApiOperation(value = "로컬 로그인")
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         log.info("/login");
@@ -37,6 +39,7 @@ public class LoginController {
                 .body(MsgEnum.LOGIN_SUCCESS.getMsg());
     }
 
+    @ApiOperation(value = "토큰 재발급")
     @GetMapping("/refresh")
     public ResponseEntity<String> refreshToken (HttpServletRequest request) {
         log.info("/refresh");
