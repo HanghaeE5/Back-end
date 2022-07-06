@@ -36,9 +36,9 @@ public class BoardService {
             String boardString,
             String todoString,
             MultipartFile file,
-            UserDetailsImpl userDetails
+            String email
     ) throws ParseException, JsonProcessingException {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
@@ -56,7 +56,7 @@ public class BoardService {
 
         if (todoRequestDto != null) {
             todoRequestDto.setBoardId(saved.getId());
-            todoService.saveList(todoRequestDto, userDetails);
+            todoService.saveList(todoRequestDto, email);
         }
 
     }

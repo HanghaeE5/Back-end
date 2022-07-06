@@ -11,7 +11,7 @@ public class TodoRequestDto {
 
     private String content;
     private String category;
-    private Integer boardId;
+    private Long boardId;
     private List<String> todoDateList;
     private String todoDate;
 

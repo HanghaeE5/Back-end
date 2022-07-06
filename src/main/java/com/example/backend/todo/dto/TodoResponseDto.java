@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 public class TodoResponseDto {
 
-    private Integer todoId;
+    private Long todoId;
     private String todoContent;
     private Date todoDate;
     private boolean state;

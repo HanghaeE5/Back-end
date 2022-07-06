@@ -1,6 +1,7 @@
 package com.example.backend.board.controller;
 
 import com.example.backend.board.service.BoardService;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.common.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,14 +25,12 @@ public class BoardController {
     // 게시글 작성
     @PostMapping("/board")
     public ResponseEntity<String> postBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(value = "board") String board,
             @RequestParam(value = "todo", required = false) String todo,
             @RequestPart(value = "file", required = false) MultipartFile file
-
             ) throws IOException, ParseException {
-
-        boardService.save(board, todo, file, userDetails);
+        LoadUser.loginAndNickCheck();
+        boardService.save(board, todo, file, LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body("파일 업로드 및 게시글 작성 완료");
     }
 
