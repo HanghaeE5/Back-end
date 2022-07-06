@@ -104,6 +104,14 @@ public class User extends BaseTime {
         this.providerType = providerType;
     }
 
+    public void updateProfileImage(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateNick(String username){
+        this.username = username;
+    }
+
     public void addNick(String username){
         this.username = username;
     }
