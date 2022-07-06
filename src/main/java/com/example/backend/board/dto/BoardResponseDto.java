@@ -7,12 +7,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Data
@@ -27,7 +26,7 @@ public class BoardResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime boardCreatedDate;
 
-    private List<BoardTodo> todos;
+    private Set<BoardTodo> todos = new LinkedHashSet<>();
 
     public BoardResponseDto(Board board) {
         this.boardId = board.getId();
@@ -36,7 +35,6 @@ public class BoardResponseDto {
         this.title = board.getTitle();
         this.category = board.getCategory();
         this.boardCreatedDate = board.getCreatedDate();
-        this.todos = board.getBoardTodo();
-
+//        this.todos = boardTodoSet;
     }
 }

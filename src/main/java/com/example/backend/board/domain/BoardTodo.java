@@ -37,4 +37,9 @@ public class BoardTodo {
         this.category = Category.valueOf(todoRequestDto.getCategory());
         this.board = board;
     }
+
+    public BoardTodo(String test){
+        this.content = test;
+    }
+
 }

@@ -11,7 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -42,13 +44,12 @@ public class Board extends BaseTime {
     private List<Todo> todo;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<BoardTodo> boardTodo;
+    private Set<BoardTodo> boardTodo = new LinkedHashSet<>();
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn(nullable = false)
     private User user;
-
 
     public Board(BoardRequestDto requestDto, User user, String imageUrl) {
         this.category = Category.valueOf(requestDto.getCategory());
