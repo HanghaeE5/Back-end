@@ -101,13 +101,11 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long id, String email) {
 
-        User user = getUser(email);
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        Board board = isYours(id, email);
         if(board.getCategory().equals(Category.CHALLENGE)) {
             List<Todo> todoList = todoRepository.findAllByBoard(board);
             for (Todo todo : todoList) {
-                todo.deleteBoard();
+                todo.changeNull();
             }
         }
         // 2. 사진 삭제
@@ -152,16 +150,16 @@ public class BoardService {
 //        return boardPage.map(BoardResponseDto::new);
 //
 //    }
-    // 게시글 id 와 게시글을 작성한 user의 id가 동일한지 확인
 
-//    private Board isYours(Long id) {
-//        Board board = boardRepository.findById(id).orElseThrow(
-//                () -> new CustomException(ErrorCode.TODO_NOT_FOUND));
-//        if(!Objects.equals(board.getUser().getUserId(), LoadUser.getEmail())) {
-//            throw new CustomException(ErrorCode.INCORRECT_USERID);
-//        }
-//        return board;
-//    }
+    // 게시글 작성자의 id와 User의 id가 동일한지 확인하는 메서드
+    private Board isYours(Long id, String email) {
+        Board board = getBoard(id);
+        User user = getUser(email);
+        if (!Objects.equals(board.getUser().getUserSeq(), user.getUserSeq())) {
+            throw new CustomException(ErrorCode.INCORRECT_USERID);
+        }
+        return board;
+    }
 
     private Board getBoard(Long id) {
         return boardRepository.findById(id).orElseThrow(
