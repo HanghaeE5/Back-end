@@ -18,7 +18,6 @@ import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +40,6 @@ public class BoardService {
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
     private final TodoService todoService;
-    private final ModelMapper modelMapper;
     private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
 
@@ -59,19 +56,16 @@ public class BoardService {
 
         if(Objects.equals(filter, "challenge")) {
             boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
-
         } else if(Objects.equals(filter, "daily")) {
             boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
         } else {
             boardPage = boardRepository.findAll(pageable);
         }
 
-        List<BoardResponseDto> boardResponseDtoList = boardPage.getContent()
-                .stream()
-                .map(board -> modelMapper.map(board, BoardResponseDto.class))
-                .collect(Collectors.toList());
-
-        return new PageBoardResponseDto(boardResponseDtoList, boardPage);
+        return new PageBoardResponseDto(
+                BoardResponseDto.getDtoList(boardPage.getContent()),
+                boardPage
+        );
     }
 
     // 게시물 상세조회

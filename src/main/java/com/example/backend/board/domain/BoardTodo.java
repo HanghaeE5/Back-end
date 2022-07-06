@@ -1,5 +1,6 @@
 package com.example.backend.board.domain;
 
+import com.example.backend.common.domain.BaseTime;
 import com.example.backend.todo.domain.Category;
 import com.example.backend.todo.dto.TodoRequestDto;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Getter
-public class BoardTodo {
+public class BoardTodo extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
