@@ -31,6 +31,8 @@ public enum ErrorCode {
     // 게시글
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 게시글이 존재하지 않습니다"),
 
+    // 채팅
+    ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 채팅방이 존재하지 않습니다"),
     ;
 
     // 추후 추가 코드

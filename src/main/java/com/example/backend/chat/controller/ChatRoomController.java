@@ -28,4 +28,10 @@ public class ChatRoomController {
         List<ChatRoomResponseDto> responseDtoList = chatRoomService.findAllRoom();
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
+
+    @GetMapping("/room/{id}")
+    public ResponseEntity<ChatRoomResponseDto> getRoom(@PathVariable String id) {
+        ChatRoomResponseDto responseDto = chatRoomService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }
