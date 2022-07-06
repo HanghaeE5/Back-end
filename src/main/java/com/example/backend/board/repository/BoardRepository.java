@@ -12,6 +12,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @EntityGraph(attributePaths = {"boardTodo"}, type = EntityGraph.EntityGraphType.LOAD)
     Page<Board> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"boardTodo"}, type = EntityGraph.EntityGraphType.LOAD)
     Page<Board> findAllByCategory(Category category, Pageable pageable);
 //    Page<Board> findAllByTitleContaining(String keyword, Pageable pageable);
 
