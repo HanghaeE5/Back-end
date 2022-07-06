@@ -38,7 +38,7 @@ public enum ErrorCode {
 
 
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이미지를 입력해주세요."),
-
+    INVALID_CHALLENGE(HttpStatus.BAD_REQUEST, "400", "챌린저스 카테고리와 Todo 내용을 확인해주세요."),
     ;
 
     // 추후 추가 코드

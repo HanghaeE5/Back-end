@@ -8,7 +8,7 @@ import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
-import com.example.backend.user.common.UserDetailsImpl;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -105,12 +105,10 @@ public class TodoService {
         Date date = formatter.parse(requestDto.getTodoDate());
         Todo todo = getTodo(id, email);
         todo.update(requestDto, date);
-
     }
 
 
     public void deleteTodo(String email, Long id) {
-
         getTodo(id, email);
         todoRepository.deleteById(id);
 
@@ -118,7 +116,6 @@ public class TodoService {
 
 
     private Todo getTodo(Long id, String email) {
-
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
