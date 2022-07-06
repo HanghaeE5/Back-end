@@ -3,6 +3,7 @@ package com.example.backend.user.service;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
+import com.example.backend.s3.AwsS3Service;
 import com.example.backend.user.config.AppProperties;
 import com.example.backend.user.domain.*;
 import com.example.backend.user.dto.*;
@@ -20,6 +21,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -42,6 +44,8 @@ public class UserService {
     private final AuthTokenProvider tokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
+
+    private final AwsS3Service awsS3Service;
 
     @Value("${spring.mail.username}")
     private String adminMail;
@@ -253,10 +257,7 @@ public class UserService {
     @Transactional
     public Map<String, String> addNick(String email, String nick) {
 
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-
+        User user = getUser(email);
         dupleNickCheck(nick);
         user.addNick(nick);
 
@@ -290,12 +291,35 @@ public class UserService {
         return token;
     }
 
-    public UserResponseDto getUser(String email) {
-        UserResponseDto userResponseDto = new UserResponseDto(
-            userRepository.findByEmail(email).orElseThrow(
-                    () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-            )
-        );
+    public UserResponseDto getUserInfo(String email) {
+        UserResponseDto userResponseDto = new UserResponseDto(getUser(email));
         return userResponseDto;
+    }
+
+    @Transactional
+    public UserResponseDto updateProfile(MultipartFile file, String email) {
+        User user = getUser(email);
+
+        user.updateProfileImage(awsS3Service.uploadImage(file));
+
+        return new UserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponseDto updateNick(String nick, String email) {
+        User user = getUser(email);
+        dupleNickCheck(nick);
+
+        user.updateNick(nick);
+
+        UserResponseDto userResponseDto = new UserResponseDto(user);
+
+        return userResponseDto;
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
     }
 }
