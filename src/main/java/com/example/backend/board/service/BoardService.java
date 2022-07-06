@@ -5,6 +5,7 @@ import com.example.backend.board.domain.BoardTodo;
 import com.example.backend.board.domain.Category;
 import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.board.dto.BoardResponseDto;
+import com.example.backend.board.dto.PageBoardResponseDto;
 import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.exception.CustomException;
@@ -17,6 +18,7 @@ import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,17 +42,19 @@ public class BoardService {
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
     private final TodoService todoService;
-
+    private final ModelMapper modelMapper;
     private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
 
     // 전체 게시글 목록 조회 구현
-    public Page<BoardResponseDto> getBoardList(String filter, Integer page, Integer size, String sort) {
+    public PageBoardResponseDto getBoardList(String filter, Integer page, Integer size, String sort) {
         Pageable pageable;
+
         if (sort == "asc")
             pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
         else
             pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
         Page<Board> boardPage;
 
         if(Objects.equals(filter, "challenge")) {
@@ -57,11 +62,16 @@ public class BoardService {
 
         } else if(Objects.equals(filter, "daily")) {
             boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
-        }
-        else {
+        } else {
             boardPage = boardRepository.findAll(pageable);
         }
-        return boardPage.map(BoardResponseDto::new);
+
+        List<BoardResponseDto> boardResponseDtoList = boardPage.getContent()
+                .stream()
+                .map(board -> modelMapper.map(board, BoardResponseDto.class))
+                .collect(Collectors.toList());
+
+        return new PageBoardResponseDto(boardResponseDtoList, boardPage);
     }
 
     // 게시물 상세조회
@@ -87,7 +97,6 @@ public class BoardService {
                 boardTodoList.add(new BoardTodo(todo, date, saveBoard));
             }
             boardTodoRepository.saveAll(boardTodoList);
-
         }
     }
 

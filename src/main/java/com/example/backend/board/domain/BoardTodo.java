@@ -2,14 +2,15 @@ package com.example.backend.board.domain;
 
 import com.example.backend.todo.domain.Category;
 import com.example.backend.todo.dto.TodoRequestDto;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @NoArgsConstructor
 @Entity
+@Getter
 public class BoardTodo {
 
     @Id

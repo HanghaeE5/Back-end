@@ -4,6 +4,7 @@ import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.user.domain.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,13 +37,15 @@ public class Board extends BaseTime {
     @Column
     private String imageUrl;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Todo> todo;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<BoardTodo> boardTodo;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(nullable = false)
     private User user;
 

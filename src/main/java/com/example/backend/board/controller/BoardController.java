@@ -2,6 +2,7 @@ package com.example.backend.board.controller;
 
 import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.board.dto.BoardResponseDto;
+import com.example.backend.board.dto.PageBoardResponseDto;
 import com.example.backend.board.service.BoardService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.todo.dto.TodoRequestDto;
@@ -27,17 +28,17 @@ public class BoardController {
 
     // 전체 게시글 목록 조회
     @GetMapping("/board")
-    public ResponseEntity<Page<BoardResponseDto>> getBoardList(
+    public ResponseEntity<PageBoardResponseDto> getBoardList(
             @RequestParam String filter,
             @RequestParam Integer page,
             @RequestParam Integer size,
             @RequestParam String sort
     ) {
-        Page<BoardResponseDto> responseDtoList = boardService.getBoardList(
+        LoadUser.loginAndNickCheck();
+        PageBoardResponseDto responseDto = boardService.getBoardList(
                 filter, page, size, sort
         );
-        LoadUser.loginAndNickCheck();
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
     // 게시글 상세 조회
     @GetMapping("/board/{id}")

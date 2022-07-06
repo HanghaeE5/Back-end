@@ -62,7 +62,7 @@ public class User extends BaseTime {
     @NotNull
     private RoleType roleType;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
     private List<Participant> participantList;
 
     public User(
