@@ -1,7 +1,7 @@
 package com.example.backend.chat.domain;
 
 import com.example.backend.chat.dto.ChatRoomRequestDto;
-import com.example.backend.common.BaseTime;
+import com.example.backend.common.domain.BaseTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
