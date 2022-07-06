@@ -1,4 +1,4 @@
-package com.example.backend.chat;
+package com.example.backend.chat.config.handler;
 
 import com.example.backend.chat.domain.ChatMessage;
 import com.example.backend.chat.repository.ChatRoomRepository;
@@ -12,7 +12,9 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -34,41 +36,33 @@ public class StompHandler implements ChannelInterceptor {
             AuthToken token = tokenProvider.convertAuthToken(tokenStr);
             token.validate();
 
-        } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-
-            // header정보에서 구독 destination정보를 얻고, roomId를 추출한다.
-            String roomId = chatService
-                    .getRoomId(Optional
-                            .ofNullable((String) message
-                                    .getHeaders()
-                                    .get("simpDestination"))
-                            .orElse("InvalidRoomId"));
-            // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
-            String sessionId = (String) message
-                    .getHeaders()
-                    .get("simpSessionId");
-            chatRoomRepository.setUserEnterInfo(sessionId, roomId);
-            // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-            String name = Optional.ofNullable((Principal) message
-                    .getHeaders().get("simpUser"))
-                    .map(Principal::getName).orElse("UnknownUser");
-            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.ENTER).roomId(roomId).sender(name).build());
-
-        } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-
-            // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            String roomId = chatRoomRepository.getUserEnterRoomId(sessionId);
-
-            // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
-            String name = Optional.ofNullable((Principal) message
-                    .getHeaders()
-                    .get("simpUser"))
-                    .map(Principal::getName)
-                    .orElse("UnknownUser");
-            chatService.sendChatMessage(ChatMessage.builder()
-                    .type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(name).build());
         }
+
+        // 일단 보류.. Controller 에서 같은 logic 다른 방식으로구현
+
+//        else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+//
+//            // header 정보에서 구독 destination 정보를 얻고, roomId를 추출한다.
+//            String roomId = (String) message.getHeaders().get(StompHeaderAccessor.NATIVE_HEADERS, MultiValueMap.class).getFirst("roomId");
+//
+//            // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
+//            String sessionId = (String) message.getHeaders().get("simpSessionId");
+//            chatRoomRepository.setUserEnterInfo(sessionId, roomId);
+//
+//            // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
+//            String name = Optional.ofNullable((Principal)message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
+//            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.ENTER).roomId(roomId).sender(name).build());
+//
+//        } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
+//
+//            // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
+//            String sessionId = (String) message.getHeaders().get("simpSessionId");
+//            String roomId = chatRoomRepository.getUserEnterRoomId(sessionId);
+//
+//            // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
+//            String name = Optional.ofNullable((Principal)message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
+//            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(name).build());
+//        }
         return message;
     }
 }

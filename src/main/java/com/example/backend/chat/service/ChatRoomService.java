@@ -4,6 +4,8 @@ import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.dto.ChatRoomRequestDto;
 import com.example.backend.chat.dto.ChatRoomResponseDto;
 import com.example.backend.chat.repository.ChatRoomRepository;
+import com.example.backend.exception.CustomException;
+import com.example.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +32,12 @@ public class ChatRoomService {
             responseDtoList.add(responseDto);
         }
         return responseDtoList;
+    }
+
+    public ChatRoomResponseDto findById(String id) {
+        ChatRoom room = chatRoomRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
+        return new ChatRoomResponseDto(room);
     }
 }
