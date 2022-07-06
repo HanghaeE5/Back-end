@@ -11,13 +11,9 @@ public enum MsgEnum {
     JWT_HEADER_NAME("Authorization"),
     REFRESH_HEADER_NAME("Refresh"),
     LOGIN_SUCCESS("로그인 완료"),
-    LOGIN_REQUIRED("로그인이 필요합니다"),
-    NICKNAME_REQUIRED("닉네임을 작성해야 합니다."),
-    NOT_EXPIRED_TOKEN_YET("토큰이 만료되지 않았습니다."),
     REISSUE_COMPLETED_TOKEN("토큰 재발급 완료"),
     AUTHENTICATION_FAIL("Authentication failed, login or reissue token"),
-    SOCIAL_REGISTER_SUCCESS("소셜 회원가입 완료"),
-    USER_NOT_FOUND("사용자를 찾을 수 없습니다.");
+    SOCIAL_REGISTER_SUCCESS("소셜 회원가입 완료");
 
 
     final private String msg;

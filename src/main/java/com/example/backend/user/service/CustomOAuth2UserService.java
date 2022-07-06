@@ -7,7 +7,6 @@ import com.example.backend.user.domain.User;
 import com.example.backend.user.domain.UserPrincipal;
 import com.example.backend.user.oauth.info.OAuth2UserInfo;
 import com.example.backend.user.oauth.info.OAuth2UserInfoFactory;
-import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +27,6 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-
-    private final UserRefreshTokenRepository refreshTokenRepository;
 
     @Override
     @Transactional

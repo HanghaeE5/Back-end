@@ -1,7 +1,7 @@
 package com.example.backend.user.domain;
 
 import com.example.backend.chat.domain.Participant;
-import com.example.backend.common.BaseTime;
+import com.example.backend.common.domain.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -107,6 +107,14 @@ public class User extends BaseTime {
     {
         this.userId = userId;
         this.providerType = providerType;
+    }
+
+    public void updateProfileImage(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateNick(String username){
+        this.username = username;
     }
 
     public void addNick(String username){

@@ -3,12 +3,10 @@ package com.example.backend.user.service;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
+import com.example.backend.s3.AwsS3Service;
 import com.example.backend.user.config.AppProperties;
 import com.example.backend.user.domain.*;
-import com.example.backend.user.dto.EmailCheckRequestDto;
-import com.example.backend.user.dto.LoginRequestDto;
-import com.example.backend.user.dto.RegisterRequestDto;
-import com.example.backend.user.dto.UserResponseDto;
+import com.example.backend.user.dto.*;
 import com.example.backend.user.repository.EmailCheckRepository;
 import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
@@ -23,6 +21,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -45,6 +44,8 @@ public class UserService {
     private final AuthTokenProvider tokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
+
+    private final AwsS3Service awsS3Service;
 
     @Value("${spring.mail.username}")
     private String adminMail;
@@ -85,12 +86,10 @@ public class UserService {
             firstValue.verificationCompleted("Y");
             return MsgEnum.CORRECT_EMAIL_CODE.getMsg();
         }
-
-        throw new IllegalArgumentException(ErrorCode.INCORRECT_EMAIL_CODE.getMsg());
-
+        throw new CustomException(ErrorCode.INCORRECT_EMAIL_CODE);
     }
 
-    public String nickCheck(RegisterRequestDto registerDto) {
+    public String nickCheck(NickRequestDto registerDto) {
         //중복 닉네임 체크
         dupleNickCheck(registerDto.getNick());
 
@@ -104,9 +103,13 @@ public class UserService {
         //닉네임 중복
         dupleNickCheck(registerDto.getNick());
         //인증 메일 보냈나 확인
+
         List<EmailCheck> emailChecks = getEmailCheckList(registerDto.getEmail());
+        if (emailChecks.get(0).getConfirmYn() == null){
+            throw new CustomException(ErrorCode.INCORRECT_EMAIL_CODE);
+        }
         if (emailChecks.get(0).getConfirmYn().equals("N")){
-            throw new IllegalArgumentException(ErrorCode.INCORRECT_EMAIL_CODE.getMsg());
+            throw new CustomException(ErrorCode.INCORRECT_EMAIL_CODE);
         }
 
         User user = User.builder()
@@ -127,20 +130,20 @@ public class UserService {
 
     private void dupleEmailCheck(String email) {
         if(userRepository.findByEmail(email).isPresent()){
-            throw new IllegalArgumentException(ErrorCode.DUPLE_EMAIL.getMsg());
+            throw new CustomException(ErrorCode.DUPLE_EMAIL);
         }
     }
 
     private void dupleNickCheck(String nick) {
         if(userRepository.findByUsername(nick).isPresent()){
-            throw new IllegalArgumentException(ErrorCode.DUPLE_NICK.getMsg());
+            throw new CustomException(ErrorCode.DUPLE_NICK);
         }
     }
 
     private List<EmailCheck> getEmailCheckList(String email) {
         List<EmailCheck> emailCheck = emailCheckRepository.findByEmailOrderByCreatedDateDesc(email);
         if (emailCheck.size() == 0){
-            throw new IllegalArgumentException(ErrorCode.INCORRECT_EMAIL_CODE.getMsg());
+            throw new CustomException(ErrorCode.INCORRECT_EMAIL_CODE);
         }
         return emailCheck;
     }
@@ -201,7 +204,7 @@ public class UserService {
         // 만료된 access token 인지 확인
         Claims claims = authToken.getExpiredTokenClaims();
         if (claims == null) {
-            throw new IllegalArgumentException(MsgEnum.NOT_EXPIRED_TOKEN_YET.getMsg());
+            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN_YET);
         }
 
         String email = claims.getSubject();
@@ -254,10 +257,7 @@ public class UserService {
     @Transactional
     public Map<String, String> addNick(String email, String nick) {
 
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-
+        User user = getUser(email);
         dupleNickCheck(nick);
         user.addNick(nick);
 
@@ -291,12 +291,35 @@ public class UserService {
         return token;
     }
 
-    public UserResponseDto getUser(String email) {
-        UserResponseDto userResponseDto = new UserResponseDto(
-            userRepository.findByEmail(email).orElseThrow(
-                    () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-            )
-        );
+    public UserResponseDto getUserInfo(String email) {
+        UserResponseDto userResponseDto = new UserResponseDto(getUser(email));
         return userResponseDto;
+    }
+
+    @Transactional
+    public UserResponseDto updateProfile(MultipartFile file, String email) {
+        User user = getUser(email);
+
+        user.updateProfileImage(awsS3Service.uploadImage(file));
+
+        return new UserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponseDto updateNick(String nick, String email) {
+        User user = getUser(email);
+        dupleNickCheck(nick);
+
+        user.updateNick(nick);
+
+        UserResponseDto userResponseDto = new UserResponseDto(user);
+
+        return userResponseDto;
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
     }
 }

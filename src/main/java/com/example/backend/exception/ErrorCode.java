@@ -18,6 +18,8 @@ public enum ErrorCode {
 
     NOT_LOGIN(HttpStatus.BAD_REQUEST, "400", "로그인이 필요합니다."),
 
+    NOT_EXPIRED_TOKEN_YET(HttpStatus.BAD_REQUEST,"400", "토큰이 만료되지 않았습니다."),
+
     NEED_NICK(HttpStatus.BAD_REQUEST, "400", "닉네임 입력 후 서비스 이용 가능합니다."),
 
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST,"400","유효하지 않은 리프레시 토큰입니다."),
@@ -33,6 +35,10 @@ public enum ErrorCode {
 
     // 채팅
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 채팅방이 존재하지 않습니다"),
+
+
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이미지를 입력해주세요."),
+
     ;
 
     // 추후 추가 코드
