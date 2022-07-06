@@ -6,9 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
-
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     @Query("select t from Todo t where (t.todoDate>=CURRENT_DATE and t.state=true) or (t.state=false)")

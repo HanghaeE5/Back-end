@@ -39,7 +39,7 @@ public class TodoService {
 
         Pageable pageable;
 
-        if (sort == "asc") {
+        if (Objects.equals(sort, "asc")) {
             pageable = PageRequest.of(page, size, Sort.by("todoDate").ascending());
         } else {
             pageable = PageRequest.of(page, size, Sort.by("todoDate").descending());
@@ -90,40 +90,36 @@ public class TodoService {
 
 
     @Transactional
-    public void done(Long id) {
+    public void done(String email, Long id) {
 
-        LoadUser.getEmail();
-        Todo todo = getTodo(id);
+        Todo todo = getTodo(id, email);
         todo.done();
 
     }
 
 
     @Transactional
-    public void update(TodoRequestDto requestDto, Long id) throws ParseException {
+    public void update(TodoRequestDto requestDto, String email, Long id) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(requestDto.getTodoDate());
-        Todo todo = getTodo(id);
+        Todo todo = getTodo(id, email);
         todo.update(requestDto, date);
-
     }
 
 
-    public void deleteTodo(Long id) {
-
-        getTodo(id);
+    public void deleteTodo(String email, Long id) {
+        getTodo(id, email);
         todoRepository.deleteById(id);
 
     }
 
 
-    private Todo getTodo(Long id) {
-
+    private Todo getTodo(Long id, String email) {
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        User user = userRepository.findByEmail(LoadUser.getEmail()).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         if (!Objects.equals(todo.getUser().getUserSeq(), user.getUserSeq())) {

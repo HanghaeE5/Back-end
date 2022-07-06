@@ -14,11 +14,8 @@ import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.todo.service.TodoService;
-import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,11 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +45,6 @@ public class BoardService {
 
     // 전체 게시글 목록 조회 구현
     public Page<BoardResponseDto> getBoardList(String filter, Integer page, Integer size, String sort) {
-
         Pageable pageable;
         if (sort == "asc")
             pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
@@ -59,8 +55,7 @@ public class BoardService {
         if(Objects.equals(filter, "challenge")) {
             boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
 
-        }
-        else if(Objects.equals(filter, "daily")) {
+        } else if(Objects.equals(filter, "daily")) {
             boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
         }
         else {
