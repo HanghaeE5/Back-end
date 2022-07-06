@@ -1,8 +1,5 @@
 package com.example.backend.chat.config.handler;
 
-import com.example.backend.chat.domain.ChatMessage;
-import com.example.backend.chat.repository.ChatRoomRepository;
-import com.example.backend.chat.service.ChatMessageService;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +9,12 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-
-import java.security.Principal;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
 
     private final AuthTokenProvider tokenProvider;
-    private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageService chatService;
 
     // websocket 요청 시 실행
     @Override

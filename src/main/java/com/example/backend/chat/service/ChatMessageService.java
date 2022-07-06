@@ -1,6 +1,6 @@
 package com.example.backend.chat.service;
 
-import com.example.backend.chat.domain.ChatMessage;
+import com.example.backend.chat.dto.ChatMessageRequestDto;
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
 import com.example.backend.chat.repository.ChatRoomRepository;
@@ -39,15 +39,25 @@ public class ChatMessageService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        participantRepository.deleteByChatRoomIdAndUserId(user.getUserId(), roomId);
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
+        Participant participant = new Participant();
+        for (Participant p : room.getParticipantList()) {
+            if (p.getUser().getEmail() == email) {
+                participant = p;
+                break;
+            }
+        }
+        participantRepository.deleteById(participant.getId());
     }
 
 
-    public void sendChatMessage(ChatMessage message) {
-        if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
+    public void sendChatMessage(ChatMessageRequestDto message) {
+        if (ChatMessageRequestDto.MessageType.ENTER.equals(message.getType())) {
             message.setMessage(message.getSender() + "님이 방에 입장했습니다.");
             message.setSender("[알림]");
-        } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
+        } else if (ChatMessageRequestDto.MessageType.QUIT.equals(message.getType())) {
             message.setMessage(message.getSender() + "님이 방에서 나갔습니다.");
             message.setSender("[알림]");
         }
