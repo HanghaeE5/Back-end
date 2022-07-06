@@ -11,7 +11,6 @@ import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.common.LoadUser;
-import com.example.backend.user.common.UserDetailsImpl;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -68,11 +67,7 @@ public class BoardService {
     }
     // 게시글 작성 구현
     @Transactional
-    public void save(
-            String boardString,
-            String todoString,
-            MultipartFile file,
-            String email) throws ParseException, JsonProcessingException {
+    public void save(String boardString, String todoString, MultipartFile file, String email) throws Exception {
         User user = userRepository.findByEmail(email).orElseThrow (
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -100,23 +95,23 @@ public class BoardService {
     }
 
     // 게시글 삭제
-    @javax.transaction.Transactional
-    public void deleteBoard(Long id, MultipartFile file) {
-        // 이메일로 User 객체를 꺼내온다.
-        // id를 이용해 Board 객체를 꺼내온다.
-        // Board 객체 id, User 객체 id로 현재 사용자가 작성한 board인지 판별
-        isYours(id);
-        awsS3Service.deleteImage();
-        boardRepository.deleteById(id);
-    }
+//    @Transactional
+//    public void deleteBoard(Long id, MultipartFile file) {
+//        // 이메일로 User 객체를 꺼내온다.
+//        // id를 이용해 Board 객체를 꺼내온다.
+//        // Board 객체 id, User 객체 id로 현재 사용자가 작성한 board인지 판별
+//        isYours(id);
+//        awsS3Service.deleteImage();
+//        boardRepository.deleteById(id);
+//    }
     // 게시글 수정
-    @javax.transaction.Transactional
-    public void updateBoard(Long id, BoardRequestDto requestDto, String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Board board = isYours(id);
-        board.update(requestDto, user);
-    }
+//    @Transactional
+//    public void updateBoard(Long id, BoardRequestDto requestDto, String email) {
+//        User user = userRepository.findByEmail(email).orElseThrow(
+//                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+//        Board board = isYours(id);
+//        board.update(requestDto, user);
+//    }
     // 게시글 검색
 //    @Transactional
 //    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {

@@ -1,6 +1,8 @@
 package com.example.backend.board.domain;
 
+import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.common.domain.BaseTime;
+import com.example.backend.todo.domain.Todo;
 import com.example.backend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -45,14 +48,14 @@ public class Board extends BaseTime {
     private User user;
 
 
-    public Board(BoardRequestDto requestDto, User user) {
-        this.category = requestDto.getCategory();
-        this.content = requestDto.getContent();
-        this.title = requestDto.getTitle();
-        this.todoId = requestDto.getTodoId();
-        this.user = user;
-//        this.imageUrl = requestDto.getImage();
-    }
+//    public Board(BoardRequestDto requestDto, User user) {
+//        this.category = requestDto.getCategory();
+//        this.content = requestDto.getContent();
+//        this.title = requestDto.getTitle();
+//        this.todoId = requestDto.getTodoId();
+//        this.user = user;
+////        this.imageUrl = requestDto.getImage();
+//    }
 
     public void update(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();

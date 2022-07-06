@@ -1,19 +1,18 @@
 package com.example.backend.board.controller;
 
-import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.board.dto.BoardResponseDto;
 import com.example.backend.board.service.BoardService;
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.common.LoadUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.text.ParseException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,15 +46,16 @@ public class BoardController {
     // 게시글 작성
     @PostMapping("/board")
     public ResponseEntity<String> postBoard(
-
             @RequestParam(value = "board") String board,
             @RequestParam(value = "todo", required = false) String todo,
             @RequestPart(value = "file", required = false) MultipartFile file
-
-            ) throws IOException, ParseException {
+            ) throws Exception {
         LoadUser.loginAndNickCheck();
         boardService.save(board, todo, file, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body("파일 업로드 및 게시글 작성 완료");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.BOARD_SAVE_SUCCESS.getMsg());
     }
     // 게시글 삭제
     @DeleteMapping("/board/{id}")
@@ -63,19 +63,19 @@ public class BoardController {
             @PathVariable Long id
     ) {
         LoadUser.loginAndNickCheck();
-        boardService.deleteBoard(id);
+//        boardService.deleteBoard(id);
         return ResponseEntity.status(HttpStatus.OK).body("게시글이 삭제되었습니다.");
     }
     // 게시글 수정
-    @PutMapping("/board/{id}")
-    public ResponseEntity<String> updateBoard(
-            @PathVariable Long id,
-            @RequestBody BoardRequestDto requestDto
-    ) {
-        LoadUser.loginAndNickCheck();
-        boardService.updateBoard(id, requestDto, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body("게시글이 수정되었습니다.");
-    }
+//    @PutMapping("/board/{id}")
+//    public ResponseEntity<String> updateBoard(
+//            @PathVariable Long id,
+//            @RequestBody BoardRequestDto requestDto
+//    ) {
+//        LoadUser.loginAndNickCheck();
+//        boardService.updateBoard(id, requestDto, LoadUser.getEmail());
+//        return ResponseEntity.status(HttpStatus.OK).body("게시글이 수정되었습니다.");
+//    }
 //    게시물 검색
 //    @GetMapping("/board/search")
 //    public ResponseEntity<Page<BoardResponseDto>> searchBoard(
