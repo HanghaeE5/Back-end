@@ -1,13 +1,16 @@
 package com.example.backend.board.service;
 
 import com.example.backend.board.domain.Board;
+import com.example.backend.board.domain.BoardTodo;
 import com.example.backend.board.domain.Category;
 import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.board.dto.BoardResponseDto;
 import com.example.backend.board.repository.BoardRepository;
+import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.s3.AwsS3Service;
+import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.common.LoadUser;
@@ -25,6 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -36,8 +43,7 @@ public class BoardService {
     private final AwsS3Service awsS3Service;
     private final TodoService todoService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
+    private final BoardTodoRepository boardTodoRepository;
 
     // 전체 게시글 목록 조회 구현
     @javax.transaction.Transactional
@@ -58,7 +64,7 @@ public class BoardService {
         return boardPage.map(BoardResponseDto::new);
     }
     // 게시물 상세조회
-    @javax.transaction.Transactional
+    @Transactional
     public BoardResponseDto getDetailBoard(Long id) {
         isYours(id);
         Board board = boardRepository.findById(id).orElseThrow(
@@ -67,34 +73,29 @@ public class BoardService {
     }
     // 게시글 작성 구현
     @Transactional
-    public void save(String boardString, String todoString, MultipartFile file, String email) throws Exception {
-        User user = userRepository.findByEmail(email).orElseThrow (
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
+    public void save(BoardRequestDto board, TodoRequestDto todo, MultipartFile file, String email) throws Exception {
+        User user = getUser(email);
+        Board saveBoard = boardRepository.save(new Board(board, user, awsS3Service.uploadImage(file)));
+        if(board.getCategory().equals(Category.CHALLENGE.toString()) && todo != null){
+            todo.setBoardId(saveBoard.getId());
+            todoService.saveList(todo, email);
 
-        BoardRequestDto boardRequestDto = objectMapper.readValue(boardString, BoardRequestDto.class);
-        TodoRequestDto todoRequestDto = null ;
-        if (todoString != null) {
-            todoRequestDto = objectMapper.readValue(todoString, TodoRequestDto.class);
-        }
-
-        Board board = Board.builder()
-                .title(boardRequestDto.getTitle())
-                .content(boardRequestDto.getContent())
-                .category(boardRequestDto.getCategory())
-                .imageUrl(awsS3Service.uploadImage(file))
-                .user(user)
-                .build();
-//        Board board = new Board(boardRequestDto, user);
-        Board saved = boardRepository.save(board);
-
-        if (todoRequestDto != null) {
-            todoRequestDto.setBoardId(saved.getId());
-            todoService.saveList(todoRequestDto, email);
+            List<BoardTodo>  boardTodoList = new ArrayList<>();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            for (String todoDate : todo.getTodoDateList()) {
+                Date date = formatter.parse(todoDate);
+                boardTodoList.add(new BoardTodo(todo, date, saveBoard));
+            }
+            boardTodoRepository.saveAll(boardTodoList);
+        }else{
+            throw new CustomException(ErrorCode.INVALID_CHALLENGE);
         }
     }
 
-    // 게시글 삭제
+    // 게시글 삭제, BoardTodo, 사진
+    //1. TODO에 board_id null
+    //2. 사진 삭제
+    //3. 게시글 삭제
 //    @Transactional
 //    public void deleteBoard(Long id, MultipartFile file) {
 //        // 이메일로 User 객체를 꺼내온다.
@@ -150,5 +151,11 @@ public class BoardService {
             throw new CustomException(ErrorCode.INCORRECT_USERID);
         }
         return board;
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
     }
 }

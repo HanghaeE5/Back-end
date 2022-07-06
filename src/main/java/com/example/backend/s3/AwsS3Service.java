@@ -30,7 +30,7 @@ public class AwsS3Service {
     public String uploadImage(MultipartFile file) {
 
         if (file == null)
-            throw new CustomException(ErrorCode.FILE_NOT_FOUND);
+            return null;
 
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();

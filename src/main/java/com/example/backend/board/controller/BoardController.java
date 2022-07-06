@@ -1,9 +1,12 @@
 package com.example.backend.board.controller;
 
+import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.board.dto.BoardResponseDto;
 import com.example.backend.board.service.BoardService;
 import com.example.backend.msg.MsgEnum;
+import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.user.common.LoadUser;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 
 @RestController
@@ -44,10 +48,11 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
     // 게시글 작성
+    @ApiOperation(value = "게시글 작성")
     @PostMapping("/board")
     public ResponseEntity<String> postBoard(
-            @RequestParam(value = "board") String board,
-            @RequestParam(value = "todo", required = false) String todo,
+            @Valid @RequestPart(value = "board") BoardRequestDto board,
+            @RequestPart(value = "todo", required = false) TodoRequestDto todo,
             @RequestPart(value = "file", required = false) MultipartFile file
             ) throws Exception {
         LoadUser.loginAndNickCheck();
@@ -57,6 +62,15 @@ public class BoardController {
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.BOARD_SAVE_SUCCESS.getMsg());
     }
+
+    @PostMapping("/test")
+    public String test(
+        @RequestPart BoardRequestDto boardRequestDto
+    ){
+        System.out.println(boardRequestDto.getTitle());
+        return "test";
+    }
+
     // 게시글 삭제
     @DeleteMapping("/board/{id}")
     public ResponseEntity<String> deleteBoard(
