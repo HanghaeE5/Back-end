@@ -40,7 +40,7 @@ public class Board extends BaseTime {
     @OneToMany(mappedBy = "board")
     private List<Todo> todo;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<BoardTodo> boardTodo;
 
     @ManyToOne

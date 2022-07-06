@@ -68,4 +68,9 @@ public class Todo extends BaseTime {
     public void done() {
         state = !state;
     }
+
+    // CHALLENGE 게시글을 작성할 때 생겨난 boardId를 다 null 값으로 바꿔줌.
+    public void deleteBoard() {
+        this.board = null;
+    }
 }

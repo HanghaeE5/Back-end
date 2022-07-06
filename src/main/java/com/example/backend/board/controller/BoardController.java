@@ -62,23 +62,17 @@ public class BoardController {
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.BOARD_SAVE_SUCCESS.getMsg());
     }
-
-    @PostMapping("/test")
-    public String test(
-        @RequestPart BoardRequestDto boardRequestDto
-    ){
-        System.out.println(boardRequestDto.getTitle());
-        return "test";
-    }
-
     // 게시글 삭제
+    @ApiOperation(value = "게시글 삭제") // swagger
     @DeleteMapping("/board/{id}")
     public ResponseEntity<String> deleteBoard(
             @PathVariable Long id
     ) {
         LoadUser.loginAndNickCheck();
-//        boardService.deleteBoard(id);
-        return ResponseEntity.status(HttpStatus.OK).body("게시글이 삭제되었습니다.");
+        boardService.deleteBoard(id,LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.BOARD_DELETE_SUCCESS.getMsg());
     }
     // 게시글 수정
 //    @PutMapping("/board/{id}")

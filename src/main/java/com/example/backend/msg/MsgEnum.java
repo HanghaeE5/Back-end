@@ -16,7 +16,9 @@ public enum MsgEnum {
     SOCIAL_REGISTER_SUCCESS("소셜 회원가입 완료"),
 
     //BOARD
-    BOARD_SAVE_SUCCESS("파일 업로드 및 게시글 작성 완료");
+    BOARD_SAVE_SUCCESS("파일 업로드 및 게시글 작성 완료"),
+
+    BOARD_DELETE_SUCCESS("게시글 삭제 완료");
 
 
     final private String msg;

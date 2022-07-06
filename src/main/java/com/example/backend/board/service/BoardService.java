@@ -12,6 +12,7 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
+import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.domain.User;
@@ -27,12 +28,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +43,10 @@ public class BoardService {
     private final AwsS3Service awsS3Service;
     private final TodoService todoService;
 
+    private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
 
     // 전체 게시글 목록 조회 구현
-    @javax.transaction.Transactional
     public Page<BoardResponseDto> getBoardList(String filter, Integer page, Integer size, String sort) {
 
         Pageable pageable;
@@ -56,17 +56,22 @@ public class BoardService {
             pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Board> boardPage;
 
-
-        if (Objects.equals(filter, "all")) {
-            boardPage = boardRepository.findAll(pageable);
-        } else
+        if(Objects.equals(filter, "challenge")) {
             boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
+
+        }
+        else if(Objects.equals(filter, "daily")) {
+            boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
+        }
+        else {
+            boardPage = boardRepository.findAll(pageable);
+        }
         return boardPage.map(BoardResponseDto::new);
     }
+
     // 게시물 상세조회
     @Transactional
     public BoardResponseDto getDetailBoard(Long id) {
-        isYours(id);
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
         return new BoardResponseDto(board);
@@ -87,8 +92,7 @@ public class BoardService {
                 boardTodoList.add(new BoardTodo(todo, date, saveBoard));
             }
             boardTodoRepository.saveAll(boardTodoList);
-        }else{
-            throw new CustomException(ErrorCode.INVALID_CHALLENGE);
+
         }
     }
 
@@ -96,16 +100,24 @@ public class BoardService {
     //1. TODO에 board_id null
     //2. 사진 삭제
     //3. 게시글 삭제
-//    @Transactional
-//    public void deleteBoard(Long id, MultipartFile file) {
-//        // 이메일로 User 객체를 꺼내온다.
-//        // id를 이용해 Board 객체를 꺼내온다.
-//        // Board 객체 id, User 객체 id로 현재 사용자가 작성한 board인지 판별
-//        isYours(id);
-//        awsS3Service.deleteImage();
-//        boardRepository.deleteById(id);
-//    }
-    // 게시글 수정
+    @Transactional
+    public void deleteBoard(Long id, String email) {
+
+        User user = getUser(email);
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        if(board.getCategory().equals(Category.CHALLENGE)) {
+            List<Todo> todoList = todoRepository.findAllByBoard(board);
+            for (Todo todo : todoList) {
+                todo.deleteBoard();
+            }
+        }
+        // 2. 사진 삭제
+        awsS3Service.deleteImage(board.getImageUrl().split("ohnigabucket.s3.ap-northeast-2.amazonaws.com/")[1]);
+        // 3. 게시글 삭제
+        boardRepository.deleteById(id);
+    }
+//     게시글 수정
 //    @Transactional
 //    public void updateBoard(Long id, BoardRequestDto requestDto, String email) {
 //        User user = userRepository.findByEmail(email).orElseThrow(
@@ -144,13 +156,19 @@ public class BoardService {
 //    }
     // 게시글 id 와 게시글을 작성한 user의 id가 동일한지 확인
 
-    private Board isYours(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(ErrorCode.TODO_NOT_FOUND));
-        if(!Objects.equals(board.getUser().getUserId(), LoadUser.getEmail())) {
-            throw new CustomException(ErrorCode.INCORRECT_USERID);
-        }
-        return board;
+//    private Board isYours(Long id) {
+//        Board board = boardRepository.findById(id).orElseThrow(
+//                () -> new CustomException(ErrorCode.TODO_NOT_FOUND));
+//        if(!Objects.equals(board.getUser().getUserId(), LoadUser.getEmail())) {
+//            throw new CustomException(ErrorCode.INCORRECT_USERID);
+//        }
+//        return board;
+//    }
+
+    private Board getBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
+        );
     }
 
     private User getUser(String email) {
