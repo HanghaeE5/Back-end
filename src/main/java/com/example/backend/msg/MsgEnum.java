@@ -18,7 +18,16 @@ public enum MsgEnum {
     //BOARD
     BOARD_SAVE_SUCCESS("파일 업로드 및 게시글 작성 완료"),
 
-    BOARD_DELETE_SUCCESS("게시글 삭제 완료");
+    BOARD_DELETE_SUCCESS("게시글 삭제 완료"),
+
+    //ToDo목록
+    TODO_SAVE_SUCCESS("Todo 추가 완료"),
+    TODO_DONE("Todo 완료"),
+    TODO_UPDATE_SUCCESS("Todo 수정 완료"),
+    TODO_DELETE_SUCCESS("Todo 삭제 완료")
+    
+
+    ;
 
 
     final private String msg;
