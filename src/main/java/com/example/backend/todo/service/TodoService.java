@@ -8,7 +8,7 @@ import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
-import com.example.backend.user.common.UserDetailsImpl;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +35,11 @@ public class TodoService {
     private final UserRepository userRepository;
 
 
-    public Page<TodoResponseDto> getTodoList(UserDetailsImpl userDetails, String filter, Integer page, Integer size, String sort) {
+    public Page<TodoResponseDto> getTodoList(String filter, Integer page, Integer size, String sort) {
 
         Pageable pageable;
 
-        if (sort == "asc") {
+        if (Objects.equals(sort, "asc")) {
             pageable = PageRequest.of(page, size, Sort.by("todoDate").ascending());
         } else {
             pageable = PageRequest.of(page, size, Sort.by("todoDate").descending());
@@ -59,11 +59,11 @@ public class TodoService {
     }
 
 
-    public void saveList(TodoRequestDto requestDto, UserDetailsImpl userDetails) throws ParseException {
+    public void saveList(TodoRequestDto requestDto, String email) throws ParseException {
 
         List<Todo> todoList = new ArrayList<>();
 
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
@@ -90,39 +90,36 @@ public class TodoService {
 
 
     @Transactional
-    public void done(UserDetailsImpl userDetails, Integer id) {
+    public void done(String email, Long id) {
 
-        Todo todo = getTodo(id, userDetails);
+        Todo todo = getTodo(id, email);
         todo.done();
 
     }
 
 
     @Transactional
-    public void update(TodoRequestDto requestDto, UserDetailsImpl userDetails, Integer id) throws ParseException {
+    public void update(TodoRequestDto requestDto, String email, Long id) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(requestDto.getTodoDate());
-        Todo todo = getTodo(id, userDetails);
+        Todo todo = getTodo(id, email);
         todo.update(requestDto, date);
-
     }
 
 
-    public void deleteTodo(UserDetailsImpl userDetails, Integer id) {
-
-        getTodo(id, userDetails);
+    public void deleteTodo(String email, Long id) {
+        getTodo(id, email);
         todoRepository.deleteById(id);
 
     }
 
 
-    private Todo getTodo(Integer id, UserDetailsImpl userDetails) {
-
+    private Todo getTodo(Long id, String email) {
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         if (!Objects.equals(todo.getUser().getUserSeq(), user.getUserSeq())) {

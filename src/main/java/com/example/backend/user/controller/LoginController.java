@@ -3,6 +3,8 @@ package com.example.backend.user.controller;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.dto.LoginRequestDto;
 import com.example.backend.user.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,10 @@ public class LoginController {
 
     @ApiOperation(value = "토큰 재발급")
     @GetMapping("/refresh")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Refresh", value = "Refresh Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "refresh_token"),
+            @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    })
     public ResponseEntity<String> refreshToken (HttpServletRequest request) {
         log.info("/refresh");
         Map<String, String> token = userService.refresh(request);

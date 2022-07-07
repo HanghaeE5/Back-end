@@ -30,7 +30,7 @@ public class AwsS3Service {
     public String uploadImage(MultipartFile file) {
 
         if (file == null)
-            throw new CustomException(ErrorCode.FILE_NOT_FOUND);
+            return null;
 
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -45,7 +45,7 @@ public class AwsS3Service {
         }
 
 
-        return "ohnigabucket.s3.ap-northeast-2.amazonaws.com/" + fileName;
+        return "https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/" + fileName;
     }
 
     public void deleteImage(String fileName) {

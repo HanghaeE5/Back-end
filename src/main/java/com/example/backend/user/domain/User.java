@@ -1,5 +1,6 @@
 package com.example.backend.user.domain;
 
+import com.example.backend.chat.domain.Participant;
 import com.example.backend.common.domain.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -7,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -59,6 +61,9 @@ public class User extends BaseTime {
     @Enumerated(EnumType.STRING)
     @NotNull
     private RoleType roleType;
+
+    @OneToMany(mappedBy = "user")
+    private List<Participant> participantList;
 
     public User(
             @Size(max = 64) String userId,
@@ -114,6 +119,10 @@ public class User extends BaseTime {
 
     public void addNick(String username){
         this.username = username;
+    }
+
+    public void updatePassword(String password){
+        this.password = password;
     }
 
 
