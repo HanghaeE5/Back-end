@@ -322,4 +322,10 @@ public class UserService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
     }
+
+    @Transactional
+    public void updatePassword(String email, PasswordRequestDto passwordRequestDto) {
+        User user = getUser(email);
+        user.updatePassword(passwordEncoder.encode(passwordRequestDto.getPassword()));
+    }
 }
