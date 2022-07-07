@@ -4,6 +4,8 @@ import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.service.FriendRequestService;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.dto.UserResponseDto;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +23,8 @@ public class FriendRequestController {
     private final FriendRequestService friendRequestService;
 
     // 요청 수락은 또 한번의 요청으로 생각 or 요청에 대한 수락 따로 구현
+    @ApiOperation(value = "친구 요청")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @PostMapping("/request")
     public ResponseEntity<String> requestFriend(@RequestBody FriendRequestDto requestDto) {
         LoadUser.loginAndNickCheck();
@@ -30,6 +34,8 @@ public class FriendRequestController {
                 .body(message);
     }
 
+    @ApiOperation(value = "친구 요청 수락")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @PostMapping("/accept/{email}")
     public ResponseEntity<String> acceptFriend(@PathVariable String email) {
         LoadUser.loginAndNickCheck();
@@ -39,6 +45,8 @@ public class FriendRequestController {
                 .body("요청을 수락했습니다");
     }
 
+    @ApiOperation(value = "친구 목록 조회")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @GetMapping("/list")
     public ResponseEntity<List<UserResponseDto>> getList() {
         LoadUser.loginAndNickCheck();
@@ -46,6 +54,8 @@ public class FriendRequestController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDtoList);
     }
 
+    @ApiOperation(value = "친구 요청 거절")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @DeleteMapping("/reject/{email}")
     public ResponseEntity<String> rejectFriend(@PathVariable String email) {
         LoadUser.loginAndNickCheck();
@@ -55,6 +65,8 @@ public class FriendRequestController {
                 .body("요청을 거절했습니다");
     }
 
+    @ApiOperation(value = "친구 삭제")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @DeleteMapping("/delete/{email}")
     public ResponseEntity<String> deleteFriend(@PathVariable String email) {
         LoadUser.loginAndNickCheck();
