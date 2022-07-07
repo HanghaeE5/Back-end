@@ -5,7 +5,6 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.friend.domain.FriendRequest;
 import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.repository.FriendRequestRepository;
-import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.dto.UserResponseDto;
 import com.example.backend.user.repository.UserRepository;
@@ -113,7 +112,7 @@ public class FriendRequestService {
         }
     }
 
-    public List<UserResponseDto> getList(String email) {
+    public List<UserResponseDto> getFriendList(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -121,6 +120,20 @@ public class FriendRequestService {
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(user.getUserSeq())) {
             if (friendRequest.isState()) {
                 UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserTo());
+                responseDtoList.add(responseDto);
+            }
+        }
+        return responseDtoList;
+    }
+
+    public List<UserResponseDto> getRequestList(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        List<UserResponseDto> responseDtoList = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserToUserSeq(user.getUserSeq())) {
+            if (!friendRequest.isState()) {
+                UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserFrom());
                 responseDtoList.add(responseDto);
             }
         }

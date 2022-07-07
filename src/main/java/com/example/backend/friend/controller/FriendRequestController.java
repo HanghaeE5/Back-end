@@ -50,7 +50,16 @@ public class FriendRequestController {
     @GetMapping("/list")
     public ResponseEntity<List<UserResponseDto>> getList() {
         LoadUser.loginAndNickCheck();
-        List<UserResponseDto> userResponseDtoList = friendRequestService.getList(LoadUser.getEmail());
+        List<UserResponseDto> userResponseDtoList = friendRequestService.getFriendList(LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDtoList);
+    }
+
+    @ApiOperation(value = "친구 요청 목록 조회")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @GetMapping("/request/list")
+    public ResponseEntity<List<UserResponseDto>> getRequestList() {
+        LoadUser.loginAndNickCheck();
+        List<UserResponseDto> userResponseDtoList = friendRequestService.getRequestList(LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDtoList);
     }
 
