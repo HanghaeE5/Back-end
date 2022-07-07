@@ -14,6 +14,7 @@ public enum MsgEnum {
     REISSUE_COMPLETED_TOKEN("토큰 재발급 완료"),
     AUTHENTICATION_FAIL("Authentication failed, login or reissue token"),
     SOCIAL_REGISTER_SUCCESS("소셜 회원가입 완료"),
+    PASSWORD_UPDATE_SUCCESS("비밀번호 변경 완료"),
 
     //BOARD
     BOARD_SAVE_SUCCESS("파일 업로드 및 게시글 작성 완료"),

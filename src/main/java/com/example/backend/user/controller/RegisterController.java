@@ -7,6 +7,7 @@ import com.example.backend.user.dto.EmailRequestDto;
 import com.example.backend.user.dto.NickRequestDto;
 import com.example.backend.user.dto.RegisterRequestDto;
 import com.example.backend.user.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -61,6 +62,7 @@ public class RegisterController {
 
     @ApiOperation(value = "소셜 회원가입 - 닉네임 입력")
     @PutMapping("/register/social")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     public ResponseEntity<String> socialRegister(@Valid @RequestBody NickRequestDto registerDto){
         LoadUser.loginCheck();
         System.out.println(LoadUser.getEmail());
