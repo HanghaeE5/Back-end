@@ -39,7 +39,10 @@ public enum ErrorCode {
 
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이미지를 입력해주세요."),
     INVALID_CHALLENGE(HttpStatus.BAD_REQUEST, "400", "챌린저스 카테고리와 Todo 내용을 확인해주세요."),
-    ;
+
+    // 친구
+    EXISTING_REQUEST(HttpStatus.BAD_REQUEST, "400", "이미 친구추가를 보낸 사용자 입니다"),
+    EXISTING_FRIEND(HttpStatus.BAD_REQUEST, "400", "친구입니다");
 
     // 추후 추가 코드
 
