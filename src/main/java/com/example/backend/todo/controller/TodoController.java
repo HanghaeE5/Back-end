@@ -9,9 +9,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 
 
@@ -45,7 +47,9 @@ public class TodoController {
     ) throws ParseException {
         LoadUser.loginAndNickCheck();
         todoService.saveList(requestDto, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(MsgEnum.TODO_SAVE_SUCCESS.getMsg());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_SAVE_SUCCESS.getMsg());
     }
 
 
@@ -57,7 +61,9 @@ public class TodoController {
     ) {
         LoadUser.loginAndNickCheck();
         todoService.done(LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK).body(MsgEnum.TODO_DONE.getMsg());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_DONE.getMsg());
     }
 
 
@@ -70,7 +76,9 @@ public class TodoController {
     ) throws ParseException {
         LoadUser.loginAndNickCheck();
         todoService.update(requestDto, LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK).body(MsgEnum.TODO_UPDATE_SUCCESS.getMsg());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_UPDATE_SUCCESS.getMsg());
     }
 
 
@@ -81,7 +89,9 @@ public class TodoController {
     ) {
         LoadUser.loginAndNickCheck();
         todoService.deleteTodo(LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK).body(MsgEnum.TODO_DELETE_SUCCESS.getMsg());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_DELETE_SUCCESS.getMsg());
     }
 
 }
