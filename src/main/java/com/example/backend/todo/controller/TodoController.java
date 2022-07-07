@@ -5,6 +5,7 @@ import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.common.LoadUser;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ public class TodoController {
     public final TodoService todoService;
 
 
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "Todo 목록 조회")
     @GetMapping("/todo")
     public ResponseEntity<Page<TodoResponseDto>> getTodoList(
@@ -40,6 +42,7 @@ public class TodoController {
 
     // Datetime 리스트로 받아서 한번에 저장
     // boardId 유무에 따라 따로 저장
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "Todo 목록 추가")
     @PostMapping("/todo")
     public ResponseEntity<String> postTodo(
@@ -54,6 +57,7 @@ public class TodoController {
 
 
     // done() 함수 만들어서 state 변경
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "Todo 완료")
     @PostMapping("/todo/{id}")
     public ResponseEntity<String> doneTodo(
@@ -68,6 +72,7 @@ public class TodoController {
 
 
     // update() 함수로 수정
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "Todo 목록 수정")
     @PutMapping("/todo/{id}")
     public ResponseEntity<String> updateTodo(
@@ -82,6 +87,7 @@ public class TodoController {
     }
 
 
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "Todo 목록 삭제")
     @DeleteMapping("todo/{id}")
     public ResponseEntity<String> deleteTodo(
