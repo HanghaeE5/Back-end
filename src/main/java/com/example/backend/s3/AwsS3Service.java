@@ -45,7 +45,7 @@ public class AwsS3Service {
         }
 
 
-        return "ohnigabucket.s3.ap-northeast-2.amazonaws.com/" + fileName;
+        return "https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/" + fileName;
     }
 
     public void deleteImage(String fileName) {
