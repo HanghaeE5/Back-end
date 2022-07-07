@@ -53,20 +53,22 @@ public class Board extends BaseTime {
 
     public Board(BoardRequestDto requestDto, User user, String imageUrl) {
         this.category = Category.valueOf(requestDto.getCategory());
-        this.content = requestDto.getContent();
-        this.title = requestDto.getTitle();
         this.user = user;
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
         this.imageUrl = imageUrl;
     }
+    public void updateChallenge(BoardRequestDto requestDto, User user) {
+        this.category = Category.valueOf(requestDto.getCategory());
+        this.user = user;
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.todoId = requestDto.getTodoId();
+        this.imageUrl = requestDto.getImage();
+    }
 
-//    public void update(BoardRequestDto requestDto, User user) {
-//        this.title = requestDto.getTitle();
-//        this.content = requestDto.getContent();
-//        this.todoId = requestDto.getTodoId();
-//        this.category = requestDto.getCategory();
-//        this.user = user;
-//        this.imageUrl = requestDto.getImage();
-//    }
+    public void updateDaily(BoardRequestDto requestDto, User user, String imageUrl) {
+    }
 
 
 //    연관관계 매핑 시 게시글 삭제와 함께 연관된 개개인의 todo-list 도 함께 삭제됨

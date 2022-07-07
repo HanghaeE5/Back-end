@@ -27,6 +27,7 @@ public class BoardController {
     private final BoardService boardService;
 
     // 전체 게시글 목록 조회
+    @ApiOperation(value = "전체 게시글 목록 조회")
     @GetMapping("/board")
     public ResponseEntity<PageBoardResponseDto> getBoardList(
             @RequestParam String filter,
@@ -41,6 +42,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
     // 게시글 상세 조회
+    @ApiOperation(value = "게시글 상세 조회")
     @GetMapping("/board/{id}")
     public ResponseEntity<BoardResponseDto> getDetailBoard(
             @PathVariable Long id
@@ -77,16 +79,18 @@ public class BoardController {
                 .body(MsgEnum.BOARD_DELETE_SUCCESS.getMsg());
     }
     // 게시글 수정
-//    @PutMapping("/board/{id}")
-//    public ResponseEntity<String> updateBoard(
-//            @PathVariable Long id,
-//            @RequestBody BoardRequestDto requestDto
-//    ) {
-//        LoadUser.loginAndNickCheck();
-//        boardService.updateBoard(id, requestDto, LoadUser.getEmail());
-//        return ResponseEntity.status(HttpStatus.OK).body("게시글이 수정되었습니다.");
-//    }
-//    게시물 검색
+    @ApiOperation(value = "게시글 수정")
+    @PutMapping("/board/{id}")
+    public ResponseEntity<String> updateBoard(
+            @PathVariable Long id,
+            @RequestBody BoardRequestDto requestDto,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) throws Exception {
+        LoadUser.loginAndNickCheck();
+        boardService.updateBoard(id, requestDto, LoadUser.getEmail(), file);
+        return ResponseEntity.status(HttpStatus.OK).body("게시글이 수정되었습니다.");
+    }
+    // 게시물 검색
 //    @GetMapping("/board/search")
 //    public ResponseEntity<Page<BoardResponseDto>> searchBoard(
 //            @RequestParam String classify,
