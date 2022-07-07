@@ -121,5 +121,9 @@ public class User extends BaseTime {
         this.username = username;
     }
 
+    public void updatePassword(String password){
+        this.password = password;
+    }
+
 
 }
