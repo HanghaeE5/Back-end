@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long> {
     List<FriendRequest> findAllByUserFromUserSeq(Long userSeq);
+
+    List<FriendRequest> findAllByUserToUserSeq(Long userSeq);
 }
