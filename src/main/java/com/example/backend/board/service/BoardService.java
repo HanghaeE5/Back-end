@@ -113,14 +113,17 @@ public class BoardService {
         // 3. 게시글 삭제
         boardRepository.deleteById(id);
     }
-//     게시글 수정
-//    @Transactional
-//    public void updateBoard(Long id, BoardRequestDto requestDto, String email) {
-//        User user = userRepository.findByEmail(email).orElseThrow(
-//                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-//        Board board = isYours(id);
-//        board.update(requestDto, user);
-//    }
+    // 게시글 수정
+    // 1. Board 작성자와 User id 동일한지 확인
+    // 2. 사진을 변경한다면 사진 삭제 후 다시 업로드
+    // 3. 아니면,,? 그냥 update,,?
+    @Transactional
+    public void updateBoard(Long id, BoardRequestDto requestDto, String email, MultipartFile file) {
+
+        Board board = isYours(id, email);
+
+        board.update(requestDto, user);
+    }
     // 게시글 검색
 //    @Transactional
 //    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {
