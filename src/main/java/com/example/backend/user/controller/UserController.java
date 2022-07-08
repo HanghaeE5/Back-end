@@ -4,10 +4,12 @@ import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.dto.NickRequestDto;
 import com.example.backend.user.dto.PasswordRequestDto;
+import com.example.backend.user.dto.SocialUserCheckResponseDto;
 import com.example.backend.user.dto.UserResponseDto;
 import com.example.backend.user.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -66,4 +69,15 @@ public class UserController {
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.PASSWORD_UPDATE_SUCCESS.getMsg());
     }
+
+    @ApiOperation(value = "비밀번호 변경 전 소셜 회원가입 확인")
+    @GetMapping("/social")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    public ResponseEntity<SocialUserCheckResponseDto> checkSocialUser(){
+        LoadUser.loginAndNickCheck();
+        return ResponseEntity
+                .ok()
+                .body(userService.checkSocialUser(LoadUser.getEmail()));
+    }
+
 }

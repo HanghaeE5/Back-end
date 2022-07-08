@@ -15,5 +15,11 @@ public class PasswordRequestDto {
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{5,20}",
             message = "비밀번호는 5~20자 영문, 숫자 사용하세요.")
-    private String password;
+    private String oldPassword;
+
+    @ApiModelProperty(value="비밀번호", example = "Abcd123", required = true)
+    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{5,20}",
+            message = "비밀번호는 5~20자 영문, 숫자 사용하세요.")
+    private String newPassword;
 }

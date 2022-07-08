@@ -7,6 +7,7 @@ import com.example.backend.board.service.BoardService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.user.common.LoadUser;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class BoardController {
 
     // 전체 게시글 목록 조회
     @ApiOperation(value = "전체 게시글 목록 조회")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @GetMapping("/board")
     public ResponseEntity<PageBoardResponseDto> getBoardList(
             @RequestParam String filter,

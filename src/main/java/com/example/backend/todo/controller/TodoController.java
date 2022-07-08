@@ -1,5 +1,6 @@
 package com.example.backend.todo.controller;
 
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.todo.service.TodoService;
@@ -8,9 +9,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 
 
@@ -44,7 +47,9 @@ public class TodoController {
     ) throws ParseException {
         LoadUser.loginAndNickCheck();
         todoService.saveList(requestDto, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body("todo 를 추가했습니다");
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_SAVE_SUCCESS.getMsg());
     }
 
 
@@ -56,7 +61,9 @@ public class TodoController {
     ) {
         LoadUser.loginAndNickCheck();
         todoService.done(LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK).body("todo 를 완료했습니다");
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_DONE.getMsg());
     }
 
 
@@ -69,7 +76,9 @@ public class TodoController {
     ) throws ParseException {
         LoadUser.loginAndNickCheck();
         todoService.update(requestDto, LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK).body("todo 를 수정했습니다");
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_UPDATE_SUCCESS.getMsg());
     }
 
 
@@ -80,7 +89,9 @@ public class TodoController {
     ) {
         LoadUser.loginAndNickCheck();
         todoService.deleteTodo(LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK).body("todo 를 삭제했습니다");
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_DELETE_SUCCESS.getMsg());
     }
 
 }
