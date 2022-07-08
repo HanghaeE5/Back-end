@@ -28,7 +28,7 @@ public class FriendRequestService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
+        User userTo = userRepository.findByUsername(requestDto.getNickname()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
@@ -56,11 +56,11 @@ public class FriendRequestService {
     }
 
     @Transactional
-    public void accept(String userEmail, String requestEmail) {
+    public void accept(String userEmail, String requestNickname) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestEmail).orElseThrow(
+        User userTo = userRepository.findByUsername(requestNickname).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 나도 request 보냄 ( state = true  인 상태로 )
@@ -75,11 +75,11 @@ public class FriendRequestService {
     }
 
     @Transactional
-    public void reject(String userEmail, String requestEmail) {
+    public void reject(String userEmail, String requestNickname) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestEmail).orElseThrow(
+        User userTo = userRepository.findByUsername(requestNickname).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 상대방의 request 삭제
@@ -91,11 +91,11 @@ public class FriendRequestService {
     }
 
     @Transactional
-    public void delete(String userEmail, String requestEmail) {
+    public void delete(String userEmail, String requestNickname) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestEmail).orElseThrow(
+        User userTo = userRepository.findByUsername(requestNickname).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 상대방 요청 삭제

@@ -36,10 +36,10 @@ public class FriendRequestController {
 
     @ApiOperation(value = "친구 요청 수락")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @PostMapping("/accept/{email}")
-    public ResponseEntity<String> acceptFriend(@PathVariable String email) {
+    @PostMapping("/accept/{nickname}")
+    public ResponseEntity<String> acceptFriend(@PathVariable String nickname) {
         LoadUser.loginAndNickCheck();
-        friendRequestService.accept(LoadUser.getEmail(), email);
+        friendRequestService.accept(LoadUser.getEmail(), nickname);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body("요청을 수락했습니다");
@@ -65,10 +65,10 @@ public class FriendRequestController {
 
     @ApiOperation(value = "친구 요청 거절")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @DeleteMapping("/reject/{email}")
-    public ResponseEntity<String> rejectFriend(@PathVariable String email) {
+    @DeleteMapping("/reject/{nickname}")
+    public ResponseEntity<String> rejectFriend(@PathVariable String nickname) {
         LoadUser.loginAndNickCheck();
-        friendRequestService.reject(LoadUser.getEmail(), email);
+        friendRequestService.reject(LoadUser.getEmail(), nickname);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body("요청을 거절했습니다");
@@ -76,10 +76,10 @@ public class FriendRequestController {
 
     @ApiOperation(value = "친구 삭제")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @DeleteMapping("/delete/{email}")
-    public ResponseEntity<String> deleteFriend(@PathVariable String email) {
+    @DeleteMapping("/delete/{nickname}")
+    public ResponseEntity<String> deleteFriend(@PathVariable String nickname) {
         LoadUser.loginAndNickCheck();
-        friendRequestService.delete(LoadUser.getEmail(), email);
+        friendRequestService.delete(LoadUser.getEmail(), nickname);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body("친구를 삭제했습니다");
