@@ -1,4 +1,4 @@
-package com.example.backend.todo.dto;
+package com.example.backend.todo.dto.response;
 
 import com.example.backend.todo.domain.Todo;
 import lombok.Data;

@@ -4,7 +4,7 @@ import com.example.backend.board.dto.BoardRequestDto;
 import com.example.backend.board.dto.BoardResponseDto;
 import com.example.backend.board.service.BoardService;
 import com.example.backend.msg.MsgEnum;
-import com.example.backend.todo.dto.TodoRequestDto;
+import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.user.common.LoadUser;
 import io.swagger.annotations.ApiOperation;
 

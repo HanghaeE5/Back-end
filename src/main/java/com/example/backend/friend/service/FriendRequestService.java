@@ -5,7 +5,6 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.friend.domain.FriendRequest;
 import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.repository.FriendRequestRepository;
-import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.dto.UserResponseDto;
 import com.example.backend.user.repository.UserRepository;

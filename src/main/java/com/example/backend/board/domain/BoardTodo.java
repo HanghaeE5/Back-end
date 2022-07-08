@@ -1,9 +1,8 @@
 package com.example.backend.board.domain;
 
 import com.example.backend.todo.domain.Category;
-import com.example.backend.todo.dto.TodoRequestDto;
+import com.example.backend.todo.dto.request.TodoRequestDto;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;

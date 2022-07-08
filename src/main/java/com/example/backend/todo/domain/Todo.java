@@ -1,9 +1,11 @@
 package com.example.backend.todo.domain;
 
 import com.example.backend.board.domain.Board;
+import com.example.backend.character.domain.Characters;
 import com.example.backend.common.domain.BaseTime;
+import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.user.domain.User;
-import com.example.backend.todo.dto.TodoRequestDto;
+import com.example.backend.todo.dto.request.TodoRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,6 +42,10 @@ public class Todo extends BaseTime {
     @JoinColumn(nullable = true)
     private Board board;
 
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Characters character;
+
     public Todo(TodoRequestDto requestDto, User user, Date tododate) {
         this.content = requestDto.getContent();
         this.todoDate = tododate;
@@ -57,7 +63,7 @@ public class Todo extends BaseTime {
         this.board = board;
     }
 
-    public void update(TodoRequestDto requestDto, Date date) {
+    public void update(TodoUpdateRequestDto requestDto, Date date) {
 
         this.content = requestDto.getContent();
         this.todoDate = date;
