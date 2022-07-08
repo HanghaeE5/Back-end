@@ -10,5 +10,5 @@ import lombok.Setter;
 @ApiModel(value = "친구 요청 객체", description = "친구 요청을 보내기 위한 객체")
 public class FriendRequestDto {
     @ApiModelProperty(value = "닉네임", example = "hesu", required = true)
-    private String nickname;
+    private String nick;
 }
