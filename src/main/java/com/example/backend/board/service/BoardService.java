@@ -3,9 +3,7 @@ package com.example.backend.board.service;
 import com.example.backend.board.domain.Board;
 import com.example.backend.board.domain.BoardTodo;
 import com.example.backend.board.domain.Category;
-import com.example.backend.board.dto.BoardRequestDto;
-import com.example.backend.board.dto.BoardResponseDto;
-import com.example.backend.board.dto.PageBoardResponseDto;
+import com.example.backend.board.dto.*;
 import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.exception.CustomException;
@@ -18,10 +16,9 @@ import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +31,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -44,23 +42,56 @@ public class BoardService {
     private final BoardTodoRepository boardTodoRepository;
 
     // 전체 게시글 목록 조회 구현
-    public PageBoardResponseDto getBoardList(String filter, Integer page, Integer size, String sort) {
-        Pageable pageable;
-
-        if (sort == "asc")
-            pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
-        else
-            pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-
+    @Transactional
+    public PageBoardResponseDto getBoardList(FilterEnum filter, String keyword, Pageable pageable, String email, SubEnum sub) {
         Page<Board> boardPage;
-
-        if(Objects.equals(filter, "challenge")) {
-            boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
-        } else if(Objects.equals(filter, "daily")) {
-            boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
-        } else {
-            boardPage = boardRepository.findAll(pageable);
+        if(sub.equals(SubEnum.title)){
+            if(Objects.equals(filter, FilterEnum.challenge)) {
+                log.info("title, challenge search");
+                boardPage = boardRepository.findByTitleContainingAndCategory(keyword, Category.CHALLENGE, pageable);
+            } else if(Objects.equals(filter, FilterEnum.daily)) {
+                log.info("title, daily search");
+                boardPage = boardRepository.findByTitleContainingAndCategory(keyword, Category.DAILY, pageable);
+            } else if(Objects.equals(filter, FilterEnum.my)){
+                log.info("title, my search");
+                User user = getUser(email);
+                boardPage = boardRepository.findByTitleContainingAndUser(keyword, user, pageable);
+            }else{
+                log.info("title search");
+                boardPage = boardRepository.findByTitleContaining(keyword, pageable);
+            }
+        }else if(sub.equals(SubEnum.content)){
+            if(Objects.equals(filter, FilterEnum.challenge)) {
+                log.info("content, challenge search");
+                boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.CHALLENGE, pageable);
+            } else if(Objects.equals(filter, FilterEnum.daily)) {
+                log.info("content, daily search");
+                boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.DAILY, pageable);
+            } else if(Objects.equals(filter, FilterEnum.my)){
+                log.info("content, my search");
+                User user = getUser(email);
+                boardPage = boardRepository.findByContentContainingAndUser(keyword, user, pageable);
+            }else{
+                log.info("content search");
+                boardPage = boardRepository.findByContentContaining(keyword, pageable);
+            }
+        }else{
+            if(Objects.equals(filter, FilterEnum.challenge)) {
+                log.info("challenge search");
+                boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
+            } else if(Objects.equals(filter, FilterEnum.daily)) {
+                log.info("daily search");
+                boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
+            } else if(Objects.equals(filter, FilterEnum.my)){
+                log.info("my search");
+                User user = getUser(email);
+                boardPage = boardRepository.findByUser(user, pageable);
+            }else{
+                log.info("search");
+                boardPage = boardRepository.findAll(pageable);
+            }
         }
+
 
         return new PageBoardResponseDto(
                 BoardResponseDto.getDtoList(boardPage.getContent()),
@@ -117,13 +148,13 @@ public class BoardService {
     // 1. Board 작성자와 User id 동일한지 확인
     // 2. 사진을 변경한다면 사진 삭제 후 다시 업로드
     // 3. 아니면,,? 그냥 update,,?
-    @Transactional
-    public void updateBoard(Long id, BoardRequestDto requestDto, String email, MultipartFile file) {
-
-        Board board = isYours(id, email);
-
-        board.update(requestDto, user);
-    }
+//    @Transactional
+//    public void updateBoard(Long id, BoardRequestDto requestDto, String email, MultipartFile file) {
+//
+//        Board board = isYours(id, email);
+//
+//        board.update(requestDto, user);
+//    }
     // 게시글 검색
 //    @Transactional
 //    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {

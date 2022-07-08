@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -39,15 +40,11 @@ public class Board extends BaseTime {
     @Column
     private String imageUrl;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Todo> todo;
-
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @BatchSize(size=100)
     private Set<BoardTodo> boardTodo = new LinkedHashSet<>();
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(nullable = false)
     private User user;
 
@@ -63,8 +60,8 @@ public class Board extends BaseTime {
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.todoId = requestDto.getTodoId();
-        this.imageUrl = requestDto.getImage();
+//        this.todoId = requestDto.getTodoId();
+//        this.imageUrl = requestDto.getImage();
     }
 
     public void updateDaily(BoardRequestDto requestDto, User user, String imageUrl) {

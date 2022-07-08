@@ -22,6 +22,8 @@ public class BoardResponseDto {
     private String title;
     private Category category;
 
+    private String authorEmail;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime boardCreatedDate;
 
@@ -35,6 +37,7 @@ public class BoardResponseDto {
         this.category = board.getCategory();
         this.boardCreatedDate = board.getCreatedDate();
         this.todos = BoardTodoResponseDto.getBoardTodoList(board.getBoardTodo());
+        this.authorEmail = board.getUser().getEmail();
     }
     public static List<BoardResponseDto> getDtoList(List<Board> boardList){
         return boardList.stream()
