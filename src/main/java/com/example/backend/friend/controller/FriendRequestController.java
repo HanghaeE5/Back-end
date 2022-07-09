@@ -4,6 +4,7 @@ import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.service.FriendRequestService;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.dto.UserResponseDto;
+import com.example.backend.user.dto.UserTodoResponseDto;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +55,8 @@ public class FriendRequestController {
     @GetMapping("/list")
     public ResponseEntity<List<UserResponseDto>> getList() {
         LoadUser.loginAndNickCheck();
-        List<UserResponseDto> userResponseDtoList = friendRequestService.getFriendList(LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDtoList);
+        List<UserResponseDto> responseDtoList = friendRequestService.getFriendList(LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
     @ApiOperation(value = "친구 요청 목록 조회")
@@ -63,8 +64,19 @@ public class FriendRequestController {
     @GetMapping("/request/list")
     public ResponseEntity<List<UserResponseDto>> getRequestList() {
         LoadUser.loginAndNickCheck();
-        List<UserResponseDto> userResponseDtoList = friendRequestService.getRequestList(LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDtoList);
+        List<UserResponseDto> responseDtoList = friendRequestService.getRequestList(LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
+    }
+
+    @ApiOperation(value = "친구 페이지 조회")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @GetMapping("/page/{nick}")
+    public ResponseEntity<UserTodoResponseDto> getFriendPage(
+            @PathVariable String nick
+    ) {
+        LoadUser.loginAndNickCheck();
+        UserTodoResponseDto responseDto = friendRequestService.getFriendPage(LoadUser.getEmail(), nick);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @ApiOperation(value = "친구 요청 거절")

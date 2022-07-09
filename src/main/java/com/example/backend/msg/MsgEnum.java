@@ -25,7 +25,8 @@ public enum MsgEnum {
     TODO_SAVE_SUCCESS("Todo 추가 완료"),
     TODO_DONE("Todo 완료"),
     TODO_UPDATE_SUCCESS("Todo 수정 완료"),
-    TODO_DELETE_SUCCESS("Todo 삭제 완료")
+    TODO_DELETE_SUCCESS("Todo 삭제 완료"),
+    TODO_SCOPE_CHANGED("Todo 공개범위 변경 완료")
 
 
     ;

@@ -1,6 +1,7 @@
 package com.example.backend.todo.dto;
 
 import com.example.backend.todo.domain.Todo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,11 @@ public class TodoResponseDto {
 
     private Long todoId;
     private String todoContent;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date todoDate;
     private boolean state;
     private String category;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
 
     public TodoResponseDto(Todo todo) {
