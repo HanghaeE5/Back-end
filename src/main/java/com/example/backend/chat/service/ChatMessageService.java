@@ -68,7 +68,7 @@ public class ChatMessageService {
         log.info("message.getRoomId() : " + message.getRoomId());
         log.info("getSender : " + message.getSender());
         System.out.println(message.toString());
-        messageSendingOperations.convertAndSend("/sub/chat/room" + message.getRoomId(), message);
+        messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
 }
