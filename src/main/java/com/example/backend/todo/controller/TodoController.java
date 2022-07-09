@@ -3,6 +3,7 @@ package com.example.backend.todo.controller;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
+import com.example.backend.todo.dto.TodoScopeRequestDto;
 import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.common.LoadUser;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,7 +36,7 @@ public class TodoController {
             @RequestParam String sort
     ) {
         LoadUser.loginAndNickCheck();
-        Page<TodoResponseDto> responseDtoList = todoService.getTodoList(filter, page, size, sort);
+        Page<TodoResponseDto> responseDtoList = todoService.getTodoList(LoadUser.getEmail(), filter, page, size, sort);
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
@@ -84,6 +85,19 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.TODO_UPDATE_SUCCESS.getMsg());
+    }
+
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @ApiOperation(value = "Todo 공개범위 설정")
+    @PutMapping("todo/scope")
+    public ResponseEntity<String> updateScope(
+            @RequestBody TodoScopeRequestDto requestDto
+    ) {
+        LoadUser.loginAndNickCheck();
+        todoService.updateScope(requestDto, LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.TODO_SCOPE_CHANGED.getMsg());
     }
 
 
