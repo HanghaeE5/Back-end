@@ -1,16 +1,19 @@
 package com.example.backend.board.domain;
 
+import com.example.backend.board.dto.BoardTodoRequestDto;
+import com.example.backend.common.domain.BaseTime;
 import com.example.backend.todo.domain.Category;
 import com.example.backend.todo.dto.TodoRequestDto;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @NoArgsConstructor
 @Entity
-public class BoardTodo {
+@Getter
+public class BoardTodo extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,10 +33,11 @@ public class BoardTodo {
     @JoinColumn
     private Board board;
 
-    public BoardTodo(TodoRequestDto todoRequestDto, Date todoDate, Board board){
-        this.content = todoRequestDto.getContent();
+    public BoardTodo(BoardTodoRequestDto boardTodoRequestDto, Date todoDate, Board board){
+        this.content = boardTodoRequestDto.getContent();
         this.todoDate = todoDate;
-        this.category = Category.valueOf(todoRequestDto.getCategory());
+        this.category = boardTodoRequestDto.getCategory();
         this.board = board;
     }
+
 }

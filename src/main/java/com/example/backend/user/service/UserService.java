@@ -300,6 +300,8 @@ public class UserService {
     public UserResponseDto updateProfile(MultipartFile file, String email) {
         User user = getUser(email);
 
+        awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+
         user.updateProfileImage(awsS3Service.uploadImage(file));
 
         return new UserResponseDto(user);

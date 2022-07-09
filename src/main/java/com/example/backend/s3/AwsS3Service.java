@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.msg.MsgEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,6 @@ public class AwsS3Service {
     private final AmazonS3 amazonS3;
 
     public String uploadImage(MultipartFile file) {
-
-        if (file == null)
-            return null;
-
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());
@@ -41,11 +38,10 @@ public class AwsS3Service {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch(IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, MsgEnum.IMAGE_UPLOAD_FAIL.getMsg());
         }
 
-
-        return "https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/" + fileName;
+        return MsgEnum.IMAGE_DOMAIN.getMsg() + fileName;
     }
 
     public void deleteImage(String fileName) {
