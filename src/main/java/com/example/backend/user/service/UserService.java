@@ -300,6 +300,8 @@ public class UserService {
     public UserResponseDto updateProfile(MultipartFile file, String email) {
         User user = getUser(email);
 
+        awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+
         user.updateProfileImage(awsS3Service.uploadImage(file));
 
         return new UserResponseDto(user);
@@ -326,6 +328,30 @@ public class UserService {
     @Transactional
     public void updatePassword(String email, PasswordRequestDto passwordRequestDto) {
         User user = getUser(email);
-        user.updatePassword(passwordEncoder.encode(passwordRequestDto.getPassword()));
+        //소셜 회원이 비밀번호를 변경하는지 체크
+        if (user.getPassword().equals("NO_PASS")){
+            throw new CustomException(ErrorCode.SOCIAL_NOT_UPDATE_PASSWORD);
+        }
+
+        //기존 비밀번호 체크
+        if (!passwordEncoder.matches(passwordRequestDto.getOldPassword(), user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_OLD_PWD);
+        }
+
+        user.updatePassword(passwordEncoder.encode(passwordRequestDto.getNewPassword()));
+    }
+
+    public SocialUserCheckResponseDto checkSocialUser(String email) {
+        User user = getUser(email);
+        String msg = "";
+        boolean socialUser = true;
+        if (user.getPassword().equals("NO_PASS")){
+            msg = "소셜 회원 입니다.";
+        }else{
+            msg = "TodoWith 회원 입니다.";
+            socialUser = false;
+        }
+
+        return new SocialUserCheckResponseDto(msg, socialUser);
     }
 }

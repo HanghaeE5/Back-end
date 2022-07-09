@@ -5,6 +5,7 @@ import com.example.backend.chat.domain.Participant;
 import com.example.backend.common.domain.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -63,7 +64,11 @@ public class User extends BaseTime {
     @NotNull
     private RoleType roleType;
 
-    @OneToMany(mappedBy = "user")
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PublicScope publicScope;
+
+    @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
     private List<Participant> participantList;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
@@ -127,6 +132,15 @@ public class User extends BaseTime {
 
     public void updatePassword(String password){
         this.password = password;
+    }
+
+    public void updatePublicScope(String publicScope) {
+        this.publicScope = PublicScope.valueOf(publicScope);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.publicScope = this.publicScope == null ? PublicScope.ALL : this.publicScope;
     }
 
 

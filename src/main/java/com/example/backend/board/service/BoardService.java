@@ -3,28 +3,28 @@ package com.example.backend.board.service;
 import com.example.backend.board.domain.Board;
 import com.example.backend.board.domain.BoardTodo;
 import com.example.backend.board.domain.Category;
-import com.example.backend.board.dto.BoardRequestDto;
-import com.example.backend.board.dto.BoardResponseDto;
+import com.example.backend.board.dto.*;
 import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
-import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,35 +33,90 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
-    private final TodoService todoService;
-
     private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
 
-    // 전체 게시글 목록 조회 구현
-    public Page<BoardResponseDto> getBoardList(String filter, Integer page, Integer size, String sort) {
-        Pageable pageable;
-        if (sort == "asc")
-            pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
-        else
-            pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+    public String saveImage(MultipartFile file){
+        if (file.isEmpty()){
+            throw new CustomException(ErrorCode.FILE_NULL);
+        }
+        return awsS3Service.uploadImage(file);
+    }
+
+    @Transactional
+    public void save(RequestDto requestDto, String email) throws Exception {
+        User user = getUser(email);
+        Board saveBoard = boardRepository.save(new Board(requestDto.getBoard(), user));
+
+        if(requestDto.getBoard().getCategory().equals(Category.CHALLENGE)
+                 && requestDto.getTodo() != null){
+            saveTodo(user, requestDto.getTodo(), saveBoard);
+            saveBoard.addParticipatingCount();
+        }
+    }
+
+    @Transactional
+    public PageBoardResponseDto getBoardList(FilterEnum filter, String keyword, Pageable pageable, String email, SubEnum sub) {
         Page<Board> boardPage;
-
-        if(Objects.equals(filter, "challenge")) {
-            boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
-
-        } else if(Objects.equals(filter, "daily")) {
-            boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
+        if(sub.equals(SubEnum.title)){
+            if(Objects.equals(filter, FilterEnum.challenge)) {
+                log.info("title, challenge search");
+                boardPage = boardRepository.findByTitleContainingAndCategory(keyword, Category.CHALLENGE, pageable);
+            } else if(Objects.equals(filter, FilterEnum.daily)) {
+                log.info("title, daily search");
+                boardPage = boardRepository.findByTitleContainingAndCategory(keyword, Category.DAILY, pageable);
+            } else if(Objects.equals(filter, FilterEnum.my)){
+                log.info("title, my search");
+                User user = getUser(email);
+                boardPage = boardRepository.findByTitleContainingAndUser(keyword, user, pageable);
+            }else{
+                log.info("title search");
+                boardPage = boardRepository.findByTitleContaining(keyword, pageable);
+            }
+        }else if(sub.equals(SubEnum.content)){
+            if(Objects.equals(filter, FilterEnum.challenge)) {
+                log.info("content, challenge search");
+                boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.CHALLENGE, pageable);
+            } else if(Objects.equals(filter, FilterEnum.daily)) {
+                log.info("content, daily search");
+                boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.DAILY, pageable);
+            } else if(Objects.equals(filter, FilterEnum.my)){
+                log.info("content, my search");
+                User user = getUser(email);
+                boardPage = boardRepository.findByContentContainingAndUser(keyword, user, pageable);
+            }else{
+                log.info("content search");
+                boardPage = boardRepository.findByContentContaining(keyword, pageable);
+            }
+        }else{
+            if(Objects.equals(filter, FilterEnum.challenge)) {
+                log.info("challenge search");
+                boardPage = boardRepository.findAllByCategory(Category.CHALLENGE, pageable);
+            } else if(Objects.equals(filter, FilterEnum.daily)) {
+                log.info("daily search");
+                boardPage = boardRepository.findAllByCategory(Category.DAILY, pageable);
+            } else if(Objects.equals(filter, FilterEnum.my)){
+                log.info("my search");
+                User user = getUser(email);
+                boardPage = boardRepository.findByUser(user, pageable);
+            }else{
+                log.info("search");
+                boardPage = boardRepository.findAll(pageable);
+            }
         }
-        else {
-            boardPage = boardRepository.findAll(pageable);
-        }
-        return boardPage.map(BoardResponseDto::new);
+
+
+        return new PageBoardResponseDto(
+                BoardResponseDto.getDtoList(boardPage.getContent()),
+                boardPage
+        );
     }
 
     // 게시물 상세조회
@@ -69,96 +124,135 @@ public class BoardService {
     public BoardResponseDto getDetailBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-        return new BoardResponseDto(board);
-    }
-    // 게시글 작성 구현
-    @Transactional
-    public void save(BoardRequestDto board, TodoRequestDto todo, MultipartFile file, String email) throws Exception {
-        User user = getUser(email);
-        Board saveBoard = boardRepository.save(new Board(board, user, awsS3Service.uploadImage(file)));
-        if(board.getCategory().equals(Category.CHALLENGE.toString()) && todo != null){
-            todo.setBoardId(saveBoard.getId());
-            todoService.saveList(todo, email);
 
-            List<BoardTodo>  boardTodoList = new ArrayList<>();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            for (String todoDate : todo.getTodoDateList()) {
-                Date date = formatter.parse(todoDate);
-                boardTodoList.add(new BoardTodo(todo, date, saveBoard));
-            }
-            boardTodoRepository.saveAll(boardTodoList);
-
-        }
+        return new BoardResponseDto(board, todoRepository.existsByBoard(board));
     }
 
-    // 게시글 삭제, BoardTodo, 사진
-    //1. TODO에 board_id null
-    //2. 사진 삭제
-    //3. 게시글 삭제
     @Transactional
     public void deleteBoard(Long id, String email) {
-
+        Board board = getBoard(id);
         User user = getUser(email);
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-        if(board.getCategory().equals(Category.CHALLENGE)) {
-            List<Todo> todoList = todoRepository.findAllByBoard(board);
-            for (Todo todo : todoList) {
-                todo.deleteBoard();
-            }
+        if (!Objects.equals(board.getUser().getUserSeq(), user.getUserSeq())) {
+            throw new CustomException(ErrorCode.INCORRECT_USERID);
         }
-        // 2. 사진 삭제
-        awsS3Service.deleteImage(board.getImageUrl().split("ohnigabucket.s3.ap-northeast-2.amazonaws.com/")[1]);
-        // 3. 게시글 삭제
+        if(board.getCategory().equals(Category.CHALLENGE)) {
+            //칠린지는 삭제 불가능
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_DELETE);
+            //삭제하려면 신청한 사람의 TODO를 어떻게 처리할지 생각해야함
+        }
+        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
         boardRepository.deleteById(id);
     }
-//     게시글 수정
-//    @Transactional
-//    public void updateBoard(Long id, BoardRequestDto requestDto, String email) {
-//        User user = userRepository.findByEmail(email).orElseThrow(
-//                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-//        Board board = isYours(id);
-//        board.update(requestDto, user);
-//    }
-    // 게시글 검색
-//    @Transactional
-//    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {
-//        Pageable pageable;
-//        if(sort == "asc") {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
-//        }
-//        else {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//        }
-//        Page<Board> boardPage;
-//        if(Objects.equals(classify, "title")) {
-//            boardPage = boardRepository.findAllByTitleContaining(keyword, pageable);
-//        }
-//    }
-//    @Transactional
-//    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {
-//        Pageable pageable;
-//        if(sort == "asc") {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
-//        }
-//        else {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//        }
-//        Page<Board> boardPage;
-//            boardPage = boardRepository.findAllByTitleContaining(keyword, pageable);
-//        return boardPage.map(BoardResponseDto::new);
-//
-//    }
-    // 게시글 id 와 게시글을 작성한 user의 id가 동일한지 확인
 
-//    private Board isYours(Long id) {
-//        Board board = boardRepository.findById(id).orElseThrow(
-//                () -> new CustomException(ErrorCode.TODO_NOT_FOUND));
-//        if(!Objects.equals(board.getUser().getUserId(), LoadUser.getEmail())) {
-//            throw new CustomException(ErrorCode.INCORRECT_USERID);
-//        }
-//        return board;
-//    }
+    @Transactional
+    public void updateBoard(Long id, String email, RequestDto requestDto) throws ParseException {
+        Board board = getBoard(id);
+        User user = getUser(email);
+        if (!Objects.equals(board.getUser().getUserSeq(), user.getUserSeq())) {
+            throw new CustomException(ErrorCode.INCORRECT_USERID);
+        }
+        //기존에 첼린지 였으면 변경 불가능
+        if(board.getCategory().equals(Category.CHALLENGE)){
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_UPDATE);
+            //변경하려면 기존에 신청한 사람들의 TODO를 어떻게 할지 생각해야함
+        }
+
+        //Daily -> Challenge
+        if (requestDto.getBoard().getCategory().equals(Category.CHALLENGE)){
+            saveTodo(user, requestDto.getTodo(), board);
+            board.addParticipatingCount();
+        }
+
+        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        board.update(requestDto.getBoard(), user);
+
+    }
+
+    @Transactional
+    public void applyChallenge(Long boardId, String email) throws ParseException {
+        User user = getUser(email);
+        Board board = getBoard(boardId);
+
+        //게시물 작성자는 첼리지를 신청/취소할 수 없음
+        if(user.getUserSeq().equals(board.getUser().getUserSeq())){
+            throw new CustomException(ErrorCode.CHALLENGE_CANCEL_AUTHOR_NOT);
+        }
+
+        //일상글은 참여 불가능
+        if (!board.getCategory().equals(Category.CHALLENGE)){
+            throw new CustomException(ErrorCode.DAILY_NOY_APPLY_CHALLENGE);
+        }
+        //첼린지가 이미 시작되었다면 신청불가
+        //BoardTodo의 날짜를 전부 가져와서 오늘날짜가 더 크다면 신청 불가
+        challengeExpiration(board);
+
+        //신청자 TODO 저장
+        List<Todo> todoList = new ArrayList<>();
+        for (BoardTodo boardTodo : board.getBoardTodo()) {
+            todoList.add(new Todo(boardTodo, user, board));
+        }
+        todoRepository.saveAll(todoList);
+        board.addParticipatingCount();
+    }
+
+    @Transactional
+    public void cancelChallenge(Long boardId, String email) throws ParseException {
+        User user = getUser(email);
+        Board board = getBoard(boardId);
+
+        if(user.getUserSeq().equals(board.getUser().getUserSeq())){
+            //게시물 작성자는 첼리지를 취소할 수 없음
+            throw new CustomException(ErrorCode.CHALLENGE_CANCEL_AUTHOR_NOT);
+        }
+
+        //일상글은 취소 불가능
+        if (!board.getCategory().equals(Category.CHALLENGE)){
+            throw new CustomException(ErrorCode.DAILY_NOY_APPLY_CHALLENGE);
+        }
+
+        //신청 하지 않은 첼린지는 취소 불가능
+        if (!todoRepository.existsByBoardAndUser(board, user)){
+            throw new CustomException(ErrorCode.NOT_APPLY_CHALLENGE_NOT_CANCEL);
+        }
+
+        //첼린지가 이미 시작되었다면 취소 불가
+        //BoardTodo의 날짜를 전부 가져와서 오늘날짜가 더 크다면 취소 불가
+        challengeExpiration(board);
+
+        //사용자가 등록한 TODO 삭제
+        List<Todo> todoList = todoRepository.findAllByBoardAndUser(board, user);
+        todoRepository.deleteAll(todoList);
+    }
+
+    private void challengeExpiration(Board board) throws ParseException {
+        for (BoardTodo boardTodo: board.getBoardTodo()) {
+            String todayFormat = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date today = new Date(dateFormat.parse(todayFormat).getTime());
+            if (boardTodo.getTodoDate().compareTo(today) < 0){
+                throw new CustomException(ErrorCode.CHALLENGE_CANCEL_APPLY_NOT);
+            }
+        }
+    }
+
+    @Transactional
+    public void saveTodo(User user, BoardTodoRequestDto todo, Board board) throws ParseException {
+        //게시물 등록자 TODO 에 생성
+        List<Todo> todoList = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        for (String todoDate : todo.getTodoDateList()) {
+            Date date = formatter.parse(todoDate);
+            todoList.add(new Todo(todo, user, board, date));
+        }
+        todoRepository.saveAll(todoList);
+
+        List<BoardTodo>  boardTodoList = new ArrayList<>();
+        for (String todoDate : todo.getTodoDateList()) {
+            Date date = formatter.parse(todoDate);
+            boardTodoList.add(new BoardTodo(todo, date, board));
+        }
+        boardTodoRepository.saveAll(boardTodoList);
+    }
 
     private Board getBoard(Long id) {
         return boardRepository.findById(id).orElseThrow(

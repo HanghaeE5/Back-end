@@ -1,16 +1,16 @@
 package com.example.backend.todo.service;
 
 import com.example.backend.board.repository.BoardRepository;
-import com.example.backend.character.domain.Characters;
 import com.example.backend.character.repository.CharacterRepository;
 import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.todo.domain.Todo;
+import com.example.backend.todo.dto.TodoScopeRequestDto;
 import com.example.backend.todo.dto.request.TodoRequestDto;
+import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.todo.dto.response.TodoDoneResponseDto;
 import com.example.backend.todo.dto.response.TodoResponseDto;
-import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
@@ -39,8 +39,12 @@ public class TodoService {
     private final CharacterService characterService;
     private final CharacterRepository characterRepository;
 
+    @Transactional
+    public Page<TodoResponseDto> getTodoList(String email, String filter, Integer page, Integer size, String sort) {
 
-    public Page<TodoResponseDto> getTodoList(String filter, Integer page, Integer size, String sort) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
 
         Pageable pageable;
 
@@ -52,11 +56,11 @@ public class TodoService {
         Page<Todo> todoPage;
 
         if (Objects.equals(filter, "all")) {
-            todoPage = todoRepository.findAllTodo(pageable);
+            todoPage = todoRepository.findAllTodo(pageable, user);
         } else if (Objects.equals(filter, "doingList")) {
-            todoPage = todoRepository.findAllByTodoStateTrue(pageable);
+            todoPage = todoRepository.findAllByTodoStateTrue(pageable, user);
         } else {
-            todoPage = todoRepository.findAllByTodoStateFalse(pageable);
+            todoPage = todoRepository.findAllByTodoStateFalse(pageable, user);
         }
 
         return todoPage.map(TodoResponseDto::new);
@@ -124,4 +128,11 @@ public class TodoService {
 
     }
 
+    @Transactional
+    public void updateScope(TodoScopeRequestDto requestDto, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        user.updatePublicScope(requestDto.getPublicScope());
+    }
 }
