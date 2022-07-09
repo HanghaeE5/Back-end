@@ -5,7 +5,6 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.friend.domain.FriendRequest;
 import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.repository.FriendRequestRepository;
-import com.example.backend.todo.dto.TodoResponseDto;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.dto.UserResponseDto;
 import com.example.backend.user.repository.UserRepository;
@@ -29,7 +28,7 @@ public class FriendRequestService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
+        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
@@ -45,7 +44,7 @@ public class FriendRequestService {
         // 상대가 보낸 요청에 대한 수락인가
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(userTo.getUserSeq())) {
             if (friendRequest.getUserTo() == user && !friendRequest.isState()) {
-                this.accept(user.getEmail(), userTo.getEmail());
+                this.requestAccept(user.getEmail(), userTo.getEmail());
                 return "요청을 수락했습니다";
             }
         }
@@ -57,11 +56,11 @@ public class FriendRequestService {
     }
 
     @Transactional
-    public void accept(String userEmail, String requestEmail) {
+    public void accept(String userEmail, FriendRequestDto requestDto) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestEmail).orElseThrow(
+        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 나도 request 보냄 ( state = true  인 상태로 )
@@ -76,11 +75,30 @@ public class FriendRequestService {
     }
 
     @Transactional
-    public void reject(String userEmail, String requestEmail) {
+    public void requestAccept(String userEmail, String nick) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestEmail).orElseThrow(
+        User userTo = userRepository.findByUsername(nick).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        // 나도 request 보냄 ( state = true  인 상태로 )
+        FriendRequest request = new FriendRequest(user, userTo, true);
+        // 상대방 state true 로 변경
+        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(userTo.getUserSeq())) {
+            if (friendRequest.getUserTo() == user && !friendRequest.isState()) {
+                friendRequest.linked();
+            }
+        }
+        friendRequestRepository.save(request);
+    }
+
+    @Transactional
+    public void reject(String userEmail, FriendRequestDto requestDto) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 상대방의 request 삭제
@@ -92,11 +110,11 @@ public class FriendRequestService {
     }
 
     @Transactional
-    public void delete(String userEmail, String requestEmail) {
+    public void delete(String userEmail, FriendRequestDto requestDto) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByEmail(requestEmail).orElseThrow(
+        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 상대방 요청 삭제
@@ -113,7 +131,7 @@ public class FriendRequestService {
         }
     }
 
-    public List<UserResponseDto> getList(String email) {
+    public List<UserResponseDto> getFriendList(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -121,6 +139,20 @@ public class FriendRequestService {
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(user.getUserSeq())) {
             if (friendRequest.isState()) {
                 UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserTo());
+                responseDtoList.add(responseDto);
+            }
+        }
+        return responseDtoList;
+    }
+
+    public List<UserResponseDto> getRequestList(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        List<UserResponseDto> responseDtoList = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserToUserSeq(user.getUserSeq())) {
+            if (!friendRequest.isState()) {
+                UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserFrom());
                 responseDtoList.add(responseDto);
             }
         }
