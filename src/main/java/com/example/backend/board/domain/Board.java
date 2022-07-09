@@ -56,6 +56,7 @@ public class Board extends BaseTime {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.imageUrl = requestDto.getImageUrl();
+        this.participatingCount = 0L;
     }
 
     public void update(BoardRequestDto requestDto, User user){
