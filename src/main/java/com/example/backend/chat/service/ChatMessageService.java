@@ -63,10 +63,11 @@ public class ChatMessageService {
             message.setMessage(message.getSender() + "님이 방에서 나갔습니다.");
             message.setSender("[알림]");
         }
-        
+
         log.info("getMessage : " + message.getMessage());
         log.info("message.getRoomId() : " + message.getRoomId());
         log.info("getSender : " + message.getSender());
+        System.out.println(message.toString());
         messageSendingOperations.convertAndSend("/sub/chat/room" + message.getRoomId(), message);
     }
 

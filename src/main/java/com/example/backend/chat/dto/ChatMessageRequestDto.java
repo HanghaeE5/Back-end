@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class ChatMessageRequestDto {
 
     @ApiModelProperty(value = "메세지 타입", example = "ENTER/TALK/QUIT", required = true)
