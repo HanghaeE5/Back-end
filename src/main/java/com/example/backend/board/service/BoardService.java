@@ -8,11 +8,10 @@ import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
-import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,11 +37,27 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
-    private final TodoService todoService;
     private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
 
-    // 전체 게시글 목록 조회 구현
+
+    public String saveImage(MultipartFile file){
+        if (file.isEmpty()){
+            throw new CustomException(ErrorCode.FILE_NULL);
+        }
+        return awsS3Service.uploadImage(file);
+    }
+
+    @Transactional
+    public void save(RequestDto requestDto, String email) throws Exception {
+        User user = getUser(email);
+        Board saveBoard = boardRepository.save(new Board(requestDto.getBoard(), user));
+        if(requestDto.getBoard().getCategory().equals(Category.CHALLENGE)
+                 && requestDto.getTodo() != null){
+            saveTodo(user, requestDto.getTodo(), saveBoard);
+        }
+    }
+
     @Transactional
     public PageBoardResponseDto getBoardList(FilterEnum filter, String keyword, Pageable pageable, String email, SubEnum sub) {
         Page<Board> boardPage;
@@ -106,93 +122,63 @@ public class BoardService {
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
         return new BoardResponseDto(board);
     }
-    // 게시글 작성 구현
-    @Transactional
-    public void save(BoardRequestDto board, TodoRequestDto todo, MultipartFile file, String email) throws Exception {
-        User user = getUser(email);
-        Board saveBoard = boardRepository.save(new Board(board, user, awsS3Service.uploadImage(file)));
-        if(board.getCategory().equals(Category.CHALLENGE.toString()) && todo != null){
-            todo.setBoardId(saveBoard.getId());
-            todoService.saveList(todo, email);
 
-            List<BoardTodo>  boardTodoList = new ArrayList<>();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            for (String todoDate : todo.getTodoDateList()) {
-                Date date = formatter.parse(todoDate);
-                boardTodoList.add(new BoardTodo(todo, date, saveBoard));
-            }
-            boardTodoRepository.saveAll(boardTodoList);
-        }
-    }
-
-    // 게시글 삭제, BoardTodo, 사진
-    //1. TODO에 board_id null
-    //2. 사진 삭제
-    //3. 게시글 삭제
     @Transactional
     public void deleteBoard(Long id, String email) {
-
-        Board board = isYours(id, email);
-        if(board.getCategory().equals(Category.CHALLENGE)) {
-            List<Todo> todoList = todoRepository.findAllByBoard(board);
-            for (Todo todo : todoList) {
-                todo.changeNull();
-            }
-        }
-        // 2. 사진 삭제
-        awsS3Service.deleteImage(board.getImageUrl().split("ohnigabucket.s3.ap-northeast-2.amazonaws.com/")[1]);
-        // 3. 게시글 삭제
-        boardRepository.deleteById(id);
-    }
-    // 게시글 수정
-    // 1. Board 작성자와 User id 동일한지 확인
-    // 2. 사진을 변경한다면 사진 삭제 후 다시 업로드
-    // 3. 아니면,,? 그냥 update,,?
-//    @Transactional
-//    public void updateBoard(Long id, BoardRequestDto requestDto, String email, MultipartFile file) {
-//
-//        Board board = isYours(id, email);
-//
-//        board.update(requestDto, user);
-//    }
-    // 게시글 검색
-//    @Transactional
-//    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {
-//        Pageable pageable;
-//        if(sort == "asc") {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
-//        }
-//        else {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//        }
-//        Page<Board> boardPage;
-//        if(Objects.equals(classify, "title")) {
-//            boardPage = boardRepository.findAllByTitleContaining(keyword, pageable);
-//        }
-//    }
-//    @Transactional
-//    public Page<BoardResponseDto> searchBoard(String classify, String keyword, String filter, Integer page, Integer size, String sort) {
-//        Pageable pageable;
-//        if(sort == "asc") {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
-//        }
-//        else {
-//            pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//        }
-//        Page<Board> boardPage;
-//            boardPage = boardRepository.findAllByTitleContaining(keyword, pageable);
-//        return boardPage.map(BoardResponseDto::new);
-//
-//    }
-
-    // 게시글 작성자의 id와 User의 id가 동일한지 확인하는 메서드
-    private Board isYours(Long id, String email) {
         Board board = getBoard(id);
         User user = getUser(email);
         if (!Objects.equals(board.getUser().getUserSeq(), user.getUserSeq())) {
             throw new CustomException(ErrorCode.INCORRECT_USERID);
         }
-        return board;
+        if(board.getCategory().equals(Category.CHALLENGE)) {
+            //칠린지는 삭제 불가능
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_DELETE);
+            //삭제하려면 신청한 사람의 TODO를 어떻게 처리할지 생각해야함
+        }
+        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        boardRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateBoard(Long id, String email, RequestDto requestDto) throws ParseException {
+        Board board = getBoard(id);
+        User user = getUser(email);
+        if (!Objects.equals(board.getUser().getUserSeq(), user.getUserSeq())) {
+            throw new CustomException(ErrorCode.INCORRECT_USERID);
+        }
+        //기존에 첼린지 였으면 변경 불가능
+        if(board.getCategory().equals(Category.CHALLENGE)){
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_UPDATE);
+            //변경하려면 기존에 신청한 사람들의 TODO를 어떻게 할지 생각해야함
+        }
+
+        //Daily -> Challenge
+        if (requestDto.getBoard().getCategory().equals(Category.CHALLENGE)){
+            saveTodo(user, requestDto.getTodo(), board);
+        }
+
+        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        board.update(requestDto.getBoard(), user);
+
+    }
+
+    @Transactional
+    public void saveTodo(User user, BoardTodoRequestDto todo, Board board) throws ParseException {
+        List<Todo> todoList = new ArrayList<>();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        for (String todoDate : todo.getTodoDateList()) {
+            Date date = formatter.parse(todoDate);
+            todoList.add(new Todo(todo, user, board, date));
+        }
+        todoRepository.saveAll(todoList);
+
+        List<BoardTodo>  boardTodoList = new ArrayList<>();
+        for (String todoDate : todo.getTodoDateList()) {
+            Date date = formatter.parse(todoDate);
+            boardTodoList.add(new BoardTodo(todo, date, board));
+        }
+        boardTodoRepository.saveAll(boardTodoList);
     }
 
     private Board getBoard(Long id) {

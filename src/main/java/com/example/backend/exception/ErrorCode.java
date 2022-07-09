@@ -30,6 +30,8 @@ public enum ErrorCode {
 
     SOCIAL_NOT_UPDATE_PASSWORD(HttpStatus.BAD_REQUEST,"400","소셜 회원가입한 사용자는 비밀번호 변경할 수 없습니다."),
 
+    FILE_NULL(HttpStatus.BAD_REQUEST, "400", "파일을 입력해주세요."),
+
     // Todo목록
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 목록이 존재하지 않습니다"),
     INCORRECT_USERID(HttpStatus.FORBIDDEN, "403", "목록의 작성자가 아닙니다"),
@@ -37,8 +39,12 @@ public enum ErrorCode {
     // 게시글
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 게시글이 존재하지 않습니다"),
 
+    CHALLENGE_NOT_DELETE(HttpStatus.BAD_REQUEST, "400", "첼린지는 삭제가 불가 합니다."),
+    CHALLENGE_NOT_UPDATE(HttpStatus.BAD_REQUEST, "400", "첼린지는 수정 불가 합니다."),
     // 채팅
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 채팅방이 존재하지 않습니다"),
+
+
 
 
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이미지를 입력해주세요."),

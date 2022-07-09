@@ -21,6 +21,12 @@ public enum MsgEnum {
 
     BOARD_DELETE_SUCCESS("게시글 삭제 완료"),
 
+    BOARD_UPDATE_SUCCESS("게시글 수정 완료"),
+
+    IMAGE_UPLOAD_FAIL("이미지 업로드에 실패했습니다."),
+
+    IMAGE_DOMAIN("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/"),
+
     //ToDo목록
     TODO_SAVE_SUCCESS("Todo 추가 완료"),
     TODO_DONE("Todo 완료"),

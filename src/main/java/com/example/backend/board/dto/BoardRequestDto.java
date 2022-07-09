@@ -1,14 +1,14 @@
 package com.example.backend.board.dto;
 
-import com.example.backend.board.domain.Category;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
-@ApiModel(value = "게시물 객체", description = "게시물을 등록 하기 위한 객체")
+
 @Getter
+@ApiModel(value = "커뮤니티 객체", description = "커뮤니티 등록 하기 위한 객체")
 public class BoardRequestDto {
 
     @ApiModelProperty(value="제목", example = "하루 3시간씩 운동하기", required = true)
@@ -23,4 +23,8 @@ public class BoardRequestDto {
     @NotBlank(message = "카테고리는 필수 입력값 입니다.")
     private String category;
 
+    @ApiModelProperty(value="이미지", example = "https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/54b55bab-46a6-4454-a179-e1ab1ebf7820.jpg", required = false)
+    private String imageUrl;
+
 }
+
