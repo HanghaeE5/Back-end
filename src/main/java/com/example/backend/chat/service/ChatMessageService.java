@@ -10,11 +10,13 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatMessageService {
 
     private final SimpMessageSendingOperations messageSendingOperations;
@@ -61,6 +63,10 @@ public class ChatMessageService {
             message.setMessage(message.getSender() + "님이 방에서 나갔습니다.");
             message.setSender("[알림]");
         }
+        
+        log.info("getMessage : " + message.getMessage());
+        log.info("message.getRoomId() : " + message.getRoomId());
+        log.info("getSender : " + message.getSender());
         messageSendingOperations.convertAndSend("/sub/chat/room" + message.getRoomId(), message);
     }
 

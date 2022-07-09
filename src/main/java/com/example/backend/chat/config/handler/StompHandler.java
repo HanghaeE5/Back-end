@@ -3,6 +3,7 @@ package com.example.backend.chat.config.handler;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -11,6 +12,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
 
@@ -23,9 +25,10 @@ public class StompHandler implements ChannelInterceptor {
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
 
-            String tokenStr = accessor.getFirstNativeHeader("Authorization");
-            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-            token.validate();
+//            String tokenStr = accessor.getFirstNativeHeader("Authorization");
+//            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+//            token.validate();
+            log.info("연결됨");
 
         }
 
