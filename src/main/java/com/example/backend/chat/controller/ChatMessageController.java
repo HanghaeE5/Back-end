@@ -26,7 +26,9 @@ public class ChatMessageController {
     public void message(ChatMessageRequestDto message, @Header("Authorization") String tokenStr) {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         String name = token.getTokenClaims().getId();
-
+        log.info(message.getMessage());
+        log.info(message.getRoomId());
+        log.info(message.getType().toString());
         // 입장, 퇴장 시 Participant 에 추가
         if (ChatMessageRequestDto.MessageType.ENTER.equals((message.getType()))) {
             chatMessageService.addParticipant(LoadUser.getEmail(), message.getRoomId());
