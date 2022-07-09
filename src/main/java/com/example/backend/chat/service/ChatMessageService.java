@@ -12,6 +12,7 @@ import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
-
+    @Transactional
     public void addParticipant(String email, String roomId) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)

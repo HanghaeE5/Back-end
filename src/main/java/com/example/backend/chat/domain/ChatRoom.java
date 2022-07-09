@@ -1,17 +1,18 @@
 package com.example.backend.chat.domain;
 
-import com.example.backend.chat.dto.ChatRoomRequestDto;
+import com.example.backend.chat.dto.ChatRoomPrivateRequestDto;
+import com.example.backend.chat.dto.ChatRoomPublicRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 public class ChatRoom extends BaseTime {
@@ -23,10 +24,19 @@ public class ChatRoom extends BaseTime {
     private String name;
 
     @OneToMany(mappedBy = "chatRoom")
-    private List<Participant> participantList;
+    private List<Participant> participantList = new ArrayList<>();
 
-    public ChatRoom(ChatRoomRequestDto requestDto) {
+    public ChatRoom(ChatRoomPrivateRequestDto requestDto) {
         this.roomId = UUID.randomUUID().toString();
         this.name = requestDto.getName();
+    }
+
+    public ChatRoom(ChatRoomPublicRequestDto requestDto) {
+        this.roomId = UUID.randomUUID().toString();
+        this.name = requestDto.getName();
+    }
+
+    public void addParticipant(Participant participant) {
+        this.participantList.add(participant);
     }
 }

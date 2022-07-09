@@ -1,8 +1,10 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.dto.ChatRoomRequestDto;
+import com.example.backend.chat.dto.ChatRoomPrivateRequestDto;
+import com.example.backend.chat.dto.ChatRoomPublicRequestDto;
 import com.example.backend.chat.dto.ChatRoomResponseDto;
 import com.example.backend.chat.service.ChatRoomService;
+import com.example.backend.user.common.LoadUser;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,20 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    @ApiOperation(value = "채팅방 생성")
-    @PostMapping("/room")
-    public ResponseEntity<ChatRoomResponseDto> createRoom(@RequestBody ChatRoomRequestDto requestDto) {
-        ChatRoomResponseDto responseDto = chatRoomService.createRoom(requestDto);
+    // 일단 보류
+    @ApiOperation(value = "일대일 채팅방 생성")
+    @PostMapping("/room/private")
+    public ResponseEntity<ChatRoomResponseDto> createPrivateRoom(@RequestBody ChatRoomPrivateRequestDto requestDto) {
+        LoadUser.loginAndNickCheck();
+        ChatRoomResponseDto responseDto = chatRoomService.createPrivateRoom(requestDto, LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @ApiOperation(value = "단체 채팅방 생성")
+    @PostMapping("/room/public")
+    public ResponseEntity<ChatRoomResponseDto> createPublicRoom(@RequestBody ChatRoomPublicRequestDto requestDto) {
+        LoadUser.loginAndNickCheck();
+        ChatRoomResponseDto responseDto = chatRoomService.createPublicRoom(requestDto, LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
