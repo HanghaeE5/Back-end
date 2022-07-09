@@ -7,8 +7,8 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.TodoRequestDto;
 import com.example.backend.todo.dto.TodoResponseDto;
+import com.example.backend.todo.dto.TodoScopeRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
-import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +34,12 @@ public class TodoService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
 
+    @Transactional
+    public Page<TodoResponseDto> getTodoList(String email, String filter, Integer page, Integer size, String sort) {
 
-    public Page<TodoResponseDto> getTodoList(String filter, Integer page, Integer size, String sort) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
 
         Pageable pageable;
 
@@ -47,11 +51,11 @@ public class TodoService {
         Page<Todo> todoPage;
 
         if (Objects.equals(filter, "all")) {
-            todoPage = todoRepository.findAllTodo(pageable);
+            todoPage = todoRepository.findAllTodo(pageable, user);
         } else if (Objects.equals(filter, "doingList")) {
-            todoPage = todoRepository.findAllByTodoStateTrue(pageable);
+            todoPage = todoRepository.findAllByTodoStateTrue(pageable, user);
         } else {
-            todoPage = todoRepository.findAllByTodoStateFalse(pageable);
+            todoPage = todoRepository.findAllByTodoStateFalse(pageable, user);
         }
 
         return todoPage.map(TodoResponseDto::new);
@@ -127,5 +131,13 @@ public class TodoService {
         }
         return todo;
 
+    }
+
+    @Transactional
+    public void updateScope(TodoScopeRequestDto requestDto, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        user.updatePublicScope(requestDto.getPublicScope());
     }
 }

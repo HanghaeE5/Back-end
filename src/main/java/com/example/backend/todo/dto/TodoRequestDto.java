@@ -21,7 +21,7 @@ public class TodoRequestDto {
     @ApiModelProperty(value = "게시글 id")
     private Long boardId;
 
-    @ApiModelProperty(value = "Todo 생성 시 날짜 목록(Array)", example = "{\"2022-07-06\",\"2022-07-07\", \"2022-07-08\"}")
+    @ApiModelProperty(value = "Todo 생성 시 날짜 목록(Array)", example = "[\"2022-07-06\",\"2022-07-07\", \"2022-07-08\"]")
     private List<String> todoDateList;
 
     @ApiModelProperty(value = "Todo 수정 시 날짜", example = "2022-07-06")
