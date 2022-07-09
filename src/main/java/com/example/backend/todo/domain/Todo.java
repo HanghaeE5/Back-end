@@ -1,6 +1,8 @@
 package com.example.backend.todo.domain;
 
 import com.example.backend.board.domain.Board;
+import com.example.backend.board.domain.BoardTodo;
+import com.example.backend.board.dto.BoardTodoRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.user.domain.User;
 import com.example.backend.todo.dto.TodoRequestDto;
@@ -57,6 +59,24 @@ public class Todo extends BaseTime {
         this.board = board;
     }
 
+    public Todo(BoardTodoRequestDto requestDto, User user, Board board, Date todoDate) {
+        this.content = requestDto.getContent();
+        this.todoDate = todoDate;
+        this.state = false;
+        this.category = requestDto.getCategory();
+        this.user = user;
+        this.board = board;
+    }
+
+    public Todo(BoardTodo boardTodo, User user, Board board) {
+        this.content = boardTodo.getContent();
+        this.todoDate = boardTodo.getTodoDate();
+        this.state = false;
+        this.category = boardTodo.getCategory();
+        this.user = user;
+        this.board = board;
+    }
+
     public void update(TodoRequestDto requestDto, Date date) {
 
         this.content = requestDto.getContent();
@@ -70,7 +90,7 @@ public class Todo extends BaseTime {
     }
 
     // CHALLENGE 게시글을 작성할 때 생겨난 boardId를 다 null 값으로 바꿔줌.
-    public void deleteBoard() {
+    public void changeNull() {
         this.board = null;
     }
 }

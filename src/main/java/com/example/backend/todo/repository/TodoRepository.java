@@ -19,7 +19,11 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query("select t from Todo t where t.user=:user and t.state=false")
     Page<Todo> findAllByTodoStateFalse(Pageable pageable, User user);
 
-    List<Todo> findAllByBoard(Board board);
+    List<Todo> findAllByBoardAndUser(Board board, User user);
+
+    boolean existsByBoard(Board board);
+
+    boolean existsByBoardAndUser(Board board, User user);
 
     @Query("select t from Todo t where t.user=:user and t.todoDate=CURRENT_DATE")
     List<Todo> findAllByTodoDate(User user);

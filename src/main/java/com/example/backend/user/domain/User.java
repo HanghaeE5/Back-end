@@ -67,7 +67,7 @@ public class User extends BaseTime {
     @Enumerated(EnumType.STRING)
     private PublicScope publicScope;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
     private List<Participant> participantList;
 
     public User(
