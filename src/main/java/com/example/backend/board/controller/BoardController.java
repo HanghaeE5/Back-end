@@ -113,14 +113,41 @@ public class BoardController {
     })
     @PutMapping("/board/{boardId}")
     public ResponseEntity<String> updateBoard(
-            @PathVariable Long id,
+            @PathVariable Long boardId,
             @Valid @RequestBody RequestDto requestDto
     ) throws Exception {
         LoadUser.loginAndNickCheck();
-        boardService.updateBoard(id, LoadUser.getEmail(), requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(MsgEnum.BOARD_UPDATE_SUCCESS.getMsg());
+        boardService.updateBoard(boardId, LoadUser.getEmail(), requestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.BOARD_UPDATE_SUCCESS.getMsg());
     }
 
     //챌린저스 신청 api
+    @ApiOperation(value = "첼린지 신청")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @PostMapping("/board/{boardId}/challenge")
+    public ResponseEntity<String> applyChallenge(
+        @PathVariable Long boardId
+    ) throws Exception{
+        LoadUser.loginAndNickCheck();
+        boardService.applyChallenge(boardId, LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.CHALLENGE_APPLY_SUCCESS.getMsg());
+    }
+
     //챌린저스 취소 api
+    @ApiOperation(value = "첼린지 취소")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @PutMapping("/board/{boardId}/challenge")
+    public ResponseEntity<String> cancelChallenge(
+            @PathVariable Long boardId
+    ) throws Exception{
+        LoadUser.loginAndNickCheck();
+        boardService.cancelChallenge(boardId, LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.CHALLENGE_CANCEL_SUCCESS.getMsg());
+    }
 }

@@ -23,6 +23,10 @@ public enum MsgEnum {
 
     BOARD_UPDATE_SUCCESS("게시글 수정 완료"),
 
+    CHALLENGE_APPLY_SUCCESS("첼린지 신청 완료"),
+
+    CHALLENGE_CANCEL_SUCCESS("첼린지 취소 완료"),
+
     IMAGE_UPLOAD_FAIL("이미지 업로드에 실패했습니다."),
 
     IMAGE_DOMAIN("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/"),

@@ -1,6 +1,7 @@
 package com.example.backend.todo.domain;
 
 import com.example.backend.board.domain.Board;
+import com.example.backend.board.domain.BoardTodo;
 import com.example.backend.board.dto.BoardTodoRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.user.domain.User;
@@ -63,6 +64,15 @@ public class Todo extends BaseTime {
         this.todoDate = todoDate;
         this.state = false;
         this.category = requestDto.getCategory();
+        this.user = user;
+        this.board = board;
+    }
+
+    public Todo(BoardTodo boardTodo, User user, Board board) {
+        this.content = boardTodo.getContent();
+        this.todoDate = boardTodo.getTodoDate();
+        this.state = false;
+        this.category = boardTodo.getCategory();
         this.user = user;
         this.board = board;
     }

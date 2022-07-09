@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -37,6 +38,10 @@ public class Board extends BaseTime {
     @Column
     private String imageUrl;
 
+    @Column
+    @ColumnDefault("0")
+    private Long participatingCount;
+
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     @BatchSize(size=100)
     private Set<BoardTodo> boardTodo = new LinkedHashSet<>();
@@ -46,7 +51,7 @@ public class Board extends BaseTime {
     private User user;
 
     public Board(BoardRequestDto requestDto, User user) {
-        this.category = Category.valueOf(requestDto.getCategory());
+        this.category = requestDto.getCategory();
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
@@ -54,11 +59,15 @@ public class Board extends BaseTime {
     }
 
     public void update(BoardRequestDto requestDto, User user){
-        this.category = Category.valueOf(requestDto.getCategory());
+        this.category = requestDto.getCategory();
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.imageUrl = requestDto.getImageUrl();
+    }
+
+    public void addParticipatingCount(){
+        this.participatingCount = this.participatingCount + 1;
     }
 
 }
