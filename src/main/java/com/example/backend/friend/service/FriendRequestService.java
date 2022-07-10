@@ -6,7 +6,7 @@ import com.example.backend.friend.domain.FriendRequest;
 import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.repository.FriendRequestRepository;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.todo.dto.TodoResponseDto;
+import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.domain.PublicScope;
 import com.example.backend.user.domain.User;

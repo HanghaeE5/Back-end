@@ -1,4 +1,4 @@
-package com.example.backend.board.dto;
+package com.example.backend.board.dto.request;
 
 import com.example.backend.board.domain.Category;
 import io.swagger.annotations.ApiModel;

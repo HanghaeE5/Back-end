@@ -1,4 +1,4 @@
-package com.example.backend.todo.dto;
+package com.example.backend.todo.dto.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

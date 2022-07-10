@@ -1,6 +1,6 @@
 package com.example.backend.board.domain;
 
-import com.example.backend.board.dto.BoardRequestDto;
+import com.example.backend.board.dto.request.BoardRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.user.domain.User;
 import lombok.AllArgsConstructor;
