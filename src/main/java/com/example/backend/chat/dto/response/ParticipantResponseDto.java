@@ -1,4 +1,4 @@
-package com.example.backend.chat.dto;
+package com.example.backend.chat.dto.response;
 
 import com.example.backend.chat.domain.Participant;
 import com.example.backend.user.dto.UserResponseDto;

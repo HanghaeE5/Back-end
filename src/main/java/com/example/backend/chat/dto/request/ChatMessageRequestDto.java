@@ -1,4 +1,4 @@
-package com.example.backend.chat.dto;
+package com.example.backend.chat.dto.request;
 
 import com.example.backend.common.domain.BaseTime;
 import io.swagger.annotations.ApiModel;

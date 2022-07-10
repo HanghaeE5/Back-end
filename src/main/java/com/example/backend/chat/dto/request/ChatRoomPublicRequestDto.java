@@ -1,4 +1,4 @@
-package com.example.backend.chat.dto;
+package com.example.backend.chat.dto.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

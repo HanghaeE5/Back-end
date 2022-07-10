@@ -2,9 +2,8 @@ package com.example.backend.chat.service;
 
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
-import com.example.backend.chat.dto.ChatRoomPrivateRequestDto;
-import com.example.backend.chat.dto.ChatRoomPublicRequestDto;
-import com.example.backend.chat.dto.ChatRoomResponseDto;
+import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
+import com.example.backend.chat.dto.response.ChatRoomResponseDto;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;

@@ -1,6 +1,6 @@
 package com.example.backend.user.dto;
 
-import com.example.backend.todo.dto.TodoResponseDto;
+import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.user.domain.ProviderType;
 import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.domain.User;

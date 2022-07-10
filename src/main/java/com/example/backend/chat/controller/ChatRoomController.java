@@ -1,8 +1,7 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.dto.ChatRoomPrivateRequestDto;
-import com.example.backend.chat.dto.ChatRoomPublicRequestDto;
-import com.example.backend.chat.dto.ChatRoomResponseDto;
+import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
+import com.example.backend.chat.dto.response.ChatRoomResponseDto;
 import com.example.backend.chat.service.ChatRoomService;
 import com.example.backend.user.common.LoadUser;
 import io.swagger.annotations.ApiOperation;
