@@ -1,5 +1,6 @@
-package com.example.backend.chat.dto;
+package com.example.backend.chat.dto.request;
 
+import com.example.backend.common.domain.BaseTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -8,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChatMessageRequestDto {
+public class ChatMessageRequestDto extends BaseTime {
 
     @ApiModelProperty(value = "메세지 타입", example = "ENTER/TALK/QUIT", required = true)
     private MessageType type;
