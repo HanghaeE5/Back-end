@@ -28,21 +28,17 @@ public class ChatMessageService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        System.out.println("==========================3");
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
-        System.out.println("=======================4");
         Participant participant = new Participant(user, chatRoom);
-        System.out.println("===========================5");
         participantRepository.save(participant);
-        System.out.println("============================6");
         chatRoom.addParticipant(participant);
-        System.out.println("========================7");
         user.addParticipant(participant);
     }
 
 
+    @Transactional
     public void deleteParticipant(String email, String roomId) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)

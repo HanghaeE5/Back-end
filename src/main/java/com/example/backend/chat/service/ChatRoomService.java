@@ -28,44 +28,27 @@ public class ChatRoomService {
     private final ParticipantRepository participantRepository;
 
     // 일대일 채팅은 일단 보류
-    public ChatRoomResponseDto createPrivateRoom(ChatRoomPrivateRequestDto requestDto, String email) {
-        ChatRoom room = new ChatRoom(requestDto);
-        chatRoomRepository.save(room);
-        return new ChatRoomResponseDto(room);
-    }
+//    public ChatRoomResponseDto createPrivateRoom(ChatRoomPrivateRequestDto requestDto, String email) {
+//        ChatRoom room = new ChatRoom(requestDto);
+//        chatRoomRepository.save(room);
+//        return new ChatRoomResponseDto(room);
+//    }
 
     // 단체 톡방
     @Transactional
     public ChatRoomResponseDto createPublicRoom(ChatRoomPublicRequestDto requestDto, String email) {
-        ChatRoom chatRoom = new ChatRoom(requestDto);
-        System.out.println("=============================1");
-        chatRoomRepository.save(chatRoom);
-        System.out.println("==============================2");
+        ChatRoom room = new ChatRoom(requestDto);
+        chatRoomRepository.save(room);
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        System.out.println("==============================3");
+        ChatRoom chatRoom = chatRoomRepository.findById(room.getRoomId()).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
         Participant participant = new Participant(user, chatRoom);
-        System.out.println("============================4");
         participantRepository.save(participant);
-        System.out.println("=================================5");
         chatRoom.addParticipant(participant);
-        System.out.println("==================================6");
         user.addParticipant(participant);
-        System.out.println("============================7");
-        ChatRoomResponseDto responseDto = new ChatRoomResponseDto(chatRoom);
-        System.out.println("===========================13");
-        return responseDto;
-    }
-
-    @Transactional
-    public ChatRoomResponseDto createPublicRoom(ChatRoomPublicRequestDto requestDto, String email) {
-        ChatRoom chatRoom = new ChatRoom(requestDto);
-        System.out.println("=============================1");
-        chatRoomRepository.save(chatRoom);
-        System.out.println("==============================2");
-        chatMessageService.addParticipant(email, chatRoom.getRoomId());
-        System.out.println("==============================9");
         return new ChatRoomResponseDto(chatRoom);
     }
 

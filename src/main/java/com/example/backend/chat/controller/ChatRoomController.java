@@ -21,13 +21,13 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     // 일단 보류
-    @ApiOperation(value = "일대일 채팅방 생성")
-    @PostMapping("/room/private")
-    public ResponseEntity<ChatRoomResponseDto> createPrivateRoom(@RequestBody ChatRoomPrivateRequestDto requestDto) {
-        LoadUser.loginAndNickCheck();
-        ChatRoomResponseDto responseDto = chatRoomService.createPrivateRoom(requestDto, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
+//    @ApiOperation(value = "일대일 채팅방 생성")
+//    @PostMapping("/room/private")
+//    public ResponseEntity<ChatRoomResponseDto> createPrivateRoom(@RequestBody ChatRoomPrivateRequestDto requestDto) {
+//        LoadUser.loginAndNickCheck();
+//        ChatRoomResponseDto responseDto = chatRoomService.createPrivateRoom(requestDto, LoadUser.getEmail());
+//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+//    }
 
     @ApiOperation(value = "단체 채팅방 생성")
     @PostMapping("/room/public")

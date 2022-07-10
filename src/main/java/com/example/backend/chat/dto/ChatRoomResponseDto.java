@@ -17,12 +17,9 @@ public class ChatRoomResponseDto {
 
     public ChatRoomResponseDto(ChatRoom room) {
         this.roomId = room.getRoomId();
-        System.out.println("============================8");
         this.name = room.getName();
-        System.out.println("==========================9");
         for (Participant p : room.getParticipantList()) {
             this.participantList.add(new ParticipantResponseDto(p));
         }
-        System.out.println("==============================12");
     }
 }
