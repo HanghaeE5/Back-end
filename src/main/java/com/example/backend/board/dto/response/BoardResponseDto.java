@@ -1,4 +1,4 @@
-package com.example.backend.board.dto;
+package com.example.backend.board.dto.response;
 
 import com.example.backend.board.domain.Board;
 import com.example.backend.board.domain.Category;

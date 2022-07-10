@@ -1,6 +1,6 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.dto.ChatMessageRequestDto;
+import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.service.ChatMessageService;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.token.AuthToken;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
