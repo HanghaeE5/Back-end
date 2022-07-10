@@ -28,11 +28,18 @@ public class ChatMessageService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        System.out.println("==========================3");
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
+        System.out.println("=======================4");
         Participant participant = new Participant(user, chatRoom);
+        System.out.println("===========================5");
         participantRepository.save(participant);
+        System.out.println("============================6");
+        chatRoom.addParticipant(participant);
+        System.out.println("========================7");
+        user.addParticipant(participant);
     }
 
 
@@ -62,7 +69,7 @@ public class ChatMessageService {
             message.setMessage(message.getSender() + "님이 방에서 나갔습니다.");
             message.setSender("[알림]");
         }
-        messageSendingOperations.convertAndSend("/sub/chat/room" + message.getRoomId(), message);
+        messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
 }

@@ -12,6 +12,8 @@ public class ParticipantResponseDto {
     private UserResponseDto user;
 
     public ParticipantResponseDto(Participant participant) {
+        System.out.println("==========================10");
         this.user = new UserResponseDto(participant.getUser());
+        System.out.println("==========================11");
     }
 }

@@ -37,16 +37,36 @@ public class ChatRoomService {
     // 단체 톡방
     @Transactional
     public ChatRoomResponseDto createPublicRoom(ChatRoomPublicRequestDto requestDto, String email) {
+        ChatRoom chatRoom = new ChatRoom(requestDto);
+        System.out.println("=============================1");
+        chatRoomRepository.save(chatRoom);
+        System.out.println("==============================2");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        ChatRoom room = new ChatRoom(requestDto);
-        chatRoomRepository.save(room);
-        Participant participant = new Participant(user, room);
+        System.out.println("==============================3");
+        Participant participant = new Participant(user, chatRoom);
+        System.out.println("============================4");
         participantRepository.save(participant);
-        room.addParticipant(participant);
+        System.out.println("=================================5");
+        chatRoom.addParticipant(participant);
+        System.out.println("==================================6");
         user.addParticipant(participant);
-        return new ChatRoomResponseDto(room);
+        System.out.println("============================7");
+        ChatRoomResponseDto responseDto = new ChatRoomResponseDto(chatRoom);
+        System.out.println("===========================13");
+        return responseDto;
+    }
+
+    @Transactional
+    public ChatRoomResponseDto createPublicRoom(ChatRoomPublicRequestDto requestDto, String email) {
+        ChatRoom chatRoom = new ChatRoom(requestDto);
+        System.out.println("=============================1");
+        chatRoomRepository.save(chatRoom);
+        System.out.println("==============================2");
+        chatMessageService.addParticipant(email, chatRoom.getRoomId());
+        System.out.println("==============================9");
+        return new ChatRoomResponseDto(chatRoom);
     }
 
     @Transactional

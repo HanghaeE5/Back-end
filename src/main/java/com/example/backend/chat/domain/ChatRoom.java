@@ -23,7 +23,7 @@ public class ChatRoom extends BaseTime {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<Participant> participantList = new ArrayList<>();
 
     public ChatRoom(ChatRoomPrivateRequestDto requestDto) {
