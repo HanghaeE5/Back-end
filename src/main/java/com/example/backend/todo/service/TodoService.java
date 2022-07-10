@@ -6,7 +6,7 @@ import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.todo.dto.TodoScopeRequestDto;
+import com.example.backend.todo.dto.request.TodoScopeRequestDto;
 import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.todo.dto.response.TodoDoneResponseDto;
@@ -90,7 +90,6 @@ public class TodoService {
 
     @Transactional
     public TodoDoneResponseDto done(String email, Long id) {
-
         Todo todo = getTodo(id, email);
         todo.done();
         return characterService.upgrade(email, todo);

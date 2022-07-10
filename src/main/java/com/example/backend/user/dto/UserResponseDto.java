@@ -1,5 +1,6 @@
 package com.example.backend.user.dto;
 
+import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.user.domain.ProviderType;
 import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.domain.User;
@@ -24,6 +25,7 @@ public class UserResponseDto {
     private LocalDateTime createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedDate;
+    private CharacterResponseDto characterInfo;
 
     public UserResponseDto(User user){
         this.id = user.getUserSeq();
@@ -35,5 +37,18 @@ public class UserResponseDto {
         this.roleType = user.getRoleType();
         this.createdDate = user.getCreatedDate();
         this.modifiedDate = user.getModifiedDate();
+    }
+
+    public UserResponseDto(User user, CharacterResponseDto characterResponseDto){
+        this.id = user.getUserSeq();
+        this.userId = user.getUserId();
+        this.nick = user.getUsername();
+        this.email = user.getEmail();
+        this.profileImageUrl = user.getProfileImageUrl();
+        this.providerType = user.getProviderType();
+        this.roleType = user.getRoleType();
+        this.createdDate = user.getCreatedDate();
+        this.modifiedDate = user.getModifiedDate();
+        this.characterInfo = characterResponseDto;
     }
 }

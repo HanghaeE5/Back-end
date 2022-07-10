@@ -1,6 +1,7 @@
 package com.example.backend.character.controller;
 
 import com.example.backend.character.domain.Type;
+import com.example.backend.character.dto.CharacterRequestDto;
 import com.example.backend.character.service.CharacterService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.common.LoadUser;
@@ -23,10 +24,10 @@ public class CharacterController {
     @ApiOperation(value = "캐릭터 초기 설정")
     @PostMapping("/select")
     public ResponseEntity<String> selectCharacter(
-            @RequestBody Type type
+            @RequestBody CharacterRequestDto requestDto
     ) {
         LoadUser.loginAndNickCheck();
-        characterService.selectCharacter(LoadUser.getEmail(), type);
+        characterService.selectCharacter(LoadUser.getEmail(), requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.CHARACTER_SELECTED.getMsg());

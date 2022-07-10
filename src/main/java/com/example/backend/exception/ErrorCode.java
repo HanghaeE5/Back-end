@@ -61,7 +61,7 @@ public enum ErrorCode {
     EXISTING_FRIEND(HttpStatus.BAD_REQUEST, "400", "친구입니다"),
 
     // 캐릭터
-    CHARCTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다"),;
+    CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다");
 
     // 추후 추가 코드
 

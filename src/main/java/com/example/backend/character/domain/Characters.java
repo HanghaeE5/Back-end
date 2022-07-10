@@ -1,5 +1,6 @@
 package com.example.backend.character.domain;
 
+import com.example.backend.character.dto.CharacterRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.user.domain.User;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,10 +29,10 @@ public class Characters extends BaseTime {
     private Step step;
 
     @Column
-    private Long level;
+    private Integer level;
 
     @Column
-    private int exp;
+    private Integer exp;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "USER_SEQ")
@@ -38,13 +40,34 @@ public class Characters extends BaseTime {
     private User user;
 
     @OneToMany(mappedBy = "character")
-    private List<Todo> todoList;
+    private List<Todo> todoList = new ArrayList<>();
 
-    public Characters(User user, Type type) {
+    public Characters(CharacterRequestDto requestDto, User user) {
         this.user = user;
-        this.type = type;
+        this.type = requestDto.getType();
         this.step = Step.FIRST;
-        this.level = 1L;
+        this.level = 1;
         this.exp = 0;
+    }
+
+    public void addExp() {
+        this.exp += 1;
+    }
+
+    public void levelUp() {
+        this.exp = 0;
+        this.level += 1;
+    }
+
+    public void stepUp() {
+        if (this.step == Step.FIRST) {
+            this.step = Step.SECOND;
+        } else {
+            this.step = Step.THIRD;
+        }
+    }
+
+    public void addTodo(Todo todo) {
+        this.todoList.add(todo);
     }
 }

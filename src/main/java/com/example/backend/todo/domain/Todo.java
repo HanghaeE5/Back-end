@@ -99,4 +99,8 @@ public class Todo extends BaseTime {
     public void changeNull() {
         this.board = null;
     }
+
+    public void addCharacter(Characters character) {
+        this.character = character;
+    }
 }

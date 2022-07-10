@@ -5,7 +5,7 @@ import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.todo.dto.response.TodoDoneResponseDto;
 import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
-import com.example.backend.todo.dto.TodoScopeRequestDto;
+import com.example.backend.todo.dto.request.TodoScopeRequestDto;
 import com.example.backend.todo.service.TodoService;
 import com.example.backend.user.common.LoadUser;
 import io.swagger.annotations.ApiImplicitParam;
