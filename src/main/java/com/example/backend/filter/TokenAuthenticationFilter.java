@@ -30,17 +30,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)  throws ServletException, IOException {
 
 
-        request.getHeaderNames().asIterator().forEachRemaining(
-                header -> log.info("header name = {}, vlaue = {}", header, request.getHeader(header)));
-
+//        request.getHeaderNames().asIterator().forEachRemaining(
+//                header -> log.info("header name = {}, vlaue = {}", header, request.getHeader(header)));
+//        log.info(tokenStr);
         String tokenStr = HeaderUtil.getAccessToken(request);
-        log.info(tokenStr);
+
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         if (token.validate()) {
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        log.info("getRequestURI : " + request.getRequestURI());
+//        log.info("getRequestURI : " + request.getRequestURI());
         filterChain.doFilter(request, response);
     }
 }

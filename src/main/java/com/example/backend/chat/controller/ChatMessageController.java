@@ -24,16 +24,19 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDto message, @Header("Authorization") String tokenStr) {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-        String name = token.getTokenClaims().getId();
+        String email = token.getTokenClaims().getSubject();
+        String name = message.getSender();
+        log.info(email);
+        log.info(name);
         log.info(message.getMessage());
         log.info(message.getRoomId());
         log.info(message.getType().toString());
         // 입장, 퇴장 시 Participant 에 추가
         if (ChatMessageRequestDto.MessageType.ENTER.equals((message.getType()))) {
-            chatMessageService.addParticipant(LoadUser.getEmail(), message.getRoomId());
+            chatMessageService.addParticipant(email, message.getRoomId());
             message.setMessage(name + "님이 입장했습니다");
         } else if (ChatMessageRequestDto.MessageType.QUIT.equals((message.getType()))) {
-            chatMessageService.deleteParticipant(LoadUser.getEmail(), message.getRoomId());
+            chatMessageService.deleteParticipant(email, message.getRoomId());
             message.setMessage(name + "님이 퇴장했습니다");
         } else {
             message.setSender(name);
