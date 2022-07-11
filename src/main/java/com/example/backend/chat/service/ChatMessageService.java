@@ -35,7 +35,6 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatMessageService chatMessageService;
 
     @Transactional
     public void addParticipant(String email, String roomId) {
@@ -79,7 +78,7 @@ public class ChatMessageService {
         log.info("getSender : " + message.getSender());
         System.out.println(message);
 
-        chatMessageService.saveChatMessage(message);
+        this.saveChatMessage(message);
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
