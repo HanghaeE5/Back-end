@@ -1,5 +1,6 @@
 package com.example.backend.chat.domain;
 
+import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import lombok.Getter;
@@ -24,18 +25,22 @@ public class ChatRoom extends BaseTime {
     @Column
     private String name;
 
+    @Column
+    private Type type;
+
     @OneToMany(mappedBy = "chatRoom")
     private List<Participant> participantList = new ArrayList<>();
 
-    // 일대일 채팅방 보류
-//    public ChatRoom(ChatRoomPrivateRequestDto requestDto) {
-//        this.roomId = UUID.randomUUID().toString();
-//        this.name = requestDto.getName();
-//    }
+    public ChatRoom(ChatRoomPrivateRequestDto requestDto) {
+        this.roomId = UUID.randomUUID().toString();
+        this.name = requestDto.getName();
+        this.type = Type.PRIVATE;
+    }
 
     public ChatRoom(ChatRoomPublicRequestDto requestDto) {
         this.roomId = UUID.randomUUID().toString();
         this.name = requestDto.getName();
+        this.type = Type.PUBLIC;
     }
 
     public ChatRoom(String name) {
