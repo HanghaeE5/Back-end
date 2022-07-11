@@ -28,8 +28,9 @@ public class StompHandler implements ChannelInterceptor {
 
             String tokenStr = accessor.getFirstNativeHeader("Authorization");
             AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-            token.validate();
             log.info("연결됨");
+            log.info("나는 websoket에서 받는 토큰이다 : "+token.getToken());
+            token.validate();
 
         }
 
