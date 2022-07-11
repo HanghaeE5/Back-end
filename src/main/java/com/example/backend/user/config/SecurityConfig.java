@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/ws/*");
+        web.ignoring().antMatchers("/ws/**");
     }
 
     @Override
@@ -78,9 +78,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                .antMatchers("*").permitAll()
-//                .antMatchers("**").permitAll()
-//                .antMatchers("/*").permitAll()
+                 .antMatchers("/sub/**").permitAll()
+                 .antMatchers("/pub/**").permitAll()
+                 .antMatchers("/ws/**").permitAll()
+                .antMatchers("/sub").permitAll()
+                .antMatchers("/ws").permitAll()
+                .antMatchers("/pub").permitAll()
 
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
