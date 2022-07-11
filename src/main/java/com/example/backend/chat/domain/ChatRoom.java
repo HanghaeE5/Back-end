@@ -6,10 +6,7 @@ import com.example.backend.common.domain.BaseTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +22,8 @@ public class ChatRoom extends BaseTime {
     @Column
     private String name;
 
-    @Column
+    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private Type type;
 
     @OneToMany(mappedBy = "chatRoom")
@@ -43,9 +41,11 @@ public class ChatRoom extends BaseTime {
         this.type = Type.PUBLIC;
     }
 
+    //BoardService에서 사용
     public ChatRoom(String name) {
         this.roomId = UUID.randomUUID().toString();
         this.name = name;
+        this.type = Type.PUBLIC;
     }
 
     public void addParticipant(Participant participant) {

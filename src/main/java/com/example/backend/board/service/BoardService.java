@@ -12,6 +12,7 @@ import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
+import com.example.backend.chat.domain.Type;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;
@@ -69,7 +70,6 @@ public class BoardService {
                  && requestDto.getTodo() != null){
             saveTodo(user, requestDto.getTodo(), saveBoard);
             saveBoard.addParticipatingCount();
-
             ChatRoom chatRoom = chatRoomRepository.save(new ChatRoom(saveBoard.getTitle()));
             saveBoard.saveChatRoomId(chatRoom.getRoomId());
             participantRepository.save(new Participant(user, chatRoom));
