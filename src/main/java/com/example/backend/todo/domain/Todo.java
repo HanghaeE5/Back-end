@@ -45,8 +45,8 @@ public class Todo extends BaseTime {
     private Board board;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    private Characters character;
+    @JoinColumn(nullable = true)
+    private Characters character = null;
 
     public Todo(TodoRequestDto requestDto, User user, Date tododate) {
         this.content = requestDto.getContent();
