@@ -25,9 +25,9 @@ public class StompHandler implements ChannelInterceptor {
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
 
-//            String tokenStr = accessor.getFirstNativeHeader("Authorization");
-//            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-//            token.validate();
+            String tokenStr = accessor.getFirstNativeHeader("Authorization");
+            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+            token.validate();
             log.info("연결됨");
 
         }
