@@ -168,7 +168,9 @@ public class BoardService {
             board.addParticipatingCount();
         }
 
-        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 ){
+            awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        }
         board.update(requestDto.getBoard(), user);
 
     }
