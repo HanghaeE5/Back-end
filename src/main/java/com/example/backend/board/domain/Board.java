@@ -42,6 +42,9 @@ public class Board extends BaseTime {
     @ColumnDefault("0")
     private Long participatingCount;
 
+    @Column
+    private String chatRoomId;
+
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     @BatchSize(size=100)
     private Set<BoardTodo> boardTodo = new LinkedHashSet<>();
@@ -71,4 +74,8 @@ public class Board extends BaseTime {
         this.participatingCount = this.participatingCount + 1;
     }
 
+
+    public void saveChatRoomId(String chatRoomId){
+        this.chatRoomId = chatRoomId;
+    }
 }

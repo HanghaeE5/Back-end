@@ -56,14 +56,11 @@ public class ChatRoomService {
     // 단체 톡방
     @Transactional
     public ChatRoomResponseDto createPublicRoom(ChatRoomPublicRequestDto requestDto, String email) {
-        ChatRoom room = new ChatRoom(requestDto);
-        chatRoomRepository.save(room);
+        ChatRoom chatRoom = chatRoomRepository.save(new ChatRoom(requestDto));
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        ChatRoom chatRoom = chatRoomRepository.findById(room.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
+        
         Participant participant = new Participant(user, chatRoom);
         participantRepository.save(participant);
         chatRoom.addParticipant(participant);

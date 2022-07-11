@@ -1,23 +1,16 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.domain.MessageType;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
-import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.service.ChatMessageService;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Slf4j
 @Controller
@@ -33,20 +26,16 @@ public class ChatMessageController {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         String email = token.getTokenClaims().getSubject();
         String name = message.getSender();
-
-
         log.info(email);
         log.info(name);
         log.info(message.getMessage());
         log.info(message.getRoomId());
         log.info(message.getType().toString());
-
-
         // 입장, 퇴장 시 Participant 에 추가
-        if (MessageType.ENTER.equals((message.getType()))) {
+        if (ChatMessageRequestDto.MessageType.ENTER.equals((message.getType()))) {
             chatMessageService.addParticipant(email, message.getRoomId());
             message.setMessage(name + "님이 입장했습니다");
-        } else if (MessageType.QUIT.equals((message.getType()))) {
+        } else if (ChatMessageRequestDto.MessageType.QUIT.equals((message.getType()))) {
             chatMessageService.deleteParticipant(email, message.getRoomId());
             message.setMessage(name + "님이 퇴장했습니다");
         } else {
@@ -56,12 +45,4 @@ public class ChatMessageController {
         chatMessageService.sendChatMessage(message);
     }
 
-    @ResponseBody
-    @GetMapping("/chat/message/before")
-    public ResponseEntity<Page<ChatMessageResponseDto>> getSavedMessages(
-            @RequestParam String roomId
-    ) {
-        Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
-    }
 }
