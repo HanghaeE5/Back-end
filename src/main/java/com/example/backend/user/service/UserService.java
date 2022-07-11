@@ -44,8 +44,9 @@ public class UserService {
     private final AuthTokenProvider tokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
-
     private final AwsS3Service awsS3Service;
+    @Value("${basic.profile.img}")
+    private String basicImg;
 
     @Value("${spring.mail.username}")
     private String adminMail;
@@ -118,6 +119,7 @@ public class UserService {
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .roleType(RoleType.USER)
                 .providerType(ProviderType.LOCAL)
+                .profileImageUrl(basicImg)
                 .build();
 
         userRepository.save(user);
@@ -300,7 +302,9 @@ public class UserService {
     public UserResponseDto updateProfile(MultipartFile file, String email) {
         User user = getUser(email);
 
-        awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        if (!basicImg.equals(user.getProfileImageUrl())){
+            awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        }
 
         user.updateProfileImage(awsS3Service.uploadImage(file));
 
