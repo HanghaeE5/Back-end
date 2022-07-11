@@ -1,5 +1,6 @@
 package com.example.backend.user.domain;
 
+import com.example.backend.character.domain.Characters;
 import com.example.backend.chat.domain.Participant;
 import com.example.backend.common.domain.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -70,6 +71,9 @@ public class User extends BaseTime {
 
     @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
     private List<Participant> participantList = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Characters characters;
 
     public User(
             @Size(max = 64) String userId,

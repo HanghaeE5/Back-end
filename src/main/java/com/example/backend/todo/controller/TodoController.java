@@ -2,6 +2,9 @@ package com.example.backend.todo.controller;
 
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.todo.dto.request.TodoRequestDto;
+import com.example.backend.todo.dto.response.TodoDoneResponseDto;
+import com.example.backend.todo.dto.response.TodoResponseDto;
+import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.dto.request.TodoScopeRequestDto;
 import com.example.backend.todo.service.TodoService;
@@ -57,18 +60,16 @@ public class TodoController {
     }
 
 
-    // done() 함수 만들어서 state 변경
+    // done() 함수 만들어서 state 변경 + 캐릭터 경험치 up
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "Todo 완료")
     @PostMapping("/todo/{id}")
-    public ResponseEntity<String> doneTodo(
+    public ResponseEntity<TodoDoneResponseDto> doneTodo(
             @PathVariable Long id
     ) {
         LoadUser.loginAndNickCheck();
-        todoService.done(LoadUser.getEmail(), id);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
-                .body(MsgEnum.TODO_DONE.getMsg());
+        TodoDoneResponseDto responseDto = todoService.done(LoadUser.getEmail(), id);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
 
@@ -78,7 +79,7 @@ public class TodoController {
     @PutMapping("/todo/{id}")
     public ResponseEntity<String> updateTodo(
             @PathVariable Long id,
-            @RequestBody TodoRequestDto requestDto
+            @RequestBody TodoUpdateRequestDto requestDto
     ) throws ParseException {
         LoadUser.loginAndNickCheck();
         todoService.update(requestDto, LoadUser.getEmail(), id);

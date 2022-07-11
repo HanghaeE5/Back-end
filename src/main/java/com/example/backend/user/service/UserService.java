@@ -1,5 +1,7 @@
 package com.example.backend.user.service;
 
+import com.example.backend.character.dto.CharacterResponseDto;
+import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
@@ -36,6 +38,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class UserService {
 
+    private final CharacterService characterService;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -292,8 +295,8 @@ public class UserService {
     }
 
     public UserResponseDto getUserInfo(String email) {
-        UserResponseDto userResponseDto = new UserResponseDto(getUser(email));
-        return userResponseDto;
+        CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(email);
+        return new UserResponseDto(getUser(email), characterResponseDto);
     }
 
     @Transactional
@@ -314,9 +317,7 @@ public class UserService {
 
         user.updateNick(nick);
 
-        UserResponseDto userResponseDto = new UserResponseDto(user);
-
-        return userResponseDto;
+        return new UserResponseDto(user);
     }
 
     private User getUser(String email) {

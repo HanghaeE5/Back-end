@@ -1,10 +1,16 @@
 package com.example.backend.todo.service;
 
-import com.example.backend.board.domain.Board;
 import com.example.backend.board.repository.BoardRepository;
+import com.example.backend.character.repository.CharacterRepository;
+import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.todo.domain.Todo;
+import com.example.backend.todo.dto.request.TodoScopeRequestDto;
+import com.example.backend.todo.dto.request.TodoRequestDto;
+import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
+import com.example.backend.todo.dto.response.TodoDoneResponseDto;
+import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.dto.request.TodoScopeRequestDto;
@@ -33,6 +39,8 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final CharacterService characterService;
+    private final CharacterRepository characterRepository;
 
     @Transactional
     public Page<TodoResponseDto> getTodoList(String email, String filter, Integer page, Integer size, String sort) {
@@ -73,37 +81,26 @@ public class TodoService {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        if (requestDto.getBoardId() != null) {
-            Board board = boardRepository.findById(requestDto.getBoardId()).orElseThrow(
-                    () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
-            );
-            for (String todoDate : requestDto.getTodoDateList()) {
-                Date date = formatter.parse(todoDate);
-                todoList.add(new Todo(requestDto, user, board, date));
-            }
+        for (String todoDate : requestDto.getTodoDateList()) {
+            Date date = formatter.parse(todoDate);
+            todoList.add(new Todo(requestDto, user, date));
         }
-        else {
-            for (String todoDate : requestDto.getTodoDateList()) {
-                Date date = formatter.parse(todoDate);
-                todoList.add(new Todo(requestDto, user, date));
-            }
-        }
+
         todoRepository.saveAll(todoList);
 
     }
 
 
     @Transactional
-    public void done(String email, Long id) {
-
+    public TodoDoneResponseDto done(String email, Long id) {
         Todo todo = getTodo(id, email);
         todo.done();
-
+        return characterService.upgrade(email, todo);
     }
 
 
     @Transactional
-    public void update(TodoRequestDto requestDto, String email, Long id) throws ParseException {
+    public void update(TodoUpdateRequestDto requestDto, String email, Long id) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(requestDto.getTodoDate());
