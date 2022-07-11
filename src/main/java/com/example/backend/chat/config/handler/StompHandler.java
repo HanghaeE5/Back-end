@@ -21,6 +21,7 @@ public class StompHandler implements ChannelInterceptor {
     // websocket 요청 시 실행
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        log.info("StompHandler preSend 접근");
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
