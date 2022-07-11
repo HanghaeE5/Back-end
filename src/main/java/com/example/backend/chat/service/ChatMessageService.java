@@ -78,7 +78,7 @@ public class ChatMessageService {
         log.info("getSender : " + message.getSender());
         System.out.println(message);
 
-        chatMessageService.saveChatMessage(message);
+        this.saveChatMessage(message);
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
