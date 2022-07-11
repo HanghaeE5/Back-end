@@ -25,6 +25,10 @@ public class BoardResponseDto {
 
     private String authorEmail;
 
+    private String authorNick;
+
+    private String authorProfileImageUrl;
+
     @ApiModelProperty(value="단일 건 조회시, 참여중인지 아닌")
     private boolean isParticipating;
 
@@ -45,6 +49,8 @@ public class BoardResponseDto {
         this.boardCreatedDate = board.getCreatedDate();
         this.todos = BoardTodoResponseDto.getBoardTodoList(board.getBoardTodo());
         this.authorEmail = board.getUser().getEmail();
+        this.authorNick = board.getUser().getUsername();
+        this.authorProfileImageUrl = board.getUser().getProfileImageUrl();
         this.isParticipating = isParticipating;
         this.ParticipatingCount = board.getParticipatingCount();
 
@@ -59,6 +65,8 @@ public class BoardResponseDto {
         this.boardCreatedDate = board.getCreatedDate();
         this.todos = BoardTodoResponseDto.getBoardTodoList(board.getBoardTodo());
         this.authorEmail = board.getUser().getEmail();
+        this.authorNick = board.getUser().getUsername();
+        this.authorProfileImageUrl = board.getUser().getProfileImageUrl();
         this.ParticipatingCount = board.getParticipatingCount();
     }
 

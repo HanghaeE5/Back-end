@@ -143,7 +143,9 @@ public class BoardService {
             throw new CustomException(ErrorCode.CHALLENGE_NOT_DELETE);
             //삭제하려면 신청한 사람의 TODO를 어떻게 처리할지 생각해야함
         }
-        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 ){
+            awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        }
         boardRepository.deleteById(id);
     }
 
@@ -166,7 +168,9 @@ public class BoardService {
             board.addParticipatingCount();
         }
 
-        awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 ){
+            awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        }
         board.update(requestDto.getBoard(), user);
 
     }
