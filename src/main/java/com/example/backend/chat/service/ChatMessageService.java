@@ -35,7 +35,6 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatMessageService chatMessageService;
 
     @Transactional
     public void addParticipant(String email, String roomId) {
