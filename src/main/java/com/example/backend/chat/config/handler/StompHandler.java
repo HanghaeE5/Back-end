@@ -21,19 +21,15 @@ public class StompHandler implements ChannelInterceptor {
     // websocket 요청 시 실행
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-
         log.info("StompHandler preSend 접근");
-
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
 
             String tokenStr = accessor.getFirstNativeHeader("Authorization");
             AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-
             log.info("연결됨");
             log.info("나는 websoket에서 받는 토큰이다 : "+token.getToken());
-
             token.validate();
 
         }

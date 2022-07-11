@@ -22,7 +22,7 @@ public class ChatRoom extends BaseTime {
     @Column
     private String name;
 
-    @Column
+    @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Type type;
 
@@ -38,6 +38,13 @@ public class ChatRoom extends BaseTime {
     public ChatRoom(ChatRoomPublicRequestDto requestDto) {
         this.roomId = UUID.randomUUID().toString();
         this.name = requestDto.getName();
+        this.type = Type.PUBLIC;
+    }
+
+    //BoardService에서 사용
+    public ChatRoom(String name) {
+        this.roomId = UUID.randomUUID().toString();
+        this.name = name;
         this.type = Type.PUBLIC;
     }
 

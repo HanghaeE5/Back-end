@@ -140,7 +140,6 @@ public class User extends BaseTime {
         this.publicScope = this.publicScope == null ? PublicScope.ALL : this.publicScope;
     }
 
-
     public void addParticipant(Participant participant) {
         this.participantList.add(participant);
     }
