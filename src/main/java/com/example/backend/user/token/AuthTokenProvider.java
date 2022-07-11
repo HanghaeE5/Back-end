@@ -50,7 +50,6 @@ public class AuthTokenProvider {
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
             String nick = claims.get("nick")!=null ? claims.get("nick").toString() : "";
-            log.info(claims.getSubject());
             User principal = new User(claims.getSubject(), nick, authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
