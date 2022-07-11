@@ -10,6 +10,7 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatMessageService {
 
     private final SimpMessageSendingOperations messageSendingOperations;
@@ -61,6 +63,12 @@ public class ChatMessageService {
                 || ChatMessageRequestDto.MessageType.QUIT.equals(message.getType())) {
             message.setSender("[알림]");
         }
+
+        log.info("getMessage : " + message.getMessage());
+        log.info("message.getRoomId() : " + message.getRoomId());
+        log.info("getSender : " + message.getSender());
+        System.out.println(message.toString());
+
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
