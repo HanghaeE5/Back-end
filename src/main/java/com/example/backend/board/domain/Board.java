@@ -1,6 +1,6 @@
 package com.example.backend.board.domain;
 
-import com.example.backend.board.dto.BoardRequestDto;
+import com.example.backend.board.dto.request.BoardRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.user.domain.User;
 import lombok.AllArgsConstructor;
@@ -56,6 +56,7 @@ public class Board extends BaseTime {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.imageUrl = requestDto.getImageUrl();
+        this.participatingCount = 0L;
     }
 
     public void update(BoardRequestDto requestDto, User user){

@@ -1,6 +1,9 @@
 package com.example.backend.board.controller;
 
 import com.example.backend.board.dto.*;
+import com.example.backend.board.dto.request.RequestDto;
+import com.example.backend.board.dto.response.BoardResponseDto;
+import com.example.backend.board.dto.response.PageBoardResponseDto;
 import com.example.backend.board.service.BoardService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.todo.dto.request.TodoRequestDto;

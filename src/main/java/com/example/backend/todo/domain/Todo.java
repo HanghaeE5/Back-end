@@ -3,7 +3,7 @@ package com.example.backend.todo.domain;
 import com.example.backend.board.domain.Board;
 import com.example.backend.character.domain.Characters;
 import com.example.backend.board.domain.BoardTodo;
-import com.example.backend.board.dto.BoardTodoRequestDto;
+import com.example.backend.board.dto.request.BoardTodoRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.user.domain.User;

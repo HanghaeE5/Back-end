@@ -19,6 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CorsProperties corsProperties;
@@ -52,6 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
+    @Override public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/ws/**");
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -61,6 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf().disable()
+                .headers() 
+                .frameOptions().sameOrigin().and() // SockJS는 기본적으로 HTML iframe 요소를 통한 전송을 허용하지 않도록 설정되는데 해당 내용을 해제한다.
                 .formLogin().disable()
                 .httpBasic().disable()
                 .exceptionHandling()
@@ -69,21 +78,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/sub/**").permitAll()
+                .antMatchers("/pub/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/sub").permitAll()
+                .antMatchers("/ws").permitAll()
+                .antMatchers("/pub").permitAll()
+
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
+
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/refresh").permitAll()
                 .antMatchers("/register/**").permitAll()
                 .antMatchers("/refresh").permitAll()
+
                 .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
-//                .antMatchers("/sub/**").hasAnyAuthority(RoleType.USER.getCode())
-//                .antMatchers("/pub/**").hasAnyAuthority(RoleType.USER.getCode())
-//                .antMatchers("/ws/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/user/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/chat/**").hasAnyAuthority(RoleType.USER.getCode())

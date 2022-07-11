@@ -3,6 +3,7 @@ package com.example.backend.chat.config.handler;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -11,6 +12,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
 
@@ -19,12 +21,19 @@ public class StompHandler implements ChannelInterceptor {
     // websocket 요청 시 실행
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
+
+        log.info("StompHandler preSend 접근");
+
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
 
             String tokenStr = accessor.getFirstNativeHeader("Authorization");
             AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+
+            log.info("연결됨");
+            log.info("나는 websoket에서 받는 토큰이다 : "+token.getToken());
+
             token.validate();
 
         }

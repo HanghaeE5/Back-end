@@ -1,5 +1,7 @@
-package com.example.backend.chat.dto;
+package com.example.backend.chat.dto.request;
 
+import com.example.backend.chat.domain.MessageType;
+import com.example.backend.common.domain.BaseTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -8,6 +10,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class ChatMessageRequestDto {
 
     @ApiModelProperty(value = "메세지 타입", example = "ENTER/TALK/QUIT", required = true)
@@ -22,15 +25,4 @@ public class ChatMessageRequestDto {
     @ApiModelProperty(value = "메세지 내용", required = true)
     private String message;
 
-    public enum MessageType {
-        ENTER, TALK, QUIT
-    }
-
-    @Builder
-    public ChatMessageRequestDto(MessageType type, String roomId, String sender, String message) {
-        this.type = type;
-        this.roomId = roomId;
-        this.sender = sender;
-        this.message = message;
-    }
 }

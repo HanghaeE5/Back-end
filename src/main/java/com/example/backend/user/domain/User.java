@@ -10,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -69,7 +70,7 @@ public class User extends BaseTime {
     private PublicScope publicScope;
 
     @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
-    private List<Participant> participantList;
+    private List<Participant> participantList = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Characters characters;
@@ -144,4 +145,7 @@ public class User extends BaseTime {
     }
 
 
+    public void addParticipant(Participant participant) {
+        this.participantList.add(participant);
+    }
 }
