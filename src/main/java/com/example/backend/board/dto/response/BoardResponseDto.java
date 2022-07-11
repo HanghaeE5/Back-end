@@ -29,6 +29,8 @@ public class BoardResponseDto {
 
     private String authorProfileImageUrl;
 
+    private String chatRoomId;
+
     @ApiModelProperty(value="단일 건 조회시, 참여중인지 아닌")
     private boolean isParticipating;
 
@@ -53,7 +55,7 @@ public class BoardResponseDto {
         this.authorProfileImageUrl = board.getUser().getProfileImageUrl();
         this.isParticipating = isParticipating;
         this.ParticipatingCount = board.getParticipatingCount();
-
+        this.chatRoomId = board.getChatRoomId();
     }
 
     public BoardResponseDto(Board board) {
@@ -68,6 +70,7 @@ public class BoardResponseDto {
         this.authorNick = board.getUser().getUsername();
         this.authorProfileImageUrl = board.getUser().getProfileImageUrl();
         this.ParticipatingCount = board.getParticipatingCount();
+        this.chatRoomId = board.getChatRoomId();
     }
 
     public static List<BoardResponseDto> getDtoList(List<Board> boardList){

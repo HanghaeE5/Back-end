@@ -10,6 +10,10 @@ import com.example.backend.board.dto.response.BoardResponseDto;
 import com.example.backend.board.dto.response.PageBoardResponseDto;
 import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
+import com.example.backend.chat.domain.ChatRoom;
+import com.example.backend.chat.domain.Participant;
+import com.example.backend.chat.repository.ChatRoomRepository;
+import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
@@ -45,6 +49,9 @@ public class BoardService {
     private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
 
+    private final ChatRoomRepository chatRoomRepository;
+
+    private final ParticipantRepository participantRepository;
 
     public String saveImage(MultipartFile file){
         if (file.isEmpty()){
@@ -62,6 +69,10 @@ public class BoardService {
                  && requestDto.getTodo() != null){
             saveTodo(user, requestDto.getTodo(), saveBoard);
             saveBoard.addParticipatingCount();
+
+            ChatRoom chatRoom = chatRoomRepository.save(new ChatRoom(saveBoard.getTitle()));
+            saveBoard.saveChatRoomId(chatRoom.getRoomId());
+            participantRepository.save(new Participant(user, chatRoom));
         }
     }
 
@@ -166,6 +177,10 @@ public class BoardService {
         if (requestDto.getBoard().getCategory().equals(Category.CHALLENGE)){
             saveTodo(user, requestDto.getTodo(), board);
             board.addParticipatingCount();
+
+            ChatRoom chatRoom = chatRoomRepository.save(new ChatRoom(requestDto.getBoard().getTitle()));
+            board.saveChatRoomId(chatRoom.getRoomId());
+            participantRepository.save(new Participant(user, chatRoom));
         }
 
         if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 ){

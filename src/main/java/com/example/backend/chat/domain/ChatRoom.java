@@ -38,6 +38,11 @@ public class ChatRoom extends BaseTime {
         this.name = requestDto.getName();
     }
 
+    public ChatRoom(String name) {
+        this.roomId = UUID.randomUUID().toString();
+        this.name = name;
+    }
+
     public void addParticipant(Participant participant) {
         this.participantList.add(participant);
     }
