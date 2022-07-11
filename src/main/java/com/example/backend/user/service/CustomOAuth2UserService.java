@@ -10,6 +10,7 @@ import com.example.backend.user.oauth.info.OAuth2UserInfoFactory;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -27,6 +28,9 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+
+    @Value("${basic.profile.img}")
+    private String basicImg;
 
     @Override
     @Transactional
@@ -73,11 +77,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
+        String imageUrl = userInfo.getImageUrl() == null || userInfo.getImageUrl().isEmpty() ? basicImg : userInfo.getImageUrl();
         User user = new User(
                 userInfo.getId(),
                 userInfo.getEmail(),
                 "Y",
-                userInfo.getImageUrl(),
+                imageUrl,
                 providerType,
                 RoleType.USER
         );

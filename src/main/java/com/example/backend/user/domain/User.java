@@ -1,5 +1,6 @@
 package com.example.backend.user.domain;
 
+import com.example.backend.character.domain.Characters;
 import com.example.backend.chat.domain.Participant;
 import com.example.backend.common.domain.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -71,6 +72,9 @@ public class User extends BaseTime {
     @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
     private List<Participant> participantList = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Characters characters;
+
     public User(
             @Size(max = 64) String userId,
             @NotNull @Size(max = 512) String email,
@@ -83,7 +87,7 @@ public class User extends BaseTime {
         this.password = "NO_PASS";
         this.email = email != null ? email : "NO_EMAIL";
         this.emailVerifiedYn = emailVerifiedYn;
-        this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
+        this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/todowith.png";
         this.providerType = providerType;
         this.roleType = roleType;
     }
@@ -94,13 +98,14 @@ public class User extends BaseTime {
             @NotNull String password,
             @NotNull @Size(max = 512) String email,
             @NotNull ProviderType providerType,
-            @NotNull RoleType roleType
+            @NotNull RoleType roleType,
+            String profileImageUrl
     ) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.emailVerifiedYn = "Y";
-        this.profileImageUrl = "";
+        this.profileImageUrl = profileImageUrl;
         this.providerType = providerType;
         this.roleType = roleType;
         this.userId = email;
