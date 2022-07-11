@@ -96,9 +96,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
-                .antMatchers("/sub/**").hasAnyAuthority(RoleType.USER.getCode())
-                .antMatchers("/pub/**").hasAnyAuthority(RoleType.USER.getCode())
-                .antMatchers("/ws/**").hasAnyAuthority(RoleType.USER.getCode())
+//                 .antMatchers("/sub/**").hasAnyAuthority(RoleType.USER.getCode())
+//                 .antMatchers("/pub/**").hasAnyAuthority(RoleType.USER.getCode())
+//                 .antMatchers("/ws/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/user/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/chat/**").hasAnyAuthority(RoleType.USER.getCode())
