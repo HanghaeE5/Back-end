@@ -56,14 +56,12 @@ public class ChatMessageService {
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
-        Participant participant = new Participant();
         for (Participant p : room.getParticipantList()) {
             if (Objects.equals(p.getUser().getEmail(), email)) {
-                participant = p;
-                break;
+                participantRepository.deleteById(p.getId());
+                return;
             }
         }
-        participantRepository.deleteById(participant.getId());
     }
 
 
