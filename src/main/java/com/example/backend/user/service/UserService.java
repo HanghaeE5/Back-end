@@ -1,5 +1,7 @@
 package com.example.backend.user.service;
 
+import com.example.backend.character.dto.CharacterResponseDto;
+import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
@@ -36,6 +38,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class UserService {
 
+    private final CharacterService characterService;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -44,8 +47,9 @@ public class UserService {
     private final AuthTokenProvider tokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
-
     private final AwsS3Service awsS3Service;
+    @Value("${basic.profile.img}")
+    private String basicImg;
 
     @Value("${spring.mail.username}")
     private String adminMail;
@@ -118,6 +122,7 @@ public class UserService {
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .roleType(RoleType.USER)
                 .providerType(ProviderType.LOCAL)
+                .profileImageUrl(basicImg)
                 .build();
 
         userRepository.save(user);
@@ -292,15 +297,17 @@ public class UserService {
     }
 
     public UserResponseDto getUserInfo(String email) {
-        UserResponseDto userResponseDto = new UserResponseDto(getUser(email));
-        return userResponseDto;
+        CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(email);
+        return new UserResponseDto(getUser(email), characterResponseDto);
     }
 
     @Transactional
     public UserResponseDto updateProfile(MultipartFile file, String email) {
         User user = getUser(email);
 
-        awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        if (!basicImg.equals(user.getProfileImageUrl())){
+            awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+        }
 
         user.updateProfileImage(awsS3Service.uploadImage(file));
 
@@ -314,9 +321,7 @@ public class UserService {
 
         user.updateNick(nick);
 
-        UserResponseDto userResponseDto = new UserResponseDto(user);
-
-        return userResponseDto;
+        return new UserResponseDto(user);
     }
 
     private User getUser(String email) {

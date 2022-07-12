@@ -41,6 +41,12 @@ public class ChatRoom extends BaseTime {
         this.type = Type.PUBLIC;
     }
 
+    public ChatRoom(String name) {
+        this.roomId = UUID.randomUUID().toString();
+        this.name = name;
+        this.type = Type.PUBLIC;
+    }
+
     public void addParticipant(Participant participant) {
         this.participantList.add(participant);
     }
