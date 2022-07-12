@@ -56,6 +56,7 @@ public class ChatMessageController {
         chatMessageService.sendChatMessage(message);
     }
 
+    // 페이징 처리해야해서 나중에 쿼리 파라미터로 size, page 값을 받으므로 roomId 도 똑같은 형태로 받은 것!!
     @ResponseBody
     @GetMapping("/chat/message/before")
     public ResponseEntity<Page<ChatMessageResponseDto>> getSavedMessages(

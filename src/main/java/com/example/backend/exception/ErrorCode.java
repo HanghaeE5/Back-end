@@ -68,6 +68,10 @@ public enum ErrorCode {
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다"),
 
 
+    // 정렬 옵션
+    INVALID_SORTING_OPTION(HttpStatus.BAD_REQUEST, "400", "잘못된 sort 옵션입니다"),
+    INVALID_FILTER_OPTION(HttpStatus.BAD_REQUEST, "400", "잘못된 filter 옵션입니다"),
+
     ;
 
     // 추후 추가 코드

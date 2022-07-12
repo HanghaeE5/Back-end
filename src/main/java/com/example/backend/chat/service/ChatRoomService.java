@@ -30,8 +30,7 @@ public class ChatRoomService {
     // 일대일 채팅은 일단 보류
     @Transactional
     public ChatRoomResponseDto createPrivateRoom(ChatRoomPrivateRequestDto requestDto, String email) {
-        ChatRoom chatRoom = new ChatRoom(requestDto);
-        chatRoomRepository.save(chatRoom);
+
         // 나와 친구 둘다 채팅방에 참가자로 추가
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
@@ -39,9 +38,10 @@ public class ChatRoomService {
         User friend = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        ChatRoom room = chatRoomRepository.findById(chatRoom.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
+        // 이미 채팅방 있는지 확인
+        ChatRoom existingRoom = chatRoomRepository
+        // 채팅방 생성
+        ChatRoom room = chatRoomRepository.save(new ChatRoom(requestDto));
         Participant participantMe = new Participant(user, room);
         Participant participantYou = new Participant(friend, room);
         participantRepository.save(participantMe);

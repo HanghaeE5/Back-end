@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(value = "채팅방 객체", description = "채팅방 생성을 위한 객체")
+@ApiModel(value = "단체 채팅방 객체", description = "채팅방 생성을 위한 객체")
 @Getter
 @Setter
 public class ChatRoomPublicRequestDto {
