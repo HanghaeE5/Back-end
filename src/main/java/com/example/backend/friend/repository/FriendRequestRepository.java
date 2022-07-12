@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long> {
     List<FriendRequest> findAllByUserFromUserSeq(Long userSeq);
@@ -13,5 +14,5 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
     List<FriendRequest> findAllByUserToUserSeq(Long userSeq);
 
     @Query("select f from FriendRequest f where f.userFrom=:user and f.userTo=:userFriend")
-    FriendRequest findRelation(User user, User userFriend);
+    Optional<FriendRequest> findRelation(User user, User userFriend);
 }
