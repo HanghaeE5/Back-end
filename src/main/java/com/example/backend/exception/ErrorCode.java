@@ -59,9 +59,16 @@ public enum ErrorCode {
     // 친구
     EXISTING_REQUEST(HttpStatus.BAD_REQUEST, "400", "이미 친구추가를 보낸 사용자 입니다"),
     EXISTING_FRIEND(HttpStatus.BAD_REQUEST, "400", "친구입니다"),
+    SELF_REQUEST(HttpStatus.BAD_REQUEST, "400", "자신에게 친구추가를 보낼 수 없습니다"),
+    NO_FRIEND_REQUEST_TO(HttpStatus.NOT_FOUND, "404", "친구 요청을 보낸 적이 없습니다"),
+    NO_FRIEND_REQUEST_FROM(HttpStatus.NOT_FOUND, "404", "친구 요청을 받은 적이 없습니다"),
+    NOT_FRIEND(HttpStatus.BAD_REQUEST, "400", "친구가 아닙니다"),
 
     // 캐릭터
-    CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다");
+    CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다"),
+
+
+    ;
 
     // 추후 추가 코드
 

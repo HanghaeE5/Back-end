@@ -100,4 +100,15 @@ public class FriendRequestController {
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body("친구를 삭제했습니다");
     }
+
+    @ApiOperation(value = "친구 요청 취소")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @DeleteMapping("/cancel")
+    public ResponseEntity<String> cancelRequest(@RequestBody FriendRequestDto requestDto) {
+        LoadUser.loginAndNickCheck();
+        friendRequestService.cancel(LoadUser.getEmail(), requestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body("친구 요청을 취소했습니다");
+    }
 }

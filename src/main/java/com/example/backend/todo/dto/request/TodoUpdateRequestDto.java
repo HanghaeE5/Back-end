@@ -5,12 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-@ApiModel(value = "ToDo 객체", description = "ToDo를 수정 하기 위한 객체")
-
+@ApiModel(value = "ToDo 수정 객체", description = "ToDo를 수정 하기 위한 객체")
 public class TodoUpdateRequestDto {
 
     @ApiModelProperty(value = "내용", example = "1시간 운동하기", required = true)
