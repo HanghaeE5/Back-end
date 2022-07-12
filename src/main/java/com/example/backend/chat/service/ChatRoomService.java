@@ -2,6 +2,8 @@ package com.example.backend.chat.service;
 
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
+import com.example.backend.chat.domain.Type;
+import com.example.backend.chat.dto.request.ChatRoomExitRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
 import com.example.backend.chat.dto.response.ChatRoomResponseDto;
@@ -12,26 +14,26 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageService chatMessageService;
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
 
     // 일대일 채팅은 일단 보류
     @Transactional
     public ChatRoomResponseDto createPrivateRoom(ChatRoomPrivateRequestDto requestDto, String email) {
-        ChatRoom chatRoom = new ChatRoom(requestDto);
-        chatRoomRepository.save(chatRoom);
+
         // 나와 친구 둘다 채팅방에 참가자로 추가
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
@@ -39,9 +41,24 @@ public class ChatRoomService {
         User friend = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        ChatRoom room = chatRoomRepository.findById(chatRoom.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
+        // 이미 채팅방 있는지 확인
+        // 이게 맞나......ㅋㅋ....
+        List<ChatRoom> roomList = new ArrayList<>();
+        List<Participant> participantList = participantRepository.findAllByUser(user);
+        for (Participant p : participantList) {
+            roomList.add(p.getChatRoom());
+        }
+        for (ChatRoom r : roomList) {
+            if (r.getType() == Type.PRIVATE) {
+                for (Participant p2 : r.getParticipantList()) {
+                    if (p2.getUser() == friend) {
+                        throw new CustomException(ErrorCode.EXISTING_ROOM);
+                    }
+                }
+            }
+        }
+        // 채팅방 생성
+        ChatRoom room = chatRoomRepository.save(new ChatRoom(requestDto));
         Participant participantMe = new Participant(user, room);
         Participant participantYou = new Participant(friend, room);
         participantRepository.save(participantMe);
@@ -95,5 +112,21 @@ public class ChatRoomService {
         return new ChatRoomResponseDto(room);
     }
 
+    @Transactional
+    public void exitRoom(ChatRoomExitRequestDto requestDto, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        ChatRoom room = chatRoomRepository.findById(requestDto.getRoomId()).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
+        List<Participant> participantList = room.getParticipantList();
+        for (Participant p : participantList) {
+            if (p.getUser() == user) {
+                participantRepository.delete(p);
+                return;
+            }
+        }
+    }
 
 }

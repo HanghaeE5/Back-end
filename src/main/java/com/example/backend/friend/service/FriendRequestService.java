@@ -38,6 +38,11 @@ public class FriendRequestService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
+        // 나에게 보내는 요청 예외처리
+        if (user == userTo) {
+            throw new CustomException(ErrorCode.SELF_REQUEST);
+        }
+
         // if (요청을 보낸적이 있는가) else if (친구로 등록 되어 있는가)
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(user.getUserSeq())) {
             if (friendRequest.getUserTo() == userTo && !friendRequest.isState()) {
@@ -55,9 +60,7 @@ public class FriendRequestService {
             }
         }
 
-        FriendRequest request = new FriendRequest(user, userTo);
-
-        friendRequestRepository.save(request);
+        friendRequestRepository.save(new FriendRequest(user, userTo));
         return "친구 요청을 보냈습니다";
     }
 
@@ -66,13 +69,21 @@ public class FriendRequestService {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
+        User friend = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        // 요청이 온 적 없는데 수락하는 경우
+        FriendRequest f = friendRequestRepository.findRelation(friend, user).orElseThrow(
+                () -> new CustomException(ErrorCode.NO_FRIEND_REQUEST_FROM)
+        );
+        // 친구인데 수락하는 경우
+        if (f.isState()) {
+            throw new CustomException(ErrorCode.EXISTING_FRIEND);
+        }
         // 나도 request 보냄 ( state = true  인 상태로 )
-        FriendRequest request = new FriendRequest(user, userTo, true);
+        FriendRequest request = new FriendRequest(user, friend, true);
         // 상대방 state true 로 변경
-        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(userTo.getUserSeq())) {
+        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(friend.getUserSeq())) {
             if (friendRequest.getUserTo() == user && !friendRequest.isState()) {
                 friendRequest.linked();
             }
@@ -80,6 +91,7 @@ public class FriendRequestService {
         friendRequestRepository.save(request);
     }
 
+    // 위 메서드에서 FriendRequestDto requestDto -> String nick 로 변환 ( 해당 클래스에서 사용 하는 메서드 )
     @Transactional
     public void requestAccept(String userEmail, String nick) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
@@ -88,15 +100,14 @@ public class FriendRequestService {
         User userTo = userRepository.findByUsername(nick).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        // 나도 request 보냄 ( state = true  인 상태로 )
-        FriendRequest request = new FriendRequest(user, userTo, true);
+        // 예외처리에 걸리지 않는 경우 나도 request 보냄 ( state = true  인 상태로 )
+        friendRequestRepository.save(new FriendRequest(user, userTo, true));
         // 상대방 state true 로 변경
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(userTo.getUserSeq())) {
             if (friendRequest.getUserTo() == user && !friendRequest.isState()) {
                 friendRequest.linked();
             }
         }
-        friendRequestRepository.save(request);
     }
 
     @Transactional
@@ -104,11 +115,19 @@ public class FriendRequestService {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
+        User friend = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        // 요청이 온 적 없는데 거절하는 경우 예외 처리
+        FriendRequest f = friendRequestRepository.findRelation(friend, user).orElseThrow(
+                () -> new CustomException(ErrorCode.NO_FRIEND_REQUEST_FROM)
+        );
+        // 이미 친구인데 거절하는 경우
+        if (f.isState()) {
+            throw new CustomException(ErrorCode.EXISTING_FRIEND);
+        }
         // 상대방의 request 삭제
-        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(userTo.getUserSeq())) {
+        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(friend.getUserSeq())) {
             if (friendRequest.getUserTo() == user && !friendRequest.isState()) {
                 friendRequestRepository.delete(friendRequest);
             }
@@ -120,18 +139,25 @@ public class FriendRequestService {
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
+        User friend = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        FriendRequest f = friendRequestRepository.findRelation(user, friend).orElseThrow(
+                () -> new CustomException(ErrorCode.NO_FRIEND_REQUEST_TO)
+        );
+        // 친구가 아니고 요청을 받은 경우
+        if (!f.isState()) {
+            throw new CustomException(ErrorCode.NOT_FRIEND);
+        }
         // 상대방 요청 삭제
-        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(userTo.getUserSeq())) {
+        for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(friend.getUserSeq())) {
             if (friendRequest.getUserTo() == user && friendRequest.isState()) {
                 friendRequestRepository.delete(friendRequest);
             }
         }
         // 내 요청 삭제
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(user.getUserSeq())) {
-            if (friendRequest.getUserTo() == userTo && friendRequest.isState()) {
+            if (friendRequest.getUserTo() == friend && friendRequest.isState()) {
                 friendRequestRepository.delete(friendRequest);
             }
         }
@@ -177,10 +203,10 @@ public class FriendRequestService {
         // 공개 범위 및 친구 관계 확인
         if (userFriend.getPublicScope() == PublicScope.FRIEND) {
             // 친구인지 확인
-            FriendRequest f = friendRequestRepository.findRelation(user, userFriend);
-            if (f == null) {
-                return new UserTodoResponseDto(userFriend, null);
-            } else if (f.isState()) {
+            FriendRequest f = friendRequestRepository.findRelation(user, userFriend).orElseThrow(
+                    () -> new CustomException(ErrorCode.NO_FRIEND_REQUEST_TO)
+            );
+            if (f.isState()) {
                 // 오늘의 todo필요
                 List<Todo> todoList = todoRepository.findAllByTodoDate(userFriend);
                 List<TodoResponseDto> responseDtoList = new ArrayList<>();
@@ -188,8 +214,7 @@ public class FriendRequestService {
                     responseDtoList.add(new TodoResponseDto(t));
                 }
                 return new UserTodoResponseDto(userFriend, responseDtoList);
-            }
-            else {
+            } else {
                 return new UserTodoResponseDto(userFriend, null);
             }
         } else if (userFriend.getPublicScope() == PublicScope.NONE) {
@@ -202,6 +227,27 @@ public class FriendRequestService {
                 responseDtoList.add(new TodoResponseDto(t));
             }
             return new UserTodoResponseDto(userFriend, responseDtoList);
+        }
+    }
+
+    public void cancel(String userEmail, FriendRequestDto requestDto) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        // 요청을 보낸 적이 있는가?
+        // 없다면 에러
+        // 있는데 이미 친구이면 에러
+        // 있고 친구도 아니면 요청 삭제
+        FriendRequest friendRequest = friendRequestRepository.findRelation(user, userTo).orElseThrow(
+                () -> new CustomException(ErrorCode.NO_FRIEND_REQUEST_TO)
+        );
+        if (!friendRequest.isState()) {
+            throw new CustomException(ErrorCode.EXISTING_FRIEND);
+        } else {
+            friendRequestRepository.delete(friendRequest);
         }
     }
 }

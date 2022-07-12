@@ -25,4 +25,7 @@ public class ChatMessageRequestDto {
     @ApiModelProperty(value = "메세지 내용", required = true)
     private String message;
 
+    @ApiModelProperty(value = "프로필 사진")
+    private String profileImageUrl;
+
 }

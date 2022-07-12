@@ -4,5 +4,6 @@ public enum Category {
     STUDY,
     EXERCISE,
     SHOPPING,
-    PROMISE
+    PROMISE,
+    ETC
 }
