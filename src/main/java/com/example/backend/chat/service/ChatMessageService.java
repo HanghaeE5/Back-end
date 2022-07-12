@@ -1,9 +1,7 @@
 package com.example.backend.chat.service;
 
 import com.example.backend.chat.domain.ChatMessage;
-import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.MessageType;
-import com.example.backend.chat.domain.Participant;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.repository.ChatMessageRepository;
@@ -21,9 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -31,53 +26,14 @@ import java.util.Objects;
 public class ChatMessageService {
 
     private final SimpMessageSendingOperations messageSendingOperations;
-    private final ParticipantRepository participantRepository;
-    private final ChatRoomRepository chatRoomRepository;
-    private final UserRepository userRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final UserRepository userRepository;
 
-    @Transactional
-    public void addParticipant(String email, String roomId) {
+    public void sendChatMessage(ChatMessageRequestDto message, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
-        Participant participant = new Participant(user, chatRoom);
-        participantRepository.save(participant);
-        chatRoom.addParticipant(participant);
-        user.addParticipant(participant);
-    }
-
-
-    @Transactional
-    public void deleteParticipant(String email, String roomId) {
-        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
-        Participant participant = new Participant();
-        for (Participant p : room.getParticipantList()) {
-            if (Objects.equals(p.getUser().getEmail(), email)) {
-                participant = p;
-                break;
-            }
-        }
-        participantRepository.deleteById(participant.getId());
-    }
-
-
-    public void sendChatMessage(ChatMessageRequestDto message) {
-        if (MessageType.ENTER.equals(message.getType())
-                || MessageType.QUIT.equals(message.getType())) {
-            message.setSender("[알림]");
-        }
-
-        log.info("getMessage : " + message.getMessage());
-        log.info("message.getRoomId() : " + message.getRoomId());
-        log.info("getSender : " + message.getSender());
-        System.out.println(message);
-
+        message.setProfileImageUrl(user.getProfileImageUrl());
         this.saveChatMessage(message);
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }

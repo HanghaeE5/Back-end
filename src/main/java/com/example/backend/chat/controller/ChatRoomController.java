@@ -56,14 +56,13 @@ public class ChatRoomController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    // unsubscribe 로 채팅방 나가기 해야될거 같음!
-//    @ApiOperation(value = "채팅방 나가기")
-//    @DeleteMapping("/room")
-//    public ResponseEntity<String> exitRoom(@RequestBody ChatRoomExitRequestDto requestDto) {
-//        LoadUser.loginAndNickCheck();
-//        chatRoomService.exitRoom(requestDto);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
-//                .body(MsgEnum.CHAT_ROOM_EXIT.getMsg());
-//    }
+    @ApiOperation(value = "채팅방 나가기")
+    @DeleteMapping("/room")
+    public ResponseEntity<String> exitRoom(@RequestBody ChatRoomExitRequestDto requestDto) {
+        LoadUser.loginAndNickCheck();
+        chatRoomService.exitRoom(requestDto, LoadUser.getEmail());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.CHAT_ROOM_EXIT.getMsg());
+    }
 }

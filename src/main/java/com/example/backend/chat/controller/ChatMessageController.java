@@ -1,6 +1,5 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.domain.MessageType;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.service.ChatMessageService;
@@ -32,28 +31,13 @@ public class ChatMessageController {
     public void message(ChatMessageRequestDto message, @Header("Authorization") String tokenStr) {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         String email = token.getTokenClaims().getSubject();
-        String name = message.getSender();
-
 
         log.info(email);
-        log.info(name);
         log.info(message.getMessage());
         log.info(message.getRoomId());
         log.info(message.getType().toString());
 
-
-        // 입장, 퇴장 시 Participant 에 추가
-        if (MessageType.ENTER.equals((message.getType()))) {
-            chatMessageService.addParticipant(email, message.getRoomId());
-            message.setMessage(name + "님이 입장했습니다");
-        } else if (MessageType.QUIT.equals((message.getType()))) {
-            chatMessageService.deleteParticipant(email, message.getRoomId());
-            message.setMessage(name + "님이 퇴장했습니다");
-        } else {
-            message.setSender(name);
-        }
-
-        chatMessageService.sendChatMessage(message);
+        chatMessageService.sendChatMessage(message, email);
     }
 
     // 페이징 처리해야해서 나중에 쿼리 파라미터로 size, page 값을 받으므로 roomId 도 똑같은 형태로 받은 것!!
