@@ -2,6 +2,7 @@ package com.example.backend.user.dto;
 
 import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.user.domain.ProviderType;
+import com.example.backend.user.domain.PublicScope;
 import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -26,6 +27,7 @@ public class UserResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedDate;
     private CharacterResponseDto characterInfo;
+    private PublicScope publicScope;
 
     public UserResponseDto(User user){
         this.id = user.getUserSeq();
@@ -37,6 +39,7 @@ public class UserResponseDto {
         this.roleType = user.getRoleType();
         this.createdDate = user.getCreatedDate();
         this.modifiedDate = user.getModifiedDate();
+        this.publicScope = user.getPublicScope();
     }
 
     public UserResponseDto(User user, CharacterResponseDto characterResponseDto){
@@ -50,5 +53,6 @@ public class UserResponseDto {
         this.createdDate = user.getCreatedDate();
         this.modifiedDate = user.getModifiedDate();
         this.characterInfo = characterResponseDto;
+        this.publicScope = user.getPublicScope();
     }
 }
