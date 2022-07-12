@@ -49,8 +49,7 @@ public enum ErrorCode {
 
     // 채팅
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 채팅방이 존재하지 않습니다"),
-
-
+    EXISTING_ROOM(HttpStatus.BAD_REQUEST, "400", "상대와 이미 대화방이 존재합니다"),
 
 
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이미지를 입력해주세요."),
@@ -67,6 +66,10 @@ public enum ErrorCode {
     // 캐릭터
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다"),
 
+
+    // 정렬 옵션
+    INVALID_SORTING_OPTION(HttpStatus.BAD_REQUEST, "400", "잘못된 sort 옵션입니다"),
+    INVALID_FILTER_OPTION(HttpStatus.BAD_REQUEST, "400", "잘못된 filter 옵션입니다"),
 
     ;
 
