@@ -21,6 +21,7 @@ public class TodoResponseDto {
     private String category;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
+    private Long boardId;
 
     public TodoResponseDto(Todo todo) {
         this.todoId = todo.getId();
@@ -29,5 +30,8 @@ public class TodoResponseDto {
         this.state = todo.isState();
         this.category = String.valueOf(todo.getCategory());
         this.createdDate = todo.getCreatedDate();
+        if (todo.getBoard() != null) {
+            this.boardId = todo.getBoard().getId();
+        }
     }
 }
