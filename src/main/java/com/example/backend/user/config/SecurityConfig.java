@@ -102,6 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/user/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/chat/**").hasAnyAuthority(RoleType.USER.getCode())
+                .antMatchers("/event/**").hasAnyAuthority(RoleType.USER.getCode())
 
                 .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                 .anyRequest().authenticated()

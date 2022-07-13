@@ -16,7 +16,6 @@ import java.util.Set;
 
 @Getter
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board extends BaseTime {

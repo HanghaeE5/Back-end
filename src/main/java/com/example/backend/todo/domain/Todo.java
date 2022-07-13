@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -32,11 +33,14 @@ public class Todo extends BaseTime {
     @Column(nullable = false)
     private boolean state;
 
+    @Column
+    private Date completeDate;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private User user;
 
@@ -93,6 +97,7 @@ public class Todo extends BaseTime {
 
     public void done() {
         state = !state;
+        this.completeDate = new Date();
     }
 
     // CHALLENGE 게시글을 작성할 때 생겨난 boardId를 다 null 값으로 바꿔줌.

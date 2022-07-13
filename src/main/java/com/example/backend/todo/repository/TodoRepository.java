@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
@@ -27,5 +30,10 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     @Query("select t from Todo t where t.user=:user and t.todoDate=CURRENT_DATE")
     List<Todo> findAllByTodoDate(User user);
+
+    List<Todo> findByUserAndTodoDate(User user, Date yesterday);
+
+//    @Query("select t from Todo t where t.user in :users and t.todoDate=:yesterday")
+//    List<Todo> findAllByUsersAndTodoDate(List<User> users, Date yesterday);
 
 }
