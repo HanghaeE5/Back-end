@@ -21,6 +21,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -51,9 +53,14 @@ public class ChatMessageService {
 
     @Transactional
     public void saveChatMessage(ChatMessageRequestDto message) {
-        User user = userRepository.findByUsername(message.getSender()).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-        chatMessageRepository.save(new ChatMessage(message, user));
+        if (!Objects.equals(message.getSender(), "[알림]")) {
+            User user = userRepository.findByUsername(message.getSender()).orElseThrow(
+                    () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+            );
+            chatMessageRepository.save(new ChatMessage(message, user));
+        }
+        else {
+            chatMessageRepository.save(new ChatMessage(message));
+        }
     }
 }
