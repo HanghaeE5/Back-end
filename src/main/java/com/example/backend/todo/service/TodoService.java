@@ -58,9 +58,9 @@ public class TodoService {
         if (Objects.equals(filter, "all")) {
             todoPage = todoRepository.findAllTodo(pageable, user);
         } else if (Objects.equals(filter, "doingList")) {
-            todoPage = todoRepository.findAllByTodoStateTrue(pageable, user);
-        } else if (Objects.equals(filter, "doneList")){
             todoPage = todoRepository.findAllByTodoStateFalse(pageable, user);
+        } else if (Objects.equals(filter, "doneList")){
+            todoPage = todoRepository.findAllByTodoStateTrue(pageable, user);
         } else {
             throw new CustomException(ErrorCode.INVALID_FILTER_OPTION);
         }

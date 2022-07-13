@@ -28,7 +28,8 @@ public class ChatMessageResponseDto {
         this.sender = message.getSender();
         this.message = message.getMessage();
         this.createdDate = message.getCreatedDate();
-        this.profileImageUrl = message.getUser().getProfileImageUrl();
+        if (message.getUser() != null) {
+            this.profileImageUrl = message.getUser().getProfileImageUrl();
+        }
     }
-
 }
