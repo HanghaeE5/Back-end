@@ -92,10 +92,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/api-docs").permitAll()
 
                 .antMatchers("/login").permitAll()
+                .antMatchers("/login/**").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/refresh").permitAll()
                 .antMatchers("/register/**").permitAll()
-                .antMatchers("/refresh").permitAll()
 
                 .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
@@ -113,7 +113,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
                 .redirectionEndpoint()
-                .baseUri("/*/oauth2/code/*")
+                .baseUri("/**/oauth2/code/**")
                 .and()
                 .userInfoEndpoint()
                 .userService(oAuth2UserService)
