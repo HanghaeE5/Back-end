@@ -1,7 +1,9 @@
 package com.example.backend.chat.service;
 
 import com.example.backend.chat.domain.ChatMessage;
+import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.MessageType;
+import com.example.backend.chat.domain.Type;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.repository.ChatMessageRepository;
@@ -29,6 +31,7 @@ import java.util.Objects;
 public class ChatMessageService {
 
     private final SimpMessageSendingOperations messageSendingOperations;
+    private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
 
@@ -36,9 +39,17 @@ public class ChatMessageService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        ChatRoom room = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
         if (message.getType() == MessageType.QUIT) {
-            message.setSender("[알림]");
-            message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다. 새로운 채팅방에서 채팅을 진행해 주세요!");
+            if (room.getType() == Type.PRIVATE) {
+                message.setSender("[알림]");
+                message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다. 새로운 채팅방에서 채팅을 진행해 주세요!");
+            } else {
+                message.setSender("[알림]");
+                message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
+            }
         }
         this.saveChatMessage(message);
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
