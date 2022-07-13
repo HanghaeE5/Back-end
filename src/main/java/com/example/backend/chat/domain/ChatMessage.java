@@ -2,6 +2,7 @@ package com.example.backend.chat.domain;
 
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.common.domain.BaseTime;
+import com.example.backend.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ public class ChatMessage extends BaseTime {
     private Long id;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private MessageType type;
 
     @Column
@@ -28,14 +30,15 @@ public class ChatMessage extends BaseTime {
     @Column
     private String message;
 
-    @Column
-    private String profileImageUrl;
+    @ManyToOne
+    @JoinColumn
+    private User user;
 
-    public ChatMessage(ChatMessageRequestDto requestDto) {
+    public ChatMessage(ChatMessageRequestDto requestDto, User user) {
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();
         this.sender = requestDto.getSender();
         this.message = requestDto.getMessage();
-        this.profileImageUrl = requestDto.getProfileImageUrl();
+        this.user = user;
     }
 }
