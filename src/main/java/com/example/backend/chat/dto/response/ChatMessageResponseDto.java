@@ -20,6 +20,7 @@ public class ChatMessageResponseDto {
     private String message;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
+    private String profileImageUrl;
 
     public ChatMessageResponseDto(ChatMessage message) {
         this.type = message.getType();
@@ -27,6 +28,7 @@ public class ChatMessageResponseDto {
         this.sender = message.getSender();
         this.message = message.getMessage();
         this.createdDate = message.getCreatedDate();
+        this.profileImageUrl = message.getProfileImageUrl();
     }
 
 }
