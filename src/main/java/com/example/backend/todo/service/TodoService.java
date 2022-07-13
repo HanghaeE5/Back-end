@@ -6,14 +6,11 @@ import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.todo.dto.request.TodoScopeRequestDto;
 import com.example.backend.todo.dto.request.TodoRequestDto;
+import com.example.backend.todo.dto.request.TodoScopeRequestDto;
 import com.example.backend.todo.dto.request.TodoUpdateRequestDto;
 import com.example.backend.todo.dto.response.TodoDoneResponseDto;
 import com.example.backend.todo.dto.response.TodoResponseDto;
-import com.example.backend.todo.dto.request.TodoRequestDto;
-import com.example.backend.todo.dto.response.TodoResponseDto;
-import com.example.backend.todo.dto.request.TodoScopeRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
@@ -37,10 +34,8 @@ import java.util.Objects;
 public class TodoService {
 
     private final TodoRepository todoRepository;
-    private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CharacterService characterService;
-    private final CharacterRepository characterRepository;
 
     @Transactional
     public Page<TodoResponseDto> getTodoList(String email, String filter, Integer page, Integer size, String sort) {
@@ -53,8 +48,10 @@ public class TodoService {
 
         if (Objects.equals(sort, "asc")) {
             pageable = PageRequest.of(page, size, Sort.by("todoDate").ascending());
-        } else {
+        } else if (Objects.equals(sort, "desc")){
             pageable = PageRequest.of(page, size, Sort.by("todoDate").descending());
+        } else {
+            throw new CustomException(ErrorCode.INVALID_SORTING_OPTION);
         }
         Page<Todo> todoPage;
 
@@ -62,8 +59,10 @@ public class TodoService {
             todoPage = todoRepository.findAllTodo(pageable, user);
         } else if (Objects.equals(filter, "doingList")) {
             todoPage = todoRepository.findAllByTodoStateTrue(pageable, user);
-        } else {
+        } else if (Objects.equals(filter, "doneList")){
             todoPage = todoRepository.findAllByTodoStateFalse(pageable, user);
+        } else {
+            throw new CustomException(ErrorCode.INVALID_FILTER_OPTION);
         }
 
         return todoPage.map(TodoResponseDto::new);

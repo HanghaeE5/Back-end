@@ -28,10 +28,14 @@ public class ChatMessage extends BaseTime {
     @Column
     private String message;
 
+    @Column
+    private String profileImageUrl;
+
     public ChatMessage(ChatMessageRequestDto requestDto) {
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();
         this.sender = requestDto.getSender();
         this.message = requestDto.getMessage();
+        this.profileImageUrl = requestDto.getProfileImageUrl();
     }
 }
