@@ -33,7 +33,12 @@ public class ChatMessageService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
-        message.setProfileImageUrl(user.getProfileImageUrl());
+        if (message.getType() == MessageType.QUIT) {
+            message.setSender("[알림]");
+            message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다. 새로운 채팅방에서 채팅을 진행해 주세요!");
+        } else {
+            message.setProfileImageUrl(user.getProfileImageUrl());
+        }
         this.saveChatMessage(message);
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }

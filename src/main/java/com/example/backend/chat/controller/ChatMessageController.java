@@ -1,8 +1,13 @@
 package com.example.backend.chat.controller;
 
+import com.example.backend.chat.domain.MessageType;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.service.ChatMessageService;
+import com.example.backend.exception.CustomException;
+import com.example.backend.exception.ErrorCode;
+import com.example.backend.user.domain.User;
+import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import io.swagger.annotations.ApiOperation;
@@ -25,18 +30,13 @@ public class ChatMessageController {
 
     private final ChatMessageService chatMessageService;
     private final AuthTokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
     @ApiOperation(value = "메세지 전송(/pub)")
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDto message, @Header("Authorization") String tokenStr) {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         String email = token.getTokenClaims().getSubject();
-
-        log.info(email);
-        log.info(message.getMessage());
-        log.info(message.getRoomId());
-        log.info(message.getType().toString());
-
         chatMessageService.sendChatMessage(message, email);
     }
 
