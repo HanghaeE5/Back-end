@@ -1,5 +1,9 @@
 package com.example.backend.friend.service;
 
+import com.example.backend.character.domain.Characters;
+import com.example.backend.character.dto.CharacterResponseDto;
+import com.example.backend.character.repository.CharacterRepository;
+import com.example.backend.character.service.CharacterService;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.friend.domain.FriendRequest;
@@ -19,12 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class FriendRequestService {
 
     private final FriendRequestRepository friendRequestRepository;
+    private final CharacterService characterService;
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
 
@@ -200,25 +206,25 @@ public class FriendRequestService {
         User userFriend = userRepository.findByUsername(nickFriend).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(userFriend.getEmail());
         // 공개 범위 및 친구 관계 확인
         if (userFriend.getPublicScope() == PublicScope.FRIEND) {
             // 친구인지 확인
-            FriendRequest f = friendRequestRepository.findRelation(user, userFriend).orElseThrow(
-                    () -> new CustomException(ErrorCode.NO_FRIEND_REQUEST_TO)
-            );
-            if (f.isState()) {
+            Optional<FriendRequest> f = friendRequestRepository.findRelation(user, userFriend);
+            Optional<FriendRequest> f2 = friendRequestRepository.findRelation(userFriend, user);
+            if (f.isEmpty() || f2.isEmpty()) {
+                return new UserTodoResponseDto(userFriend, null, characterResponseDto);
+            } else {
                 // 오늘의 todo필요
                 List<Todo> todoList = todoRepository.findAllByTodoDate(userFriend);
                 List<TodoResponseDto> responseDtoList = new ArrayList<>();
                 for (Todo t : todoList) {
                     responseDtoList.add(new TodoResponseDto(t));
                 }
-                return new UserTodoResponseDto(userFriend, responseDtoList);
-            } else {
-                return new UserTodoResponseDto(userFriend, null);
+                return new UserTodoResponseDto(userFriend, responseDtoList, characterResponseDto);
             }
         } else if (userFriend.getPublicScope() == PublicScope.NONE) {
-            return new UserTodoResponseDto(userFriend, null);
+            return new UserTodoResponseDto(userFriend, null, characterResponseDto);
         } else {
             // 오늘의 todo필요
             List<Todo> todoList = todoRepository.findAllByTodoDate(userFriend);
@@ -226,7 +232,7 @@ public class FriendRequestService {
             for (Todo t : todoList) {
                 responseDtoList.add(new TodoResponseDto(t));
             }
-            return new UserTodoResponseDto(userFriend, responseDtoList);
+            return new UserTodoResponseDto(userFriend, responseDtoList, characterResponseDto);
         }
     }
 
