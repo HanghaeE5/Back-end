@@ -1,5 +1,7 @@
 package com.example.backend.user.service;
 
+import com.example.backend.event.domain.Stamp;
+import com.example.backend.event.repository.StampRepository;
 import com.example.backend.exception.OAuthProviderMissMatchException;
 import com.example.backend.user.domain.ProviderType;
 import com.example.backend.user.domain.RoleType;
@@ -28,6 +30,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final StampRepository stampRepository;
 
     @Value("${basic.profile.img}")
     private String basicImg;
@@ -70,6 +73,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }else{
                 //최초 가입
                 savedUser = createUser(userInfo, providerType);
+                stampRepository.save(new Stamp(savedUser));
             }
         }
 

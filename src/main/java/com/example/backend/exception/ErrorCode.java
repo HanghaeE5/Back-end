@@ -32,6 +32,14 @@ public enum ErrorCode {
 
     FILE_NULL(HttpStatus.BAD_REQUEST, "400", "파일을 입력해주세요."),
 
+    STAMP_TABLE_NULL(HttpStatus.BAD_REQUEST, "400", "도장관련 정보가 없습니다."),
+
+    STAMP_CNT_LESS(HttpStatus.BAD_REQUEST, "400", "도장 개수가 적습니다."),
+
+    COUPON_NOT_FOUNT(HttpStatus.BAD_REQUEST, "400", "응모권이 없습니다"),
+
+    WINNING_NOT_FOUNT(HttpStatus.BAD_REQUEST, "400", "당첨 기록이 없습니다."),
+
     // Todo목록
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 목록이 존재하지 않습니다"),
     INCORRECT_USERID(HttpStatus.FORBIDDEN, "403", "목록의 작성자가 아닙니다"),
