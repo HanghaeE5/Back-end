@@ -72,8 +72,8 @@ public class User extends BaseTime {
     @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
     private List<Participant> participantList = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    private Characters characters;
+//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+//    private Characters characters;
 
     public User(
             @Size(max = 64) String userId,

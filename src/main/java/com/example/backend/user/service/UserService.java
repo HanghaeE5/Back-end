@@ -2,6 +2,8 @@ package com.example.backend.user.service;
 
 import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.character.service.CharacterService;
+import com.example.backend.event.domain.Stamp;
+import com.example.backend.event.repository.StampRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
@@ -46,6 +48,7 @@ public class UserService {
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final StampRepository stampRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
     private final AwsS3Service awsS3Service;
     @Value("${basic.profile.img}")
@@ -125,7 +128,8 @@ public class UserService {
                 .profileImageUrl(basicImg)
                 .build();
 
-        userRepository.save(user);
+        User saveUser = userRepository.save(user);
+        stampRepository.save(new Stamp(saveUser));
 
         //인증한 이메일 삭제
         emailCheckRepository.deleteByEmail(user.getEmail());
@@ -324,12 +328,6 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
-    private User getUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-    }
-
     @Transactional
     public void updatePassword(String email, PasswordRequestDto passwordRequestDto) {
         User user = getUser(email);
@@ -358,5 +356,11 @@ public class UserService {
         }
 
         return new SocialUserCheckResponseDto(msg, socialUser);
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
     }
 }

@@ -34,7 +34,7 @@ public class Characters extends BaseTime {
     @Column
     private Integer exp;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_SEQ")
     @MapsId
     private User user;
