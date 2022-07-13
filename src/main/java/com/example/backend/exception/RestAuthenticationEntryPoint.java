@@ -19,6 +19,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getOutputStream().println(
@@ -27,6 +28,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
                     "\"msg\":\""+ MsgEnum.AUTHENTICATION_FAIL.getMsg() +"\"" +
                 " }"
         );
+        log.info(request.getRequestURI());
         log.info("Responding with unauthorized error. Message := {}", authException.getMessage());
         log.info("AUTHENTICATION_FAIL := {}", MsgEnum.AUTHENTICATION_FAIL.getMsg());
     }

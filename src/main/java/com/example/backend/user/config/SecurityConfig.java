@@ -92,6 +92,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/api-docs").permitAll()
 
                 .antMatchers("/login").permitAll()
+                .antMatchers("/oauth2/**").permitAll()
+                .antMatchers("/error/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/refresh").permitAll()
