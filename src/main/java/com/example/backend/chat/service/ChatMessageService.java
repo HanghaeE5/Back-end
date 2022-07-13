@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +37,6 @@ public class ChatMessageService {
         if (message.getType() == MessageType.QUIT) {
             message.setSender("[알림]");
             message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다. 새로운 채팅방에서 채팅을 진행해 주세요!");
-        } else {
-            message.setProfileImageUrl(user.getProfileImageUrl());
         }
         this.saveChatMessage(message);
         messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
@@ -46,12 +45,15 @@ public class ChatMessageService {
     // 페이징으로 받아서 무한 스크롤 가능할듯
     public Page<ChatMessageResponseDto> getSavedMessages(String roomId) {
         Pageable pageable = PageRequest.of(0, 100, Sort.by("createdDate").descending());
-
         Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
         return messagePage.map(ChatMessageResponseDto::new);
     }
 
+    @Transactional
     public void saveChatMessage(ChatMessageRequestDto message) {
-        chatMessageRepository.save(new ChatMessage(message));
+        User user = userRepository.findByUsername(message.getSender()).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        chatMessageRepository.save(new ChatMessage(message, user));
     }
 }

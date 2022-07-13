@@ -3,6 +3,7 @@ package com.example.backend.chat.service;
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
 import com.example.backend.chat.domain.Type;
+import com.example.backend.chat.dto.request.ChatRoomEnterRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomExitRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
@@ -67,7 +68,7 @@ public class ChatRoomService {
         room.addParticipant(participantYou);
         user.addParticipant(participantMe);
         friend.addParticipant(participantYou);
-        return new ChatRoomResponseDto(room);
+        return new ChatRoomResponseDto(room, user);
     }
 
     // 단체 톡방
@@ -85,7 +86,7 @@ public class ChatRoomService {
         participantRepository.save(participant);
         chatRoom.addParticipant(participant);
         user.addParticipant(participant);
-        return new ChatRoomResponseDto(chatRoom);
+        return new ChatRoomResponseDto(chatRoom, user);
     }
 
     @Transactional
@@ -99,17 +100,21 @@ public class ChatRoomService {
             ChatRoom room = chatRoomRepository.findById(p.getChatRoom().getRoomId()).orElseThrow(
                     () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
             );
-            ChatRoomResponseDto responseDto = new ChatRoomResponseDto(room);
+            ChatRoomResponseDto responseDto = new ChatRoomResponseDto(room, user);
             responseDtoList.add(responseDto);
         }
         return responseDtoList;
     }
 
-    public ChatRoomResponseDto findById(String id) {
+    @Transactional
+    public ChatRoomResponseDto findById(String id, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
         ChatRoom room = chatRoomRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
-        return new ChatRoomResponseDto(room);
+        return new ChatRoomResponseDto(room, user);
     }
 
     @Transactional
@@ -129,4 +134,14 @@ public class ChatRoomService {
         }
     }
 
+    @Transactional
+    public void enterPublicRoom(ChatRoomEnterRequestDto requestDto, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        ChatRoom room = chatRoomRepository.findById(requestDto.getRoomId()).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
+        participantRepository.save(new Participant(user, room));
+    }
 }
