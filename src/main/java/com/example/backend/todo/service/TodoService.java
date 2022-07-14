@@ -104,18 +104,26 @@ public class TodoService {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(requestDto.getTodoDate());
         Todo todo = getTodo(id, email);
+        if (todo.getBoard() != null) {
+            throw new CustomException(ErrorCode.CHALLENGE_UPDATE_FORBIDDEN);
+        }
         todo.update(requestDto, date);
     }
 
 
     public void deleteTodo(String email, Long id) {
-        getTodo(id, email);
+
+        Todo todo = getTodo(id, email);
+        if (todo.getBoard() != null) {
+            throw new CustomException(ErrorCode.CHALLENGE_DELETE_FORBIDDEN);
+        }
         todoRepository.deleteById(id);
 
     }
 
 
     private Todo getTodo(Long id, String email) {
+
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
