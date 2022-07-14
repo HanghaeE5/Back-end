@@ -43,6 +43,7 @@ public enum ErrorCode {
     // Todo목록
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 목록이 존재하지 않습니다"),
     INCORRECT_USERID(HttpStatus.FORBIDDEN, "403", "목록의 작성자가 아닙니다"),
+    TODO_ALREADY_DONE(HttpStatus.BAD_REQUEST, "400", "이미 완료한 Todo 입니다"),
 
     // 게시글
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 게시글이 존재하지 않습니다"),
@@ -75,7 +76,7 @@ public enum ErrorCode {
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 캐릭터가 존재하지 않습니다"),
 
 
-    // 정렬 옵션
+    // 정렬 옵션,
     INVALID_SORTING_OPTION(HttpStatus.BAD_REQUEST, "400", "잘못된 sort 옵션입니다"),
     INVALID_FILTER_OPTION(HttpStatus.BAD_REQUEST, "400", "잘못된 filter 옵션입니다"),
 

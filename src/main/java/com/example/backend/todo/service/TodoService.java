@@ -93,6 +93,9 @@ public class TodoService {
     @Transactional
     public TodoDoneResponseDto done(String email, Long id) {
         Todo todo = getTodo(id, email);
+        if (todo.isState()) {
+            throw new CustomException(ErrorCode.TODO_ALREADY_DONE);
+        }
         todo.done();
         return characterService.upgrade(email, todo);
     }
