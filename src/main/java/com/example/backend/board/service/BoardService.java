@@ -134,13 +134,25 @@ public class BoardService {
         );
     }
 
+    private boolean withTodoExpiration(Board board) throws ParseException {
+        for (BoardTodo boardTodo : board.getBoardTodo()) {
+            String todayFormat = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date today = new Date(dateFormat.parse(todayFormat).getTime());
+            if (boardTodo.getTodoDate().compareTo(today) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // 게시물 상세조회
     @Transactional
-    public BoardResponseDto getDetailBoard(Long id) {
+    public BoardResponseDto getDetailBoard(Long id) throws ParseException {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-        return new BoardResponseDto(board, todoRepository.existsByBoard(board));
+        return new BoardResponseDto(board, todoRepository.existsByBoard(board), !withTodoExpiration(board));
     }
 
     @Transactional
@@ -207,7 +219,10 @@ public class BoardService {
         }
         //첼린지가 이미 시작되었다면 신청불가
         //BoardTodo의 날짜를 전부 가져와서 오늘날짜가 더 크다면 신청 불가
-        challengeExpiration(board);
+        if(!withTodoExpiration(board)){
+            throw new CustomException(ErrorCode.CHALLENGE_CANCEL_APPLY_NOT);
+        }
+
 
         //신청자 TODO 저장
         List<Todo> todoList = new ArrayList<>();
@@ -240,22 +255,13 @@ public class BoardService {
 
         //첼린지가 이미 시작되었다면 취소 불가
         //BoardTodo의 날짜를 전부 가져와서 오늘날짜가 더 크다면 취소 불가
-        challengeExpiration(board);
+        if(!withTodoExpiration(board)){
+            throw new CustomException(ErrorCode.CHALLENGE_CANCEL_APPLY_NOT);
+        }
 
         //사용자가 등록한 TODO 삭제
         List<Todo> todoList = todoRepository.findAllByBoardAndUser(board, user);
         todoRepository.deleteAll(todoList);
-    }
-
-    private void challengeExpiration(Board board) throws ParseException {
-        for (BoardTodo boardTodo: board.getBoardTodo()) {
-            String todayFormat = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date today = new Date(dateFormat.parse(todayFormat).getTime());
-            if (boardTodo.getTodoDate().compareTo(today) < 0){
-                throw new CustomException(ErrorCode.CHALLENGE_CANCEL_APPLY_NOT);
-            }
-        }
     }
 
     @Transactional
