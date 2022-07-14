@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 
 @RestController
 @RequiredArgsConstructor
@@ -90,7 +91,7 @@ public class BoardController {
     @GetMapping("/board/{boardId}")
     public ResponseEntity<BoardResponseDto> getDetailBoard(
             @PathVariable Long boardId
-    ) {
+    ) throws ParseException {
         LoadUser.loginAndNickCheck();
         return ResponseEntity.status(HttpStatus.OK).body(boardService.getDetailBoard(boardId));
     }
