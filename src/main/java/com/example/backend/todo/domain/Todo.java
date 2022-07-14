@@ -27,6 +27,7 @@ public class Todo extends BaseTime {
     @Column(nullable = false)
     private String content;
 
+    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private Date todoDate;
 

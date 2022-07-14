@@ -2,10 +2,13 @@ package com.example.backend.character.domain;
 
 import com.example.backend.character.dto.CharacterRequestDto;
 import com.example.backend.common.domain.BaseTime;
+import com.example.backend.todo.domain.Category;
 import com.example.backend.todo.domain.Todo;
+import com.example.backend.user.domain.PublicScope;
 import com.example.backend.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -34,6 +37,22 @@ public class Characters extends BaseTime {
     @Column
     private Integer exp;
 
+    @ColumnDefault(value = "0")
+    @Column
+    private Integer study;
+
+    @ColumnDefault(value = "0")
+    @Column
+    private Integer exercise;
+
+    @ColumnDefault(value = "0")
+    @Column
+    private Integer promise;
+
+    @ColumnDefault(value = "0")
+    @Column
+    private Integer shopping;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_SEQ")
     @MapsId
@@ -48,6 +67,10 @@ public class Characters extends BaseTime {
         this.step = Step.FIRST;
         this.level = 1;
         this.exp = 0;
+        this.study = 0;
+        this.exercise = 0;
+        this.promise = 0;
+        this.shopping = 0;
     }
 
     public void addExp() {
@@ -70,4 +93,17 @@ public class Characters extends BaseTime {
     public void addTodo(Todo todo) {
         this.todoList.add(todo);
     }
+
+    public void upgradeMedal(Category category) {
+        if (category == Category.STUDY) {
+            this.study++;
+        } else if (category == Category.EXERCISE) {
+            this.exercise++;
+        } else if (category == Category.PROMISE) {
+            this.promise++;
+        } else {
+            this.shopping++;
+        }
+    }
+
 }

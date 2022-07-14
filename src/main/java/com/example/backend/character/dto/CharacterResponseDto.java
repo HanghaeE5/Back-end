@@ -16,12 +16,20 @@ public class CharacterResponseDto {
     private Integer exp;
     private boolean levelUp;
     private boolean stepUp;
+    private Integer study;
+    private Integer exercise;
+    private Integer promise;
+    private Integer shopping;
 
     public CharacterResponseDto(Characters characters) {
         this.type = characters.getType();
         this.step = characters.getStep();
         this.level = characters.getLevel();
         this.exp = characters.getExp();
+        this.study = characters.getStudy();
+        this.exercise = characters.getExercise();
+        this.promise = characters.getPromise();
+        this.shopping = characters.getShopping();
     }
 
     public CharacterResponseDto(Characters characters, boolean levelUp, boolean stepUp) {
@@ -31,5 +39,9 @@ public class CharacterResponseDto {
         this.exp = characters.getExp();
         this.levelUp = levelUp;
         this.stepUp = stepUp;
+        this.study = characters.getStudy();
+        this.exercise = characters.getExercise();
+        this.promise = characters.getPromise();
+        this.shopping = characters.getShopping();
     }
 }

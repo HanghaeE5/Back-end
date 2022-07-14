@@ -7,8 +7,10 @@ import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.character.repository.CharacterRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.todo.domain.Category;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.response.TodoDoneResponseDto;
+import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class CharacterService {
     private final CollectionBean standard;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
+    private final TodoRepository todoRepository;
 
 
     // 캐릭터 선택
@@ -56,14 +59,19 @@ public class CharacterService {
         Characters characters = characterRepository.findById(user.getUserSeq()).orElseThrow(
                 () -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND)
         );
-        characters.addExp();
-        if (Objects.equals(characters.getExp(), standard.getLevelExp().get(characters.getLevel()))) {
-            characters.levelUp();
-            levelUp = true;
-        }
-        if (Objects.equals(characters.getLevel(), standard.getStepLevel().get(characters.getStep()))) {
-            characters.stepUp();
-            stepUp = true;
+        if (todoRepository.findTodayDone().size() <= 10) {
+            if (todo.getCategory() != Category.ETC) {
+                characters.upgradeMedal(todo.getCategory());
+            }
+            characters.addExp();
+            if (Objects.equals(characters.getExp(), standard.getLevelExp().get(characters.getLevel()))) {
+                characters.levelUp();
+                levelUp = true;
+            }
+            if (Objects.equals(characters.getLevel(), standard.getStepLevel().get(characters.getStep()))) {
+                characters.stepUp();
+                stepUp = true;
+            }
         }
         todo.addCharacter(characters);
         characters.addTodo(todo);
