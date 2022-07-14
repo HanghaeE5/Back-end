@@ -44,6 +44,8 @@ public enum ErrorCode {
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 목록이 존재하지 않습니다"),
     INCORRECT_USERID(HttpStatus.FORBIDDEN, "403", "목록의 작성자가 아닙니다"),
     TODO_ALREADY_DONE(HttpStatus.BAD_REQUEST, "400", "이미 완료한 Todo 입니다"),
+    CHALLENGE_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "403", "챌린지 todo는 수정이 불가능합니다"),
+    CHALLENGE_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "403", "챌린지 todo는 삭제가 불가능합니다"),
 
     // 게시글
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 게시글이 존재하지 않습니다"),
