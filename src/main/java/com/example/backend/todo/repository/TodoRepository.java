@@ -33,6 +33,9 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findByUserAndTodoDate(User user, Date yesterday);
 
+    @Query("select t from Todo t where t.completeDate>=CURRENT_DATE")
+    List<Todo> findTodayDone();
+
 //    @Query("select t from Todo t where t.user in :users and t.todoDate=:yesterday")
 //    List<Todo> findAllByUsersAndTodoDate(List<User> users, Date yesterday);
 

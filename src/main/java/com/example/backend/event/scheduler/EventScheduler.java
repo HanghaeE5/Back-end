@@ -41,7 +41,7 @@ public class EventScheduler {
 //    10초마다 테스트용
 //    @Scheduled(cron = "*/10 * * * * ?")
 
-    @Scheduled(cron = "0 15 0,2,3 * * ?")
+    @Scheduled(cron = "0 5 0,2,3 * * ?")
     @Transactional
     public void eventJob() throws ParseException {
 
