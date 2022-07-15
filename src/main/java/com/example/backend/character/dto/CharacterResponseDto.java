@@ -22,6 +22,7 @@ public class CharacterResponseDto {
     private Integer promise;
     private Integer shopping;
     private String characterUrl;
+    private String characterName;
 
     public CharacterResponseDto(Characters characters) {
         this.type = characters.getType();
@@ -35,18 +36,24 @@ public class CharacterResponseDto {
         if (characters.getType().equals(Type.거북이)) {
             if (characters.getStep().equals(Step.FIRST)) {
                 this.characterUrl = MsgEnum.TURTLE_ONE_URL.getMsg();
+                this.characterName = MsgEnum.TURTLE_ONE_NAME.getMsg();
             } else if (characters.getStep().equals(Step.SECOND)) {
                 this.characterUrl = MsgEnum.TURTLE_TWO_URL.getMsg();
+                this.characterName = MsgEnum.TURTLE_TWO_NAME.getMsg();
             } else {
                 this.characterUrl = MsgEnum.TURTLE_THIRD_URL.getMsg();
+                this.characterName = MsgEnum.TURTLE_THIRD_NAME.getMsg();
             }
         } else {
             if (characters.getStep().equals(Step.FIRST)) {
                 this.characterUrl = MsgEnum.SLOTH_ONE_URL.getMsg();
+                this.characterName = MsgEnum.SLOTH_ONE_NAME.getMsg();
             } else if (characters.getStep().equals(Step.SECOND)) {
                 this.characterUrl = MsgEnum.SLOTH_TWO_URL.getMsg();
+                this.characterName = MsgEnum.SLOTH_TWO_NAME.getMsg();
             } else {
                 this.characterUrl = MsgEnum.SLOTH_THIRD_URL.getMsg();
+                this.characterName = MsgEnum.SLOTH_THIRD_NAME.getMsg();
             }
         }
     }
