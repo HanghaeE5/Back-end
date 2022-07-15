@@ -38,13 +38,19 @@ public enum MsgEnum {
     TODO_DONE("Todo 완료"),
     TODO_UPDATE_SUCCESS("Todo 수정 완료"),
     TODO_DELETE_SUCCESS("Todo 삭제 완료"),
-
     TODO_SCOPE_CHANGED("Todo 공개범위 변경 완료"),
 
-
+    // 캐릭터
     CHARACTER_SELECTED("캐릭터를 선택했습니다"),
-    CHAT_ROOM_EXIT("채팅방에서 퇴장했습니다"),
+    TURTLE_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EA%B1%B0%EB%B6%81%EC%9D%B4_STEPl1.svg"),
+    TURTLE_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EA%B1%B0%EB%B6%81%EC%9D%B4_STEP2.svg"),
+    TURTLE_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EA%B1%B0%EB%B6%81%EC%9D%B4_STEP3.svg"),
+    SLOTH_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEPl1.svg"),
+    SLOTH_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEP2.svg"),
+    SLOTH_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEP3.svg"),
 
+    // 채팅
+    CHAT_ROOM_EXIT("채팅방에서 퇴장했습니다"),
     CHAT_ROOM_ENTER("채팅방에 입장했습니다"),
 
     ;
