@@ -1,6 +1,7 @@
 package com.example.backend.user.dto;
 
 import com.example.backend.character.dto.CharacterResponseDto;
+import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.user.domain.ProviderType;
 import com.example.backend.user.domain.PublicScope;
 import com.example.backend.user.domain.RoleType;
@@ -11,6 +12,8 @@ import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Getter
@@ -28,6 +31,7 @@ public class UserResponseDto {
     private LocalDateTime modifiedDate;
     private CharacterResponseDto characterInfo;
     private PublicScope publicScope;
+    private List<TodoResponseDto> todayTodoList = new ArrayList<>();
 
     public UserResponseDto(User user){
         this.id = user.getUserSeq();
@@ -42,7 +46,7 @@ public class UserResponseDto {
         this.publicScope = user.getPublicScope();
     }
 
-    public UserResponseDto(User user, CharacterResponseDto characterResponseDto){
+    public UserResponseDto(User user, CharacterResponseDto characterResponseDto, List<TodoResponseDto> responseDtoList){
         this.id = user.getUserSeq();
         this.userId = user.getUserId();
         this.nick = user.getUsername();
@@ -54,5 +58,6 @@ public class UserResponseDto {
         this.modifiedDate = user.getModifiedDate();
         this.characterInfo = characterResponseDto;
         this.publicScope = user.getPublicScope();
+        this.todayTodoList = responseDtoList;
     }
 }
