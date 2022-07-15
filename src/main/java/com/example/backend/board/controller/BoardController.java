@@ -93,7 +93,7 @@ public class BoardController {
             @PathVariable Long boardId
     ) throws ParseException {
         LoadUser.loginAndNickCheck();
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.getDetailBoard(boardId));
+        return ResponseEntity.status(HttpStatus.OK).body(boardService.getDetailBoard(boardId, LoadUser.getEmail()));
     }
 
     @ApiOperation(value = "게시글 삭제")
