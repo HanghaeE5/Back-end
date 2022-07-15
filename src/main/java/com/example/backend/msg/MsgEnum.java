@@ -49,6 +49,14 @@ public enum MsgEnum {
     SLOTH_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEP2.svg"),
     SLOTH_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEP3.svg"),
 
+    TURTLE_ONE_NAME("등껍질은 비니 침대"),
+    TURTLE_TWO_NAME("달팽이보단 빠른 비니"),
+    TURTLE_THIRD_NAME(" 출격 완료 ! 비니"),
+    SLOTH_ONE_NAME("이불 밖은 무서운 브라우니"),
+    SLOTH_TWO_NAME("3종 오토 브라우니"),
+    SLOTH_THIRD_NAME("현자 브라우니"),
+
+
     // 채팅
     CHAT_ROOM_EXIT("채팅방에서 퇴장했습니다"),
     CHAT_ROOM_ENTER("채팅방에 입장했습니다"),
