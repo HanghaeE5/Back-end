@@ -148,11 +148,12 @@ public class BoardService {
 
     // 게시물 상세조회
     @Transactional
-    public BoardResponseDto getDetailBoard(Long id) throws ParseException {
+    public BoardResponseDto getDetailBoard(Long id, String email) throws ParseException {
+        User user = getUser(email);
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-        return new BoardResponseDto(board, todoRepository.existsByBoard(board), !withTodoExpiration(board));
+        return new BoardResponseDto(board, todoRepository.existsByBoardAndUser(board, user), !withTodoExpiration(board));
     }
 
     @Transactional
