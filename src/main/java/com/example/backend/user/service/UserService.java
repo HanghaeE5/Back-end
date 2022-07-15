@@ -8,6 +8,9 @@ import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
+import com.example.backend.todo.domain.Todo;
+import com.example.backend.todo.dto.response.TodoResponseDto;
+import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.config.AppProperties;
 import com.example.backend.user.domain.*;
 import com.example.backend.user.dto.*;
@@ -29,10 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -51,6 +51,8 @@ public class UserService {
     private final StampRepository stampRepository;
     private final static long THREE_DAYS_MSEC = 259200000;
     private final AwsS3Service awsS3Service;
+    private final TodoRepository todoRepository;
+
     @Value("${basic.profile.img}")
     private String basicImg;
 
@@ -301,8 +303,16 @@ public class UserService {
     }
 
     public UserResponseDto getUserInfo(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
         CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(email);
-        return new UserResponseDto(getUser(email), characterResponseDto);
+        List<Todo> todoList = todoRepository.findAllByTodoDate(user);
+        List<TodoResponseDto> responseDtoList = new ArrayList<>();
+        for (Todo t : todoList) {
+            responseDtoList.add(new TodoResponseDto(t));
+        }
+        return new UserResponseDto(getUser(email), characterResponseDto, responseDtoList);
     }
 
     @Transactional
