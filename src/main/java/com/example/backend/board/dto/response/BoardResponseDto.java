@@ -45,7 +45,7 @@ public class BoardResponseDto {
 
     private BoardTodoResponseDto todo;
 
-    public BoardResponseDto(Board board, boolean isParticipating, boolean isWithTodoDeadline) {
+    public BoardResponseDto(Board board, boolean participating, boolean withTodoDeadline) {
         this.boardId = board.getId();
         this.boardContent = board.getContent();
         this.imageUrl = board.getImageUrl();
@@ -56,8 +56,8 @@ public class BoardResponseDto {
         this.authorEmail = board.getUser().getEmail();
         this.authorNick = board.getUser().getUsername();
         this.authorProfileImageUrl = board.getUser().getProfileImageUrl();
-        this.participating = isParticipating;
-        this.withTodoDeadline = isWithTodoDeadline;
+        this.participating = participating;
+        this.withTodoDeadline = withTodoDeadline;
         this.ParticipatingCount = board.getParticipatingCount();
         this.chatRoomId = board.getChatRoomId();
     }
