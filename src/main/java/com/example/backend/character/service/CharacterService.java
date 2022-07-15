@@ -75,7 +75,7 @@ public class CharacterService {
         }
         todo.addCharacter(characters);
         characters.addTodo(todo);
-        CharacterResponseDto characterResponseDto = new CharacterResponseDto(characters, levelUp, stepUp);
+        CharacterResponseDto characterResponseDto = new CharacterResponseDto(characters, levelUp, stepUp, standard.getLevelExp().get(characters.getLevel()));
         TodoDoneResponseDto responseDto = new TodoDoneResponseDto(characterResponseDto);
 
         return responseDto;
@@ -92,7 +92,7 @@ public class CharacterService {
         Characters c = characterRepository.findById(user.getUserSeq()).orElseThrow(
                 () -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND)
         );
-        CharacterResponseDto responseDto = new CharacterResponseDto(c);
+        CharacterResponseDto responseDto = new CharacterResponseDto(c, standard.getLevelExp().get(c.getLevel()));
 
         return responseDto;
     }

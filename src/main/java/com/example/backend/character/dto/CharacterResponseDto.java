@@ -14,7 +14,9 @@ public class CharacterResponseDto {
     private Type type;
     private Step step;
     private Integer level;
-    private Integer exp;
+    private Integer expDone;
+    private Integer expNeed;
+    private Double expPercent;
     private boolean levelUp;
     private boolean stepUp;
     private Integer study;
@@ -24,11 +26,13 @@ public class CharacterResponseDto {
     private String characterUrl;
     private String characterName;
 
-    public CharacterResponseDto(Characters characters) {
+    public CharacterResponseDto(Characters characters, Integer expNeed) {
         this.type = characters.getType();
         this.step = characters.getStep();
         this.level = characters.getLevel();
-        this.exp = characters.getExp();
+        this.expDone = characters.getExp();
+        this.expNeed = expNeed;
+        this.expPercent = (double) this.expDone / (double) this.expNeed * 100;
         this.study = characters.getStudy();
         this.exercise = characters.getExercise();
         this.promise = characters.getPromise();
@@ -58,11 +62,13 @@ public class CharacterResponseDto {
         }
     }
 
-    public CharacterResponseDto(Characters characters, boolean levelUp, boolean stepUp) {
+    public CharacterResponseDto(Characters characters, boolean levelUp, boolean stepUp, Integer expNeed) {
         this.type = characters.getType();
         this.step = characters.getStep();
         this.level = characters.getLevel();
-        this.exp = characters.getExp();
+        this.expDone = characters.getExp();
+        this.expNeed = expNeed;
+        this.expPercent = (double) this.expDone / (double) this.expNeed * 100;
         this.levelUp = levelUp;
         this.stepUp = stepUp;
         this.study = characters.getStudy();

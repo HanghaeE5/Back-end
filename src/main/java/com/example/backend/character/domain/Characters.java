@@ -34,6 +34,7 @@ public class Characters extends BaseTime {
     @Column
     private Integer level;
 
+    // 현재 레벨에서 완료한 개수
     @Column
     private Integer exp;
 
