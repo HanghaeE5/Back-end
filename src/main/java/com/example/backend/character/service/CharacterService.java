@@ -59,7 +59,7 @@ public class CharacterService {
         Characters characters = characterRepository.findById(user.getUserSeq()).orElseThrow(
                 () -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND)
         );
-        if (todoRepository.findTodayDone().size() <= 10) {
+        if (todoRepository.findTodayDone(user).size() <= 10) {
             if (todo.getCategory() != Category.ETC) {
                 characters.upgradeMedal(todo.getCategory());
             }
