@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -73,6 +74,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         OidcUser user = ((OidcUser) authentication.getPrincipal());
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
+
         if (userInfo.getEmail() == null){
             throw new CustomException(ErrorCode.NEED_EMAIL);
         }
@@ -107,11 +109,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             userRefreshTokenRepository.saveAndFlush(userRefreshToken);
         }
 
-//        쿠키에 넣지 않고 파라미터로 넘겨주는 방식으로 변경
+        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
         String nickCheck = (username == null) ? "N" : "Y";
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("access", accessToken.getToken())
-                .queryParam("refresh", refreshToken.getToken())
                 .queryParam("nick", nickCheck)
                 .build().toUriString();
     }

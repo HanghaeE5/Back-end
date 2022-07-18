@@ -54,27 +54,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        User savedUser = userRepository.findByUserId(userInfo.getId());
+        User savedUser = userRepository.findByEmail(userInfo.getEmail()).get();
         //이미 가입된 회원
         if (savedUser != null) {
-            if (providerType != savedUser.getProviderType()) {
-                throw new OAuthProviderMissMatchException(
-                        "Looks like you're signed up with " + providerType +
-                                " account. Please use your " + savedUser.getProviderType() + " account to login."
-                );
-            }
+            //추후에 providerType, userid -> List로 받을 수 있게 변경하기
+            savedUser.updateSocialId(userInfo.getId(), providerType);
         } else {
-            //이미 로컬로 가입한 회원
-            Optional<User> optionalUser = userRepository.findByEmail(userInfo.getEmail());
-            if (optionalUser.isPresent()) {
-                //소셜로그인 할 수 있게 변경
-                savedUser = optionalUser.get();
-                savedUser.updateSocialId(userInfo.getId(), providerType);
-            }else{
-                //최초 가입
-                savedUser = createUser(userInfo, providerType);
-                stampRepository.save(new Stamp(savedUser));
-            }
+            //최초 가입
+            savedUser = createUser(userInfo, providerType);
+            stampRepository.save(new Stamp(savedUser));
         }
 
         return UserPrincipal.create(savedUser, user.getAttributes());
