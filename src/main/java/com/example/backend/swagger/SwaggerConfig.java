@@ -79,10 +79,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     private List<SecurityScheme> apiKey() {
         List<SecurityScheme>  apiKeys = new ArrayList<>();
         ApiKey access = new ApiKey("Access-Token", MsgEnum.JWT_HEADER_NAME.getMsg(), "header");
-        ApiKey refresh = new ApiKey("Refresh-Token", MsgEnum.REFRESH_HEADER_NAME.getMsg(), "header");
-
         apiKeys.add(access);
-        apiKeys.add(refresh);
 
         return apiKeys;
     }
@@ -103,13 +100,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
 
-        AuthorizationScope authorizationScope2 = new AuthorizationScope("global", "refreshEverything");
-        AuthorizationScope[] authorizationScopes2 = new AuthorizationScope[1];
-        authorizationScopes2[0] = authorizationScope2;
-
-
         securityReferenceList.add(new SecurityReference("Access-Token", authorizationScopes));
-        securityReferenceList.add(new SecurityReference("Refresh-Token", authorizationScopes2));
 
         return securityReferenceList;
     }
