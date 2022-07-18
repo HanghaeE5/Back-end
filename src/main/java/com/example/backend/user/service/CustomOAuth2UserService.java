@@ -54,10 +54,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        User savedUser = userRepository.findByEmail(userInfo.getEmail()).get();
+        User savedUser;
+        Optional<User> optionalUser = userRepository.findByEmail(userInfo.getEmail());
         //이미 가입된 회원
-        if (savedUser != null) {
+        if (optionalUser.isPresent()) {
             //추후에 providerType, userid -> List로 받을 수 있게 변경하기
+            savedUser = optionalUser.get();
             savedUser.updateSocialId(userInfo.getId(), providerType);
         } else {
             //최초 가입
