@@ -215,27 +215,36 @@ public class UserService {
     public String refresh(HttpServletRequest request, HttpServletResponse response){
         String accessToken = HeaderUtil.getAccessToken(request);
         AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
-
+        log.info("1");
         // 만료된 access token 인지 확인
         Claims claims = authToken.getExpiredTokenClaims();
+        log.info("2");
         if (claims == null) {
+            log.info("2-1");
             throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN_YET);
         }
-
+        log.info("3");
         String email = claims.getSubject();
+        log.info("email : " + email);
         String username = claims.get("nick", String.class);
         RoleType roleType = RoleType.of(claims.get("role", String.class));
-
+        log.info("4");
         // refresh token
         String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN).map(Cookie::getValue).orElse((null));
+        log.info("refresh Token : " + refreshToken);
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
+        log.info("5");
         if (!authRefreshToken.validate()) {
+            log.info("5-1");
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        // userId refresh token 으로 DB 확인
+        log.info("6");
+        // email refresh token 으로 DB 확인
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmailAndRefreshToken(email, refreshToken);
+        log.info("DB Refresh Token : " + userRefreshToken.getRefreshToken());
         if (userRefreshToken == null) {
+            log.info("6-1");
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
@@ -247,7 +256,7 @@ public class UserService {
                 username,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
-
+        log.info("7");
         // refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
         long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
         if (validTime <= THREE_DAYS_MSEC) {
@@ -264,8 +273,9 @@ public class UserService {
             int cookieMaxAge = (int) refreshTokenExpiry / 60;
             CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
             CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
+            log.info("7-1");
         }
-
+        log.info("8");
         return newAccessToken.getToken();
     }
 

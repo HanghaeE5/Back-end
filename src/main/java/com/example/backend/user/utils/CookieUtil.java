@@ -1,5 +1,6 @@
 package com.example.backend.user.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -8,14 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Optional;
 
+@Slf4j
 public class CookieUtil {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                System.out.println("cookie name : " +cookie.getName());
-                System.out.println("cookie value : " +cookie.getValue());
+                log.info("cookie name : " +cookie.getName());
+                log.info("cookie value : " +cookie.getValue());
                 if (name.equals(cookie.getName())) {
                     return Optional.of(cookie);
                 }
