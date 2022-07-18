@@ -165,7 +165,7 @@ public class UserService {
 
 
     @Transactional
-    public String login(LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
+    public String login(LoginRequestDto loginRequestDto) {
         //회원 있는지 없는지 체크
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_EMAIL_PWD));
@@ -202,17 +202,13 @@ public class UserService {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
         return accessToken.getToken();
     }
 
 
 
     @Transactional
-    public String refresh(HttpServletRequest request, HttpServletResponse response){
+    public String refresh(HttpServletRequest request){
         String accessToken = HeaderUtil.getAccessToken(request);
         AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
 
@@ -227,15 +223,9 @@ public class UserService {
         RoleType roleType = RoleType.of(claims.get("role", String.class));
 
         // refresh token
-        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN).map(Cookie::getValue).orElse((null));
-        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmail(email);
+        AuthToken authRefreshToken = tokenProvider.convertAuthToken(userRefreshToken.getRefreshToken());
         if (!authRefreshToken.validate()) {
-            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
-
-        // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmailAndRefreshToken(email, refreshToken);
-        if (userRefreshToken == null) {
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
@@ -247,7 +237,6 @@ public class UserService {
                 username,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
-
         // refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
         long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
         if (validTime <= THREE_DAYS_MSEC) {
@@ -261,11 +250,7 @@ public class UserService {
             // DB에 refresh 토큰 업데이트 해주기
             userRefreshToken.setRefreshToken(authRefreshToken.getToken());
 
-            int cookieMaxAge = (int) refreshTokenExpiry / 60;
-            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
         }
-
         return newAccessToken.getToken();
     }
 
@@ -300,9 +285,9 @@ public class UserService {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
         return newAccessToken.getToken();
     }
