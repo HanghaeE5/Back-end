@@ -43,18 +43,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .accepts(Collections.singleton(MediaType.APPLICATION_JSON))
                 .build();
 
-        RequestParameterBuilder refreshTokenBuilder = new RequestParameterBuilder();
-        refreshTokenBuilder
-                .name(MsgEnum.REFRESH_HEADER_NAME.getMsg())
-                .description("Refresh Token")
-                .required(false)
-                .in("header")
-                .accepts(Collections.singleton(MediaType.APPLICATION_JSON))
-                .build();
-
         List<RequestParameter> header = new ArrayList<>();
         header.add(accessTokenBuilder.build());
-        header.add(refreshTokenBuilder.build());
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())

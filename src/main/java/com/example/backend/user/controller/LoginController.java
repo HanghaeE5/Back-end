@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -28,15 +29,12 @@ public class LoginController {
 
     @ApiOperation(value = "로컬 로그인")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
         log.info("/login");
-
-        Map<String, String> token = userService.login(loginRequestDto);
 
         return ResponseEntity
                 .ok()
-                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), token.get(MsgEnum.JWT_HEADER_NAME.getMsg()))
-                .header(MsgEnum.REFRESH_HEADER_NAME.getMsg(), token.get(MsgEnum.REFRESH_HEADER_NAME.getMsg()))
+                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.login(loginRequestDto, request, response))
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.LOGIN_SUCCESS.getMsg());
     }
@@ -44,17 +42,14 @@ public class LoginController {
     @ApiOperation(value = "토큰 재발급")
     @GetMapping("/refresh")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Refresh", value = "Refresh Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "refresh_token"),
             @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     })
-    public ResponseEntity<String> refreshToken (HttpServletRequest request) {
+    public ResponseEntity<String> refreshToken (HttpServletRequest request, HttpServletResponse response) {
         log.info("/refresh");
-        Map<String, String> token = userService.refresh(request);
 
         return ResponseEntity
                 .ok()
-                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), token.get(MsgEnum.JWT_HEADER_NAME.getMsg()))
-                .header(MsgEnum.REFRESH_HEADER_NAME.getMsg(), token.get(MsgEnum.REFRESH_HEADER_NAME.getMsg()))
+                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.refresh(request, response))
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.REISSUE_COMPLETED_TOKEN.getMsg());
     }
