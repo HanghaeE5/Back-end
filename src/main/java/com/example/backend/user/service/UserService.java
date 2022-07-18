@@ -19,6 +19,7 @@ import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
+import com.example.backend.user.utils.CookieUtil;
 import com.example.backend.user.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +31,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
 
 @Service
 @RequiredArgsConstructor
@@ -161,7 +165,7 @@ public class UserService {
 
 
     @Transactional
-    public Map<String, String> login(LoginRequestDto loginRequestDto) {
+    public String login(LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
         //회원 있는지 없는지 체크
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_EMAIL_PWD));
@@ -198,17 +202,17 @@ public class UserService {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-        //토큰 Map에 넣고 리턴
-        Map<String, String> token = new HashMap<>();
-        token.put(MsgEnum.JWT_HEADER_NAME.getMsg(), accessToken.getToken());
-        token.put(MsgEnum.REFRESH_HEADER_NAME.getMsg(), userRefreshToken.getRefreshToken());
-        return token;
+        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+        return accessToken.getToken();
     }
 
 
 
     @Transactional
-    public Map<String, String> refresh(HttpServletRequest request){
+    public String refresh(HttpServletRequest request, HttpServletResponse response){
         String accessToken = HeaderUtil.getAccessToken(request);
         AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
 
@@ -223,7 +227,7 @@ public class UserService {
         RoleType roleType = RoleType.of(claims.get("role", String.class));
 
         // refresh token
-        String refreshToken = HeaderUtil.getRefreshToken(request);
+        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN).map(Cookie::getValue).orElse((null));
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
         if (!authRefreshToken.validate()) {
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
@@ -256,17 +260,17 @@ public class UserService {
             );
             // DB에 refresh 토큰 업데이트 해주기
             userRefreshToken.setRefreshToken(authRefreshToken.getToken());
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
         }
 
-        //토큰 Map에 넣고 리턴
-        Map<String, String> token = new HashMap<>();
-        token.put(MsgEnum.JWT_HEADER_NAME.getMsg(), newAccessToken.getToken());
-        token.put(MsgEnum.REFRESH_HEADER_NAME.getMsg(), authRefreshToken.getToken());
-        return token;
+        return newAccessToken.getToken();
     }
 
     @Transactional
-    public Map<String, String> addNick(String email, String nick) {
+    public String addNick(String email, String nick, HttpServletRequest request, HttpServletResponse response) {
 
         User user = getUser(email);
         dupleNickCheck(nick);
@@ -296,10 +300,11 @@ public class UserService {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-        Map<String, String> token = new HashMap<>();
-        token.put(MsgEnum.JWT_HEADER_NAME.getMsg(), newAccessToken.getToken());
-        token.put(MsgEnum.REFRESH_HEADER_NAME.getMsg(), userRefreshToken.getRefreshToken());
-        return token;
+        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+        return newAccessToken.getToken();
     }
 
     public UserResponseDto getUserInfo(String email) {
