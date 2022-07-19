@@ -40,7 +40,7 @@ public class ChatMessage extends BaseTime {
     public ChatMessage(ChatMessageRequestDto requestDto, User user) {
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();
-        this.sender = requestDto.getSender();
+        this.sender = user.getUsername();
         this.message = requestDto.getMessage();
         this.user = user;
     }
