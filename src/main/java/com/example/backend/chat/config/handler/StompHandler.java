@@ -1,5 +1,7 @@
 package com.example.backend.chat.config.handler;
 
+import com.example.backend.chat.service.ChatMessageService;
+import com.example.backend.chat.service.ChatMessageService2;
 import com.example.backend.chat.service.ChatRoomService;
 import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.token.AuthToken;
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class StompHandler implements ChannelInterceptor {
 
     private final AuthTokenProvider tokenProvider;
-    private final ChatRoomService chatRoomService;
+    private final ChatMessageService2 chatMessageService2;
 
     // websocket 요청 시 실행
     @Override
@@ -31,9 +33,12 @@ public class StompHandler implements ChannelInterceptor {
         String tokenStr = accessor.getFirstNativeHeader("Authorization");
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         token.validate();
-
+//        String email = token.getTokenClaims().getSubject();
+//
+//        log.info("내 이메일은 " + email + "이다");
         log.info("나는 websoket 에서 받는 토큰이다 : " + token.getToken());
 
+        // Subscribe 시
         if (StompCommand.CONNECT == accessor.getCommand()) {
 
             log.info(message.getHeaders().toString());
@@ -43,16 +48,21 @@ public class StompHandler implements ChannelInterceptor {
 
             log.info(message.getHeaders().toString());
             log.info("나는 StompCommand.SUBSCRIBE");
+            // subscribe 시 마지막으로 연결 끊은 시간 이후의 해당 채팅방 메세지를 읽음 처리
+            // participant 의 status 를 true 변경
+            chatMessageService2.read();
+            chatMessageService2.enter();
 
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
-            // 채팅방 나가기 메서드 호출
-//            chatRoomService.exitRoom(message, LoadUser.getEmail());
+
             log.info("나는 StompCommand.UNSUBSCRIBE");
 
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
 
             log.info(message.getHeaders().toString());
             log.info("나는 StompCommand.DISCONNECT");
+            // participant 의 status 를 false 로 변경
+            chatMessageService2.exit();
 
         }
         return message;
