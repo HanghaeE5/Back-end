@@ -29,12 +29,12 @@ public class LoginController {
 
     @ApiOperation(value = "로컬 로그인")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
         log.info("/login");
 
         return ResponseEntity
                 .ok()
-                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.login(loginRequestDto))
+                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.login(loginRequestDto, request, response))
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.LOGIN_SUCCESS.getMsg());
     }
@@ -44,12 +44,12 @@ public class LoginController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     })
-    public ResponseEntity<String> refreshToken (HttpServletRequest request) {
+    public ResponseEntity<String> refreshToken (HttpServletRequest request, HttpServletResponse response) {
         log.info("/refresh");
 
         return ResponseEntity
                 .ok()
-                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.refresh(request))
+                .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.refresh(request, response))
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.REISSUE_COMPLETED_TOKEN.getMsg());
     }
