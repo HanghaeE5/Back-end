@@ -263,6 +263,7 @@ public class BoardService {
         //사용자가 등록한 TODO 삭제
         List<Todo> todoList = todoRepository.findAllByBoardAndUser(board, user);
         todoRepository.deleteAll(todoList);
+        board.minusParticipatingCount();
     }
 
     @Transactional

@@ -77,4 +77,8 @@ public class Board extends BaseTime {
     public void saveChatRoomId(String chatRoomId){
         this.chatRoomId = chatRoomId;
     }
+
+    public void minusParticipatingCount() {
+        this.participatingCount = this.participatingCount - 1;
+    }
 }
