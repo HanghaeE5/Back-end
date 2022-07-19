@@ -165,7 +165,7 @@ public class UserService {
 
 
     @Transactional
-    public String login(LoginRequestDto loginRequestDto) {
+    public String login(LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
         //회원 있는지 없는지 체크
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_EMAIL_PWD));
@@ -200,6 +200,10 @@ public class UserService {
         } else {
             // DB에 refresh 토큰 업데이트
             userRefreshToken.setRefreshToken(refreshToken.getToken());
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
         }
 
         return accessToken.getToken();
@@ -208,7 +212,7 @@ public class UserService {
 
 
     @Transactional
-    public String refresh(HttpServletRequest request){
+    public String refresh(HttpServletRequest request, HttpServletResponse response){
         String accessToken = HeaderUtil.getAccessToken(request);
         AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
 
@@ -249,6 +253,10 @@ public class UserService {
             );
             // DB에 refresh 토큰 업데이트 해주기
             userRefreshToken.setRefreshToken(authRefreshToken.getToken());
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
 
         }
         return newAccessToken.getToken();
