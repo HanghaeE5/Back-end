@@ -6,10 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -27,6 +24,13 @@ public class BoardTodoResponseDto {
             this.category = bt.getCategory().toString();
             this.todoDateList.add(bt.getTodoDate());
         }
+        Collections.sort(this.todoDateList);
+    }
+
+    public BoardTodoResponseDto(BoardTodo boardTodo){
+        this.todoContent = boardTodo.getContent();
+        this.category = boardTodo.getCategory().toString();
+        this.todoDateList.add(boardTodo.getTodoDate());
     }
 
 //    public static List<BoardTodoResponseDto> getBoardTodoList(Set<BoardTodo> boardTodoList){

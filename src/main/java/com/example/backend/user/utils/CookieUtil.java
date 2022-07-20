@@ -25,8 +25,16 @@ public class CookieUtil {
         return Optional.empty();
     }
 
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//        cookie.setMaxAge(maxAge);
+//
+//        response.addCookie(cookie);
+
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
+//                .domain(".todowith.co.kr")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(maxAge)
@@ -35,12 +43,6 @@ public class CookieUtil {
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
-//        Cookie cookie = new Cookie(name, value);
-//        cookie.setPath("/");
-//        cookie.setHttpOnly(true);
-//        cookie.setMaxAge(maxAge);
-//
-//        response.addCookie(cookie);
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

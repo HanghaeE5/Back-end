@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 @Data
-@Getter
 public class PageBoardResponseDto {
     private List<BoardResponseDto> content;
 
