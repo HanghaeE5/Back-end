@@ -41,7 +41,7 @@ public class UserController {
     @ApiOperation(value = "사용자 프로필 사진 변경")
     @PutMapping("/profile")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    public ResponseEntity<UserResponseDto> updateProfile(@RequestPart(value = "file") MultipartFile file){
+    public ResponseEntity<UserResponseDto> updateProfile(@RequestPart(value = "file", required = false) MultipartFile file){
         LoadUser.loginAndNickCheck();
         return ResponseEntity
                 .ok()
