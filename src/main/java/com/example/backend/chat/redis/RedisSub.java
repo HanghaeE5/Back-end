@@ -23,7 +23,7 @@ public class RedisSub implements MessageListener {
         try {
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
             ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
-            messageSendingOperations.convertAndSend();
+//            messageSendingOperations.convertAndSend();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
