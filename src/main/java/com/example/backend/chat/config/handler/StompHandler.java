@@ -43,6 +43,7 @@ public class StompHandler implements ChannelInterceptor {
 
             log.info(message.getHeaders().toString());
             log.info("나는 StompCommand.CONNECT");
+            // sessionId 와 userId
 
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
 
