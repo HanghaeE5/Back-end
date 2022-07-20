@@ -1,17 +1,18 @@
 package com.example.backend.board.controller;
 
-import com.example.backend.board.dto.*;
+import com.example.backend.board.dto.FilterEnum;
+import com.example.backend.board.dto.SubEnum;
 import com.example.backend.board.dto.request.RequestDto;
 import com.example.backend.board.dto.response.BoardResponseDto;
 import com.example.backend.board.dto.response.PageBoardResponseDto;
 import com.example.backend.board.service.BoardService;
 import com.example.backend.msg.MsgEnum;
-import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.user.common.LoadUser;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,6 +28,7 @@ import java.text.ParseException;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
@@ -61,16 +63,8 @@ public class BoardController {
                 .body(MsgEnum.BOARD_SAVE_SUCCESS.getMsg());
     }
 
-    @ApiOperation(value = "전체 게시글 목록 조회")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "access_token"),
-        @ApiImplicitParam(name = "filter", value = "카테고리(daily/challenge/my)", dataType = "string", paramType = "query"),
-        @ApiImplicitParam(name = "keyword", value = "검색 키워드", dataType = "string", paramType = "query"),
-        @ApiImplicitParam(name = "pageable", value = "페이징 값(size, page, sort)", dataType = "Pageable", paramType = "query"),
-        @ApiImplicitParam(name = "sub", value = "(제목/내용으로 검색)title/content", dataType = "string", paramType = "query")
-    })
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @GetMapping("/board")
+    @ApiOperation(value = "전체 게시글 목록 조회 / version-1 삭제 예정")
+    @GetMapping("/board-v1")
     public ResponseEntity<PageBoardResponseDto> getBoardList(
             @RequestParam(defaultValue = "all", required = false) FilterEnum filter,
             @RequestParam(defaultValue = "", required = false) String keyword,
@@ -84,9 +78,31 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @ApiOperation(value = "게시글 상세 조회")
+    @ApiOperation(value = "전체 게시글 목록 조회")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "access_token"),
+            @ApiImplicitParam(name = "filter", value = "카테고리(daily/challenge/my)", dataType = "string", paramType = "query", dataTypeClass = FilterEnum.class),
+            @ApiImplicitParam(name = "keyword", value = "검색 키워드", dataType = "string", paramType = "query", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "pageable", value = "페이징 값(size, page, sort)", dataType = "Pageable", paramType = "query", dataTypeClass = Pageable.class),
+            @ApiImplicitParam(name = "sub", value = "(제목/내용으로 검색)title/content", dataType = "string", paramType = "query", dataTypeClass = SubEnum.class)
+    })
+    @GetMapping("/board")
+    public ResponseEntity<PageBoardResponseDto> getBoardListV2(
+        @RequestParam(required = false) FilterEnum filter,
+        @RequestParam(defaultValue = "", required = false) String keyword,
+        @RequestParam(defaultValue = "all", required = false) SubEnum sub,
+        @PageableDefault(sort="createdDate", direction= Sort.Direction.DESC) Pageable pageable
+    ) {
+        LoadUser.loginAndNickCheck();
+        PageBoardResponseDto responseDto = boardService.getBoardListV2(
+                filter, keyword, pageable, LoadUser.getEmail(), sub
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @ApiOperation(value = "게시글 상세 조회 및 검색")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", dataTypeClass = String.class, example = "access_token"),
     })
     @GetMapping("/board/{boardId}")
     public ResponseEntity<BoardResponseDto> getDetailBoard(

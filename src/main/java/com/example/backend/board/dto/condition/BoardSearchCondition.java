@@ -13,4 +13,11 @@ public class BoardSearchCondition {
     private FilterEnum filter;
     private String keyword;
     private User user;
+
+    public BoardSearchCondition(SubEnum sub, FilterEnum filter, String keyword, User user) {
+        this.sub = sub;
+        this.filter = filter;
+        this.keyword = keyword;
+        this.user = user;
+    }
 }

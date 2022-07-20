@@ -27,6 +27,12 @@ public class BoardTodoResponseDto {
         Collections.sort(this.todoDateList);
     }
 
+    public BoardTodoResponseDto(BoardTodo boardTodo){
+        this.todoContent = boardTodo.getContent();
+        this.category = boardTodo.getCategory().toString();
+        this.todoDateList.add(boardTodo.getTodoDate());
+    }
+
 //    public static List<BoardTodoResponseDto> getBoardTodoList(Set<BoardTodo> boardTodoList){
 //        return boardTodoList.stream()
 //                .map(BoardTodoResponseDto::new)
