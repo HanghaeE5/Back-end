@@ -317,11 +317,16 @@ public class UserService {
     public UserResponseDto updateProfile(MultipartFile file, String email) {
         User user = getUser(email);
 
-        if (!basicImg.equals(user.getProfileImageUrl())){
-            awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+//        if (!basicImg.equals(user.getProfileImageUrl())){
+//            awsS3Service.deleteImage(user.getProfileImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
+//        }
+
+        String imgUrl = basicImg;
+        if (file != null){
+            imgUrl = awsS3Service.uploadImage(file);
         }
 
-        user.updateProfileImage(awsS3Service.uploadImage(file));
+        user.updateProfileImage(imgUrl);
 
         return new UserResponseDto(user);
     }
