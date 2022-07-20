@@ -64,6 +64,10 @@ public class ChatMessageService {
 
     @Transactional
     public void saveChatMessage(ChatMessageRequestDto message) {
+
+        // if 문 안에서 participant 숫자로 read 숫자를 계산
+        // ChatMessage 생성 하면서 Reader 함께 생성 -아직 안함-
+
         if (!Objects.equals(message.getSender(), "[알림]")) {
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
                     () -> new CustomException(ErrorCode.USER_NOT_FOUND)

@@ -25,7 +25,7 @@ public class ChatMessageResponseDto {
     public ChatMessageResponseDto(ChatMessage message) {
         this.type = message.getType();
         this.roomId = message.getRoomId();
-        this.sender = message.getSender();
+        this.sender = message.getUser().getUsername();
         this.message = message.getMessage();
         this.createdDate = message.getCreatedDate();
         if (message.getUser() != null) {
