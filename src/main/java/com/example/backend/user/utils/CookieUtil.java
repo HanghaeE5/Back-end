@@ -1,5 +1,7 @@
 package com.example.backend.user.utils;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Optional;
 
+@Slf4j
 public class CookieUtil {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
@@ -22,13 +25,24 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//        cookie.setMaxAge(maxAge);
+//
+//        response.addCookie(cookie);
 
-        response.addCookie(cookie);
+    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+//                .domain(".todowith.co.kr")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(maxAge)
+                .secure(true)
+                .sameSite("None")
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

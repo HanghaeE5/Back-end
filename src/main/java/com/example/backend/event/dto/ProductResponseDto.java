@@ -9,9 +9,12 @@ public class ProductResponseDto {
     private Long eventId;
     private String name;
 
+    private String imageUrl;
+
     public ProductResponseDto(Product product, Long eventId){
         this.eventId = eventId;
         this.name = product.getName();
+        this.imageUrl = product.getImgUrl();
     }
 
 }
