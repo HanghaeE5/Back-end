@@ -31,6 +31,7 @@ public class FriendRequestService {
 
     private final FriendRequestRepository friendRequestRepository;
     private final CharacterService characterService;
+    private final CharacterRepository characterRepository;
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
 
@@ -176,7 +177,10 @@ public class FriendRequestService {
         List<UserResponseDto> responseDtoList = new ArrayList<>();
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserFromUserSeq(user.getUserSeq())) {
             if (friendRequest.isState()) {
-                UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserTo());
+                Characters character = characterRepository.findById(friendRequest.getUserTo().getUserSeq()).orElseThrow(
+                        () -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND)
+                );
+                UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserTo(), character);
                 responseDtoList.add(responseDto);
             }
         }
