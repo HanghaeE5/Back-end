@@ -6,6 +6,8 @@ import com.example.backend.board.dto.FilterEnum;
 import com.example.backend.board.dto.SubEnum;
 import com.example.backend.board.dto.condition.BoardSearchCondition;
 import com.example.backend.user.domain.User;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
@@ -13,6 +15,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
@@ -39,6 +42,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(boardSort(pageable))
                 .fetch();
 
         JPAQuery<Board> countQuery = queryFactory
@@ -81,5 +85,27 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                     "function('matchs',{0},{1},{2})", board.title, board.content, "+" + keyword + "*");
             return booleanTemplate.gt(0);
         }
+    }
+
+
+    private OrderSpecifier<?> boardSort(Pageable page) {
+        //서비스에서 보내준 Pageable 객체에 정렬조건 null 값 체크
+        if (!page.getSort().isEmpty()) {
+            //정렬값이 들어 있으면 for 사용하여 값을 가져온다
+            for (Sort.Order order : page.getSort()) {
+                // 서비스에서 넣어준 DESC or ASC 를 가져온다.
+                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+                // 서비스에서 넣어준 정렬 조건을 스위치 케이스 문을 활용하여 셋팅하여 준다.
+                switch (order.getProperty()){
+                    case "title":
+                        return new OrderSpecifier(direction, board.title);
+                    case "content":
+                        return new OrderSpecifier(direction, board.content);
+                    case "createdDate":
+                        return new OrderSpecifier(direction, board.createdDate);
+                }
+            }
+        }
+        return null;
     }
 }
