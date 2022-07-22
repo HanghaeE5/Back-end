@@ -61,6 +61,13 @@ public class Board extends BaseTime {
         this.participatingCount = 0L;
     }
 
+    public Board(String title, String content, User user){
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.participatingCount = 0L;
+    }
+
     public void update(BoardRequestDto requestDto, User user){
         this.category = requestDto.getCategory();
         this.user = user;

@@ -95,21 +95,24 @@ public class BoardService {
                 log.info("title search");
                 boardPage = boardRepository.findByTitleContaining(keyword, pageable);
             }
-        }else if(sub.equals(SubEnum.content)){
-            if(Objects.equals(filter, FilterEnum.challenge)) {
+        }else if(sub.equals(SubEnum.content)) {
+            if (Objects.equals(filter, FilterEnum.challenge)) {
                 log.info("content, challenge search");
                 boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.CHALLENGE, pageable);
-            } else if(Objects.equals(filter, FilterEnum.daily)) {
+            } else if (Objects.equals(filter, FilterEnum.daily)) {
                 log.info("content, daily search");
                 boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.DAILY, pageable);
-            } else if(Objects.equals(filter, FilterEnum.my)){
+            } else if (Objects.equals(filter, FilterEnum.my)) {
                 log.info("content, my search");
                 User user = getUser(email);
                 boardPage = boardRepository.findByContentContainingAndUser(keyword, user, pageable);
-            }else{
+            } else {
                 log.info("content search");
                 boardPage = boardRepository.findByContentContaining(keyword, pageable);
             }
+//            else if(sub.equals(SubEnum.all)) {
+//                boardPage = boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+//            }
         }else{
             if(Objects.equals(filter, FilterEnum.challenge)) {
                 log.info("challenge search");
@@ -135,9 +138,8 @@ public class BoardService {
 
     @Transactional
     public PageBoardResponseDto getBoardListV2(FilterEnum filter, String keyword, Pageable pageable, String email, SubEnum sub){
-        User user = getUser(email);
 
-        BoardSearchCondition searchCondition = new BoardSearchCondition(sub, filter, keyword, user);
+        BoardSearchCondition searchCondition = new BoardSearchCondition(sub, filter, keyword, email);
 
         Page<Board> result = boardRepository.search(pageable, searchCondition);
 

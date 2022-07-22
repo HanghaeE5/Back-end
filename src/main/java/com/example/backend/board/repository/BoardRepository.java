@@ -23,6 +23,8 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
 
     Page<Board> findByTitleContaining(String keyword, Pageable pageable);
 
+    Page<Board> findByTitleContainingOrContentContaining(String keyword1, String keyword2, Pageable pageable);
+
     Page<Board> findByContentContainingAndUser(String keyword, User user, Pageable pageable);
 
     Page<Board> findByContentContainingAndCategory(String keyword, Category category, Pageable pageable);
