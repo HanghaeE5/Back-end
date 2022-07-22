@@ -33,7 +33,7 @@ public class BoardTestController {
             @PageableDefault(sort="createdDate", direction= Sort.Direction.DESC) Pageable pageable
     ) {
         PageBoardResponseDto responseDto = boardService.getBoardList(
-                filter, keyword, pageable, "yung6532@naver.com", sub
+                filter, keyword, pageable, "a@a.com", sub
         );
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
@@ -46,7 +46,7 @@ public class BoardTestController {
             @PageableDefault(sort="createdDate", direction= Sort.Direction.DESC) Pageable pageable
     ) {
         PageBoardResponseDto responseDto = boardService.getBoardListV2(
-                filter, keyword, pageable, "yung6532@naver.com", sub
+                filter, keyword, pageable, "a@a.com", sub
         );
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

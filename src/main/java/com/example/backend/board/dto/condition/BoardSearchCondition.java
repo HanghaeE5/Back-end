@@ -12,12 +12,12 @@ public class BoardSearchCondition {
     private SubEnum sub;
     private FilterEnum filter;
     private String keyword;
-    private User user;
+    private String email;
 
-    public BoardSearchCondition(SubEnum sub, FilterEnum filter, String keyword, User user) {
+    public BoardSearchCondition(SubEnum sub, FilterEnum filter, String keyword, String email) {
         this.sub = sub;
         this.filter = filter;
         this.keyword = keyword;
-        this.user = user;
+        this.email = email;
     }
 }
