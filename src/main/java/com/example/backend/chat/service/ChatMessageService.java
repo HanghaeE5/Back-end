@@ -54,6 +54,7 @@ public class ChatMessageService {
             }
         }
         ChatMessage chatMessage = this.saveChatMessage(message);
+        //--- 여기서 종료 ---
         log.info("chat.controller.ChatMessageService.sendChatMessage().end");
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), chatMessage);
     }
@@ -91,14 +92,18 @@ public class ChatMessageService {
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
+        log.info("1111111111111111111111111111111111111111111111111111111");
         long notRead = chatRoom.getParticipantList().size() - participantCount - 1;
+        log.info("chat.controller.ChatMessageService.saveChatMessage().notRead = " + notRead);
         if (!Objects.equals(message.getSender(), "[알림]")) {
+            log.info("2222222222222222222222222222222222222222222222222222222222222");
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
                     () -> new CustomException(ErrorCode.USER_NOT_FOUND)
             );
             return chatMessageRepository.save(new ChatMessage(message, user, notRead));
         }
         else {
+            log.info("33333333333333333333333333333333333333333333333333");
             return chatMessageRepository.save(new ChatMessage(message));
         }
     }
