@@ -14,11 +14,10 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
     }
 
     @Override
-    public Page<Board> search(Pageable pageable, BoardSearchCondition searchCondition) {
+    public Slice<Board> search(Pageable pageable, BoardSearchCondition searchCondition) {
 
         List<Board> content = queryFactory.
                 selectFrom(board)
@@ -46,22 +45,20 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                         keywordAndSubject(searchCondition.getKeyword(), searchCondition.getSub())
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize() + 1)
                 .orderBy(
                         boardSort(pageable, searchCondition.getKeyword(), searchCondition.getSub())
                             .stream().toArray(OrderSpecifier[]::new)
                         )
                 .fetch();
 
-        JPAQuery<Board> countQuery = queryFactory
-                .select(board)
-                .from(board)
-                .where(
-                        filterEq(searchCondition.getFilter(), searchCondition.getEmail()),
-                        keywordAndSubject(searchCondition.getKeyword(), searchCondition.getSub())
-                );
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            content.remove(pageable.getPageSize());
+            hasNext = true;
+        }
 
-        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
+        return new SliceImpl<>(content, pageable, hasNext);
     }
 
     private BooleanExpression filterEq(FilterEnum filterEnum, String email) {
@@ -104,19 +101,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
         }
         orderSpecifierList.add(new OrderSpecifier(Order.DESC, board.createdDate));
 
-//        if (!page.getSort().isEmpty()) {
-//            for (Sort.Order order : page.getSort()) {
-//                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
-//                switch (order.getProperty()){
-//                    case "title":
-//                        orderSpecifierList.add(new OrderSpecifier(direction, board.title));
-//                    case "content":
-//                        orderSpecifierList.add(new OrderSpecifier(direction, board.content));
-//                    default:
-//                        orderSpecifierList.add(new OrderSpecifier(direction, board.createdDate));
-//                }
-//            }
-//        }
         return orderSpecifierList;
     }
 
