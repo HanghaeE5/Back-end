@@ -24,11 +24,12 @@ public class RedisSub implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         log.info("chat.redis.RedisSub.onMessage()");
         try {
-            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
+            String publishMessage = redisTemplate.getStringSerializer().deserialize(message.getBody());
             ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
             messageSendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            log.error("chat.redis.RedisSub.onMessage.error");
         }
     }
 

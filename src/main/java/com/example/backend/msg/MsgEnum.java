@@ -60,6 +60,8 @@ public enum MsgEnum {
     // 채팅
     CHAT_ROOM_EXIT("채팅방에서 퇴장했습니다"),
     CHAT_ROOM_ENTER("채팅방에 입장했습니다"),
+    COUNT_PARTICIPANT("COUNT_PARTICIPANT"),
+    SESSION_PARTICIPANT_MAPPING("SESSION_PARTICIPANT_MAPPING"),
 
     ;
 
