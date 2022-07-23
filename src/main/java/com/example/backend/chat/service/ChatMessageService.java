@@ -37,6 +37,7 @@ public class ChatMessageService {
     private final RedisPub redisPub;
 
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
+        log.info("chat.controller.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -53,6 +54,7 @@ public class ChatMessageService {
             }
         }
         ChatMessage chatMessage = this.saveChatMessage(message);
+        log.info("chat.controller.ChatMessageService.sendChatMessage().end");
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), chatMessage);
     }
 
@@ -83,6 +85,7 @@ public class ChatMessageService {
     @Transactional
     public ChatMessage saveChatMessage(ChatMessageRequestDto message) {
 
+        log.info("chat.controller.ChatMessageService.saveChatMessage()");
         // if 문 안에서 participant 숫자로 read 숫자를 계산
         long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
