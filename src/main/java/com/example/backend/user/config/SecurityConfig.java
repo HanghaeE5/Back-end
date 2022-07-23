@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
 
+                .antMatchers("/test/**").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers("/error/**").permitAll()
