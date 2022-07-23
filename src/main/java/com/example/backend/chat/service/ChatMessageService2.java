@@ -30,7 +30,7 @@ public class ChatMessageService2 {
     private HashOperations<String, String, String> hashOperations;
 
     @Resource(name = "redisTemplate")
-    private ValueOperations<String, Long> valueOperations;
+    private ValueOperations<String, String> valueOperations;
 
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
@@ -50,7 +50,7 @@ public class ChatMessageService2 {
 
     public long getParticipantCount(String roomId) {
         log.info("chat.service.ChatMessageService2.getParticipant()");
-        return Optional.ofNullable(valueOperations.get(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse(0L);
+        return Long.parseLong(Optional.ofNullable(valueOperations.get(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse("0"));
     }
 
     public long plusParticipantCount(String roomId) {
