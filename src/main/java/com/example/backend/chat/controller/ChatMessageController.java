@@ -32,6 +32,7 @@ public class ChatMessageController {
     @ApiOperation(value = "메세지 전송(/pub)")
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDto message, @Header("Authorization") String tokenStr) {
+        log.info("chat.controller.ChatMessageController.message()");
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         String email = token.getTokenClaims().getSubject();
         chatMessageService.sendChatMessage(message, email);
