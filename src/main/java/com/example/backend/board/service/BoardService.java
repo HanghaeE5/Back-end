@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -141,7 +142,7 @@ public class BoardService {
 
         BoardSearchCondition searchCondition = new BoardSearchCondition(sub, filter, keyword, email);
 
-        Page<Board> result = boardRepository.search(pageable, searchCondition);
+        Slice<Board> result = boardRepository.search(pageable, searchCondition);
 
         return new PageBoardResponseDto(
                 BoardResponseDto.getDtoList(result.getContent()),
