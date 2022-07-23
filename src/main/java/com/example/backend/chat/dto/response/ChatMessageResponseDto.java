@@ -21,6 +21,7 @@ public class ChatMessageResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
     private String profileImageUrl;
+    private long notRead;
 
     public ChatMessageResponseDto(ChatMessage message) {
         this.type = message.getType();
@@ -32,4 +33,9 @@ public class ChatMessageResponseDto {
             this.profileImageUrl = message.getUser().getProfileImageUrl();
         }
     }
+
+    public void read() {
+        notRead--;
+    }
+
 }
