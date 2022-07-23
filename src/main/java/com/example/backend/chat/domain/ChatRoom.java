@@ -26,7 +26,7 @@ public class ChatRoom extends BaseTime {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "chatRoom")
     private List<Participant> participantList = new ArrayList<>();
 
     public ChatRoom(ChatRoomPrivateRequestDto requestDto) {

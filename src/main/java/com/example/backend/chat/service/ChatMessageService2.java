@@ -10,6 +10,7 @@ import com.example.backend.msg.MsgEnum;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 // StompHandler 에 ChatMessageService DI 시 The dependencies of some of the beans in the application context form a cycle 오류
 // 원인 : ChatMessageService 에는 SimpMessageSendingOperations 가 선언되어 있음
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService2 {
@@ -28,7 +30,7 @@ public class ChatMessageService2 {
     private HashOperations<String, String, String> hashOperations;
 
     @Resource(name = "redisTemplate")
-    private ValueOperations<String, Long> valueOperations;
+    private ValueOperations<String, String> valueOperations;
 
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
@@ -47,7 +49,8 @@ public class ChatMessageService2 {
     }
 
     public long getParticipantCount(String roomId) {
-        return Optional.ofNullable(valueOperations.get(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse(0L);
+        log.info("chat.service.ChatMessageService2.getParticipant()");
+        return Long.parseLong(Optional.ofNullable(valueOperations.get(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse("0"));
     }
 
     public long plusParticipantCount(String roomId) {
