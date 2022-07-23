@@ -94,7 +94,7 @@ public class ChatMessageService {
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
         log.info("1111111111111111111111111111111111111111111111111111111");
-        long notRead = chatRoom.getParticipantList().size() - participantCount - 1;
+        long notRead = (long) chatRoom.getParticipantList().size() - participantCount - 1L;
         log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
         if (!Objects.equals(message.getSender(), "[알림]")) {
             log.info("2222222222222222222222222222222222222222222222222222222222222");
