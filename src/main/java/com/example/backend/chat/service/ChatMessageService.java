@@ -37,7 +37,7 @@ public class ChatMessageService {
     private final RedisPub redisPub;
 
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
-        log.info("chat.controller.ChatMessageService.sendChatMessage()");
+        log.info("chat.service.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -55,7 +55,7 @@ public class ChatMessageService {
         }
         ChatMessage chatMessage = this.saveChatMessage(message);
         //--- 여기서 종료 ---
-        log.info("chat.controller.ChatMessageService.sendChatMessage().end");
+        log.info("chat.service.ChatMessageService.sendChatMessage().end");
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), chatMessage);
     }
 
@@ -86,15 +86,16 @@ public class ChatMessageService {
     @Transactional
     public ChatMessage saveChatMessage(ChatMessageRequestDto message) {
 
-        log.info("chat.controller.ChatMessageService.saveChatMessage()");
+        log.info("chat.service.ChatMessageService.saveChatMessage()");
         // if 문 안에서 participant 숫자로 read 숫자를 계산
         long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
+        log.info("chat.service.ChatMessageService.saveChatMessage().participantCount = " + participantCount);
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
         log.info("1111111111111111111111111111111111111111111111111111111");
         long notRead = chatRoom.getParticipantList().size() - participantCount - 1;
-        log.info("chat.controller.ChatMessageService.saveChatMessage().notRead = " + notRead);
+        log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
         if (!Objects.equals(message.getSender(), "[알림]")) {
             log.info("2222222222222222222222222222222222222222222222222222222222222");
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
