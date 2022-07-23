@@ -61,6 +61,9 @@ public enum MsgEnum {
     CHAT_ROOM_EXIT("채팅방에서 퇴장했습니다"),
     CHAT_ROOM_ENTER("채팅방에 입장했습니다"),
 
+
+    // 알림
+    SSE_CONNECT_SUCCESS("SSE 연결 완료 ! ")
     ;
 
 
