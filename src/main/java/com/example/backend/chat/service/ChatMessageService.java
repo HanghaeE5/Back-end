@@ -1,11 +1,10 @@
 package com.example.backend.chat.service;
 
-import com.example.backend.chat.domain.ChatMessage;
-import com.example.backend.chat.domain.ChatRoom;
-import com.example.backend.chat.domain.MessageType;
-import com.example.backend.chat.domain.Type;
+import com.example.backend.chat.domain.*;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
+import com.example.backend.chat.redis.RedisPub;
+import com.example.backend.chat.redis.RedisRepository;
 import com.example.backend.chat.repository.ChatMessageRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.chat.repository.ParticipantRepository;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +28,16 @@ import java.util.Objects;
 @Slf4j
 public class ChatMessageService {
 
-    private final SimpMessageSendingOperations messageSendingOperations;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatMessageService2 chatMessageService2;
     private final UserRepository userRepository;
+    private final RedisRepository redisRepository;
+    private final ParticipantRepository participantRepository;
+    private final RedisPub redisPub;
 
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
+        log.info("chat.controller.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -51,27 +53,59 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
-        this.saveChatMessage(message);
-        messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        ChatMessage chatMessage = this.saveChatMessage(message);
+        //--- 여기서 종료 ---
+        log.info("chat.controller.ChatMessageService.sendChatMessage().end");
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), chatMessage);
     }
 
     // 페이징으로 받아서 무한 스크롤 가능할듯
-    public Page<ChatMessageResponseDto> getSavedMessages(String roomId) {
+    public Page<ChatMessageResponseDto> getSavedMessages(String roomId, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
+        Participant participant = participantRepository.findByUserAndChatRoom(user, chatRoom).orElseThrow(
+                () -> new CustomException(ErrorCode.PARTICIPANT_NOT_FOUND)
+        );
         Pageable pageable = PageRequest.of(0, 100, Sort.by("createdDate").descending());
         Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
-        return messagePage.map(ChatMessageResponseDto::new);
+        Page<ChatMessageResponseDto> responseDtoPage = messagePage.map(ChatMessageResponseDto::new);
+        for (ChatMessageResponseDto c : responseDtoPage) {
+            if (c.getCreatedDate().isBefore(participant.getExitTime())) {
+                continue;
+            } else {
+                c.read();
+            }
+        }
+        return responseDtoPage;
     }
 
     @Transactional
-    public void saveChatMessage(ChatMessageRequestDto message) {
+    public ChatMessage saveChatMessage(ChatMessageRequestDto message) {
+
+        log.info("chat.controller.ChatMessageService.saveChatMessage()");
+        // if 문 안에서 participant 숫자로 read 숫자를 계산
+        long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
+        ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
+                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+        );
+        log.info("1111111111111111111111111111111111111111111111111111111");
+        long notRead = chatRoom.getParticipantList().size() - participantCount - 1;
+        log.info("chat.controller.ChatMessageService.saveChatMessage().notRead = " + notRead);
         if (!Objects.equals(message.getSender(), "[알림]")) {
+            log.info("2222222222222222222222222222222222222222222222222222222222222");
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
                     () -> new CustomException(ErrorCode.USER_NOT_FOUND)
             );
-            chatMessageRepository.save(new ChatMessage(message, user));
+            return chatMessageRepository.save(new ChatMessage(message, user, notRead));
         }
         else {
-            chatMessageRepository.save(new ChatMessage(message));
+            log.info("33333333333333333333333333333333333333333333333333");
+            return chatMessageRepository.save(new ChatMessage(message));
         }
     }
+
 }

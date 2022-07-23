@@ -1,5 +1,6 @@
 package com.example.backend.user.dto;
 
+import com.example.backend.character.domain.Characters;
 import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.user.domain.ProviderType;
@@ -32,6 +33,7 @@ public class UserResponseDto {
     private CharacterResponseDto characterInfo;
     private PublicScope publicScope;
     private List<TodoResponseDto> todayTodoList = new ArrayList<>();
+    private Integer characterLevel;
 
     public UserResponseDto(User user){
         this.id = user.getUserSeq();
@@ -44,6 +46,20 @@ public class UserResponseDto {
         this.createdDate = user.getCreatedDate();
         this.modifiedDate = user.getModifiedDate();
         this.publicScope = user.getPublicScope();
+    }
+
+    public UserResponseDto(User user, Characters character){
+        this.id = user.getUserSeq();
+        this.userId = user.getUserId();
+        this.nick = user.getUsername();
+        this.email = user.getEmail();
+        this.profileImageUrl = user.getProfileImageUrl();
+        this.providerType = user.getProviderType();
+        this.roleType = user.getRoleType();
+        this.createdDate = user.getCreatedDate();
+        this.modifiedDate = user.getModifiedDate();
+        this.publicScope = user.getPublicScope();
+        this.characterLevel = character.getLevel();
     }
 
     public UserResponseDto(User user, CharacterResponseDto characterResponseDto, List<TodoResponseDto> responseDtoList){

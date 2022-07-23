@@ -21,15 +21,21 @@ public class ChatMessageResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
     private String profileImageUrl;
+    private long notRead;
 
     public ChatMessageResponseDto(ChatMessage message) {
         this.type = message.getType();
         this.roomId = message.getRoomId();
-        this.sender = message.getSender();
+        this.sender = message.getUser().getUsername();
         this.message = message.getMessage();
         this.createdDate = message.getCreatedDate();
         if (message.getUser() != null) {
             this.profileImageUrl = message.getUser().getProfileImageUrl();
         }
     }
+
+    public void read() {
+        notRead--;
+    }
+
 }

@@ -42,12 +42,12 @@ public enum MsgEnum {
 
     // 캐릭터
     CHARACTER_SELECTED("캐릭터를 선택했습니다"),
-    TURTLE_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EA%B1%B0%EB%B6%81%EC%9D%B4_STEPl1.svg"),
-    TURTLE_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EA%B1%B0%EB%B6%81%EC%9D%B4_STEP2.svg"),
-    TURTLE_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EA%B1%B0%EB%B6%81%EC%9D%B4_STEP3.svg"),
-    SLOTH_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEPl1.svg"),
-    SLOTH_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEP2.svg"),
-    SLOTH_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/STEP/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_STEP3.svg"),
+    TURTLE_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/%EC%BA%90%EB%A6%AD%ED%84%B0/%EA%B1%B0%EB%B6%81%EC%9D%B4_level1.svg"),
+    TURTLE_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/%EC%BA%90%EB%A6%AD%ED%84%B0/%EA%B1%B0%EB%B6%81%EC%9D%B4_level2.svg"),
+    TURTLE_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/%EC%BA%90%EB%A6%AD%ED%84%B0/%EA%B1%B0%EB%B6%81%EC%9D%B4_level3.svg"),
+    SLOTH_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/%EC%BA%90%EB%A6%AD%ED%84%B0/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_level1.svg"),
+    SLOTH_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/%EC%BA%90%EB%A6%AD%ED%84%B0/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_level2.svg"),
+    SLOTH_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/%EC%BA%90%EB%A6%AD%ED%84%B0/%EB%82%98%EB%AC%B4%EB%8A%98%EB%B3%B4_level3.svg"),
 
     TURTLE_ONE_NAME("등껍질은 비니 침대"),
     TURTLE_TWO_NAME("달팽이보단 빠른 비니"),
@@ -60,6 +60,8 @@ public enum MsgEnum {
     // 채팅
     CHAT_ROOM_EXIT("채팅방에서 퇴장했습니다"),
     CHAT_ROOM_ENTER("채팅방에 입장했습니다"),
+    COUNT_PARTICIPANT("COUNT_PARTICIPANT"),
+    SESSION_PARTICIPANT_MAPPING("SESSION_PARTICIPANT_MAPPING"),
 
     ;
 

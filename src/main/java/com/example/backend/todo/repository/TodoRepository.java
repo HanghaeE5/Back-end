@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
-    @Query("select t from Todo t where t.user=:user and ((t.todoDate<=CURRENT_DATE and t.state=true) or (t.state=false))")
+    @Query("select t from Todo t where t.user=:user and ((t.todoDate>=CURRENT_DATE and t.state=true) or (t.state=false))")
     Page<Todo> findAllTodo(Pageable pageable, User user);
 
     @Query("select t from Todo t where t.user=:user and t.state=true")
@@ -33,8 +33,8 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findByUserAndTodoDate(User user, Date yesterday);
 
-    @Query("select t from Todo t where t.completeDate>=CURRENT_DATE")
-    List<Todo> findTodayDone();
+    @Query("select t from Todo t where t.user=:user and t.completeDate>=CURRENT_DATE")
+    List<Todo> findTodayDone(User user);
 
 //    @Query("select t from Todo t where t.user in :users and t.todoDate=:yesterday")
 //    List<Todo> findAllByUsersAndTodoDate(List<User> users, Date yesterday);

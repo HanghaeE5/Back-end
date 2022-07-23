@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -63,14 +65,11 @@ public class RegisterController {
     @ApiOperation(value = "소셜 회원가입 - 닉네임 입력")
     @PutMapping("/register/social")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    public ResponseEntity<String> socialRegister(@Valid @RequestBody NickRequestDto registerDto){
+    public ResponseEntity<String> socialRegister(@Valid @RequestBody NickRequestDto registerDto, HttpServletRequest request, HttpServletResponse response){
         LoadUser.loginCheck();
-        System.out.println(LoadUser.getEmail());
-        Map<String, String> token = userService.addNick(LoadUser.getEmail(),registerDto.getNick());
 
         return ResponseEntity.ok()
-                    .header(MsgEnum.JWT_HEADER_NAME.getMsg(), token.get(MsgEnum.JWT_HEADER_NAME.getMsg()))
-                    .header(MsgEnum.REFRESH_HEADER_NAME.getMsg(), token.get(MsgEnum.REFRESH_HEADER_NAME.getMsg()))
+                    .header(MsgEnum.JWT_HEADER_NAME.getMsg(), userService.addNick(LoadUser.getEmail(),registerDto.getNick(), request, response))
                     .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                     .body(MsgEnum.SOCIAL_REGISTER_SUCCESS.getMsg());
     }

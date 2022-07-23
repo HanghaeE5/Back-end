@@ -8,6 +8,7 @@ import com.example.backend.chat.dto.request.ChatRoomExitRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
 import com.example.backend.chat.dto.response.ChatRoomResponseDto;
+import com.example.backend.chat.redis.RedisRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;
@@ -30,6 +31,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
+    private final RedisRepository redisRepository;
 
     // 일대일 채팅은 일단 보류
     @Transactional
@@ -43,7 +45,6 @@ public class ChatRoomService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         // 이미 채팅방 있는지 확인
-        // 이게 맞나......ㅋㅋ....
         List<ChatRoom> roomList = new ArrayList<>();
         List<Participant> participantList = participantRepository.findAllByUser(user);
         for (Participant p : participantList) {
@@ -68,6 +69,7 @@ public class ChatRoomService {
         room.addParticipant(participantYou);
         user.addParticipant(participantMe);
         friend.addParticipant(participantYou);
+        redisRepository.subscribe(room.getRoomId());
         return new ChatRoomResponseDto(room, user);
     }
 
@@ -86,6 +88,7 @@ public class ChatRoomService {
         participantRepository.save(participant);
         chatRoom.addParticipant(participant);
         user.addParticipant(participant);
+        redisRepository.subscribe(chatRoom.getRoomId());
         return new ChatRoomResponseDto(chatRoom, user);
     }
 

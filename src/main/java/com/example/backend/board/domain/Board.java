@@ -24,7 +24,7 @@ public class Board extends BaseTime {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String title;
 
     @Column(columnDefinition = "TEXT")
@@ -61,6 +61,13 @@ public class Board extends BaseTime {
         this.participatingCount = 0L;
     }
 
+    public Board(String title, String content, User user){
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.participatingCount = 0L;
+    }
+
     public void update(BoardRequestDto requestDto, User user){
         this.category = requestDto.getCategory();
         this.user = user;
@@ -76,5 +83,9 @@ public class Board extends BaseTime {
 
     public void saveChatRoomId(String chatRoomId){
         this.chatRoomId = chatRoomId;
+    }
+
+    public void minusParticipatingCount() {
+        this.participatingCount = this.participatingCount - 1;
     }
 }

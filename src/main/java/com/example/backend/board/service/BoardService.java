@@ -3,7 +3,9 @@ package com.example.backend.board.service;
 import com.example.backend.board.domain.Board;
 import com.example.backend.board.domain.BoardTodo;
 import com.example.backend.board.domain.Category;
-import com.example.backend.board.dto.*;
+import com.example.backend.board.dto.FilterEnum;
+import com.example.backend.board.dto.SubEnum;
+import com.example.backend.board.dto.condition.BoardSearchCondition;
 import com.example.backend.board.dto.request.BoardTodoRequestDto;
 import com.example.backend.board.dto.request.RequestDto;
 import com.example.backend.board.dto.response.BoardResponseDto;
@@ -12,7 +14,6 @@ import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
-import com.example.backend.chat.domain.Type;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;
@@ -20,7 +21,6 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
-import com.example.backend.todo.dto.request.TodoRequestDto;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,21 +96,24 @@ public class BoardService {
                 log.info("title search");
                 boardPage = boardRepository.findByTitleContaining(keyword, pageable);
             }
-        }else if(sub.equals(SubEnum.content)){
-            if(Objects.equals(filter, FilterEnum.challenge)) {
+        }else if(sub.equals(SubEnum.content)) {
+            if (Objects.equals(filter, FilterEnum.challenge)) {
                 log.info("content, challenge search");
                 boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.CHALLENGE, pageable);
-            } else if(Objects.equals(filter, FilterEnum.daily)) {
+            } else if (Objects.equals(filter, FilterEnum.daily)) {
                 log.info("content, daily search");
                 boardPage = boardRepository.findByContentContainingAndCategory(keyword, Category.DAILY, pageable);
-            } else if(Objects.equals(filter, FilterEnum.my)){
+            } else if (Objects.equals(filter, FilterEnum.my)) {
                 log.info("content, my search");
                 User user = getUser(email);
                 boardPage = boardRepository.findByContentContainingAndUser(keyword, user, pageable);
-            }else{
+            } else {
                 log.info("content search");
                 boardPage = boardRepository.findByContentContaining(keyword, pageable);
             }
+//            else if(sub.equals(SubEnum.all)) {
+//                boardPage = boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+//            }
         }else{
             if(Objects.equals(filter, FilterEnum.challenge)) {
                 log.info("challenge search");
@@ -127,23 +131,23 @@ public class BoardService {
             }
         }
 
-
         return new PageBoardResponseDto(
                 BoardResponseDto.getDtoList(boardPage.getContent()),
                 boardPage
         );
     }
 
-    private boolean withTodoExpiration(Board board) throws ParseException {
-        for (BoardTodo boardTodo : board.getBoardTodo()) {
-            String todayFormat = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date today = new Date(dateFormat.parse(todayFormat).getTime());
-            if (boardTodo.getTodoDate().compareTo(today) < 0) {
-                return false;
-            }
-        }
-        return true;
+    @Transactional
+    public PageBoardResponseDto getBoardListV2(FilterEnum filter, String keyword, Pageable pageable, String email, SubEnum sub){
+
+        BoardSearchCondition searchCondition = new BoardSearchCondition(sub, filter, keyword, email);
+
+        Slice<Board> result = boardRepository.search(pageable, searchCondition);
+
+        return new PageBoardResponseDto(
+                BoardResponseDto.getDtoList(result.getContent()),
+                result
+        );
     }
 
     // 게시물 상세조회
@@ -263,6 +267,7 @@ public class BoardService {
         //사용자가 등록한 TODO 삭제
         List<Todo> todoList = todoRepository.findAllByBoardAndUser(board, user);
         todoRepository.deleteAll(todoList);
+        board.minusParticipatingCount();
     }
 
     @Transactional
@@ -282,6 +287,18 @@ public class BoardService {
             boardTodoList.add(new BoardTodo(todo, date, board));
         }
         boardTodoRepository.saveAll(boardTodoList);
+    }
+
+    private boolean withTodoExpiration(Board board) throws ParseException {
+        for (BoardTodo boardTodo : board.getBoardTodo()) {
+            String todayFormat = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date today = new Date(dateFormat.parse(todayFormat).getTime());
+            if (boardTodo.getTodoDate().compareTo(today) < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Board getBoard(Long id) {

@@ -1,12 +1,9 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.domain.MessageType;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.service.ChatMessageService;
-import com.example.backend.exception.CustomException;
-import com.example.backend.exception.ErrorCode;
-import com.example.backend.user.domain.User;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
@@ -35,6 +32,7 @@ public class ChatMessageController {
     @ApiOperation(value = "메세지 전송(/pub)")
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDto message, @Header("Authorization") String tokenStr) {
+        log.info("chat.controller.ChatMessageController.message()");
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         String email = token.getTokenClaims().getSubject();
         chatMessageService.sendChatMessage(message, email);
@@ -46,7 +44,8 @@ public class ChatMessageController {
     public ResponseEntity<Page<ChatMessageResponseDto>> getSavedMessages(
             @RequestParam String roomId
     ) {
-        Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId);
+        LoadUser.loginAndNickCheck();
+        Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId, LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 }
