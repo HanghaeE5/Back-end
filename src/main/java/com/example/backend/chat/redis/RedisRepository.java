@@ -18,7 +18,7 @@ public class RedisRepository {
 
     private final RedisSub redisSub;
     private final RedisMessageListenerContainer redisMessageListenerContainer;
-    private final RedisTemplate<?, ?> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private Map<String, ChannelTopic> topicMap;
 
     @PostConstruct
