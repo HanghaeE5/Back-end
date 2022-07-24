@@ -37,6 +37,7 @@ public class ChatMessageService2 {
     private final ChatRoomRepository chatRoomRepository;
 
     public String getRoomId(Optional<String> simpDestination) {
+        log.info("chat.service.ChatMessageService2.getRoomId()");
         if (simpDestination.isEmpty()) {
             throw new CustomException(ErrorCode.SUBSCRIBE_ERROR);
         }
@@ -54,20 +55,24 @@ public class ChatMessageService2 {
     }
 
     public long plusParticipantCount(String roomId) {
+        log.info("chat.service.ChatMessageService2.plusParticipantCount");
         return Optional.ofNullable(valueOperations.increment(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse(0L);
     }
 
     public long minusParticipantCount(String roomId) {
+        log.info("chat.service.ChatMessageService2.minusParticipantCount");
         return Optional.ofNullable(valueOperations.decrement(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse(0L);
     }
 
     public void mapSessionAndParticipant(String email, String roomId, String sessionId) {
+        log.info("chat.service.ChatMessageService2.mapSessionAndParticipant");
         Participant participant = this.findParticipant(email, roomId);
         hashOperations.put(MsgEnum.SESSION_PARTICIPANT_MAPPING.getMsg(), sessionId, participant.getId().toString());
     }
 
     @Transactional
     public Participant findParticipant(String email, String roomId) {
+        log.info("chat.service.ChatMessageService2.findParticipant");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -80,6 +85,7 @@ public class ChatMessageService2 {
     }
 
     public String exitParticipant(String sessionId) {
+        log.info("chat.service.ChatMessageService2.exitParticipant");
         String Id = hashOperations.get(MsgEnum.SESSION_PARTICIPANT_MAPPING.getMsg(), sessionId);
         assert Id != null;
         Long participantId = Long.parseLong(Id);
@@ -88,6 +94,7 @@ public class ChatMessageService2 {
 
     @Transactional
     public String changeExitTime(Long id) {
+        log.info("chat.service.ChatMessageService2.changeExitTime");
         Participant participant = participantRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.PARTICIPANT_NOT_FOUND)
         );

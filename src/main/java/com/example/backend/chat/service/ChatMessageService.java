@@ -54,13 +54,13 @@ public class ChatMessageService {
             }
         }
         ChatMessage chatMessage = this.saveChatMessage(message);
-        //--- 여기서 종료 ---
         log.info("chat.service.ChatMessageService.sendChatMessage().end");
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), chatMessage);
     }
 
     // 페이징으로 받아서 무한 스크롤 가능할듯
     public Page<ChatMessageResponseDto> getSavedMessages(String roomId, String email) {
+        log.info("chat.service.ChatMessageService.getSavedMessages()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -74,9 +74,7 @@ public class ChatMessageService {
         Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
         Page<ChatMessageResponseDto> responseDtoPage = messagePage.map(ChatMessageResponseDto::new);
         for (ChatMessageResponseDto c : responseDtoPage) {
-            if (c.getCreatedDate().isBefore(participant.getExitTime())) {
-                continue;
-            } else {
+            if (c.getCreatedDate().isAfter(participant.getExitTime())) {
                 c.read();
             }
         }
@@ -94,7 +92,7 @@ public class ChatMessageService {
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
         log.info("1111111111111111111111111111111111111111111111111111111");
-        long notRead = (long) chatRoom.getParticipantList().size() - participantCount - 1L;
+        long notRead = (long) chatRoom.getParticipantList().size() - participantCount;
         log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
         if (!Objects.equals(message.getSender(), "[알림]")) {
             log.info("2222222222222222222222222222222222222222222222222222222222222");

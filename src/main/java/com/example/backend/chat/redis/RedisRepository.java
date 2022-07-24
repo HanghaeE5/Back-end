@@ -38,6 +38,7 @@ public class RedisRepository {
     }
 
     public ChannelTopic getTopic(String roomId) {
+        log.info("chat.redis.RedisRepository.getTopic()");
         return topicMap.get(roomId);
     }
 
