@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisPub {
 
-    private final RedisTemplate<?, ?> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public void publish(ChannelTopic topic, ChatMessage message) {
         log.info("chat.redis.RedisPub.publish()");
