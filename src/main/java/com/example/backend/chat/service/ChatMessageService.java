@@ -53,9 +53,10 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
-        this.saveChatMessage(message);
+        ChatMessage chatMessage = this.saveChatMessage(message);
+        ChatMessageResponseDto responseDto = new ChatMessageResponseDto(chatMessage);
         log.info("chat.service.ChatMessageService.sendChatMessage().end");
-        redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), responseDto);
     }
 
     // 페이징으로 받아서 무한 스크롤 가능할듯
@@ -86,13 +87,13 @@ public class ChatMessageService {
 
         log.info("chat.service.ChatMessageService.saveChatMessage()");
         // if 문 안에서 participant 숫자로 read 숫자를 계산
-        long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
+        Long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
         log.info("chat.service.ChatMessageService.saveChatMessage().participantCount = " + participantCount);
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
         log.info("1111111111111111111111111111111111111111111111111111111");
-        long notRead = (long) chatRoom.getParticipantList().size() - participantCount;
+        Long notRead = chatRoom.getParticipantList().size() - participantCount;
         log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
         if (!Objects.equals(message.getSender(), "[알림]")) {
             log.info("2222222222222222222222222222222222222222222222222222222222222");

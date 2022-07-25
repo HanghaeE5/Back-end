@@ -2,6 +2,7 @@ package com.example.backend.chat.redis;
 
 import com.example.backend.chat.domain.ChatMessage;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
+import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class RedisSub implements MessageListener {
         log.info("chat.redis.RedisSub.onMessage()");
         try {
             String publishMessage = redisTemplate.getStringSerializer().deserialize(message.getBody());
-            ChatMessageRequestDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDto.class);
+            ChatMessageResponseDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageResponseDto.class);
             messageSendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
