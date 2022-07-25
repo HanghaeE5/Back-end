@@ -1,7 +1,5 @@
 package com.example.backend.chat.redis;
 
-import com.example.backend.chat.domain.ChatMessage;
-import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +16,8 @@ public class RedisPub {
 
     public void publish(ChannelTopic topic, ChatMessageResponseDto message) {
         log.info("chat.redis.RedisPub.publish()");
+        log.info("topic.getTopic() = " + topic.getTopic());
+        log.info("ChatMessageResponseDto message = " + message);
         redisTemplate.convertAndSend(topic.getTopic(), message);
     }
 
