@@ -29,13 +29,13 @@ public class Notification {
     @JoinColumn(name = "url_ID")
     private RelatedURL url;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    @NotNull
-    private User receiver;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn
+//    @NotNull
+    private Long receiver;
 
     @Builder
-    public Notification(User receiver, String content, String url, Boolean isRead) {
+    public Notification(Long receiver, String content, String url, Boolean isRead) {
         this.receiver = receiver;
         this.content = new NotificationContent(content);
         this.url = new RelatedURL(url);

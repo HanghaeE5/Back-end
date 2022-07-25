@@ -9,7 +9,7 @@ public interface EmitterRepository {
     SseEmitter save(String id, SseEmitter em);
     void deleteById(String id);
 
-    Map<Long, SseEmitter> findAllStartWithById(Long id);
+    Map<String, SseEmitter> findAllStartWithById(String id);
 
-    void saveEventCache(Long key, Notification notification);
+    void saveEventCache(String key, Notification notification);
 }
