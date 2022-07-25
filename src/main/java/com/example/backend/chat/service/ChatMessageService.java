@@ -36,6 +36,7 @@ public class ChatMessageService {
     private final ParticipantRepository participantRepository;
     private final RedisPub redisPub;
 
+    @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
         log.info("chat.service.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
