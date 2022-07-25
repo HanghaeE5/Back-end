@@ -30,9 +30,15 @@ public class NotificationController {
     ) {
 //        LoadUser.loginAndNickCheck();
         SseEmitter sseEmitter = notificationService.subscribe(id, lastEventId);
-        notificationService.send(id, new Review(id, "리뷰에용"), "내용이에용");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(sseEmitter);
+    }
+
+    @GetMapping("/subscribe/test")
+    public ResponseEntity<String> subscribeTest() {
+        notificationService.send(123L, new Review(123L, "리뷰에용"), "이제 되게찌?");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("안농?");
     }
 
 
