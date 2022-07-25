@@ -49,17 +49,17 @@ public class ChatMessageService2 {
         }
     }
 
-    public long getParticipantCount(String roomId) {
+    public Long getParticipantCount(String roomId) {
         log.info("chat.service.ChatMessageService2.getParticipant()");
         return Long.parseLong(Optional.ofNullable(valueOperations.get(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse("0"));
     }
 
-    public long plusParticipantCount(String roomId) {
+    public Long plusParticipantCount(String roomId) {
         log.info("chat.service.ChatMessageService2.plusParticipantCount");
         return Optional.ofNullable(valueOperations.increment(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse(0L);
     }
 
-    public long minusParticipantCount(String roomId) {
+    public Long minusParticipantCount(String roomId) {
         log.info("chat.service.ChatMessageService2.minusParticipantCount");
         return Optional.ofNullable(valueOperations.decrement(MsgEnum.COUNT_PARTICIPANT.getMsg() + "_" + roomId)).orElse(0L);
     }
@@ -87,9 +87,11 @@ public class ChatMessageService2 {
     public String exitParticipant(String sessionId) {
         log.info("chat.service.ChatMessageService2.exitParticipant");
         String Id = hashOperations.get(MsgEnum.SESSION_PARTICIPANT_MAPPING.getMsg(), sessionId);
-        assert Id != null;
-        Long participantId = Long.parseLong(Id);
-        return this.changeExitTime(participantId);
+        if (Id != null) {
+            Long participantId = Long.parseLong(Id);
+            return this.changeExitTime(participantId);
+        }
+        return null;
     }
 
     @Transactional

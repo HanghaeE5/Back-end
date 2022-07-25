@@ -33,6 +33,7 @@ public class UserController {
     @GetMapping
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     public ResponseEntity<UserResponseDto> getUser() {
+        log.info(LoadUser.getEmail());
         return ResponseEntity
                 .ok()
                 .body(userService.getUserInfo(LoadUser.getEmail()));

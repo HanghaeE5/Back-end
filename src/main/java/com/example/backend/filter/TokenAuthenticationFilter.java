@@ -32,9 +32,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 //        request.getHeaderNames().asIterator().forEachRemaining(
 //                header -> log.info("header name = {}, vlaue = {}", header, request.getHeader(header)));
-//        log.info(tokenStr);
         String tokenStr = HeaderUtil.getAccessToken(request);
-
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         if (token.validate()) {
             Authentication authentication = tokenProvider.getAuthentication(token);

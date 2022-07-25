@@ -304,7 +304,12 @@ public class UserService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+
+        if (user.getUsername() == null){
+            throw new CustomException(ErrorCode.NEED_NICK);
+        }
         CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(email);
+
         List<Todo> todoList = todoRepository.findAllByTodoDate(user);
         List<TodoResponseDto> responseDtoList = new ArrayList<>();
         for (Todo t : todoList) {

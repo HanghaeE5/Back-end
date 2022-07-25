@@ -30,12 +30,12 @@ public class ChatMessageService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatMessageService2 chatMessageService2;
     private final UserRepository userRepository;
     private final RedisRepository redisRepository;
     private final ParticipantRepository participantRepository;
     private final RedisPub redisPub;
 
+    @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
         log.info("chat.service.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
@@ -53,7 +53,7 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
-        this.saveChatMessage(message);
+        // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
         log.info("chat.service.ChatMessageService.sendChatMessage().end");
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
@@ -79,32 +79,6 @@ public class ChatMessageService {
             }
         }
         return responseDtoPage;
-    }
-
-    @Transactional
-    public ChatMessage saveChatMessage(ChatMessageRequestDto message) {
-
-        log.info("chat.service.ChatMessageService.saveChatMessage()");
-        // if 문 안에서 participant 숫자로 read 숫자를 계산
-        long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
-        log.info("chat.service.ChatMessageService.saveChatMessage().participantCount = " + participantCount);
-        ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
-        log.info("1111111111111111111111111111111111111111111111111111111");
-        long notRead = (long) chatRoom.getParticipantList().size() - participantCount;
-        log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
-        if (!Objects.equals(message.getSender(), "[알림]")) {
-            log.info("2222222222222222222222222222222222222222222222222222222222222");
-            User user = userRepository.findByUsername(message.getSender()).orElseThrow(
-                    () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-            );
-            return chatMessageRepository.save(new ChatMessage(message, user, notRead));
-        }
-        else {
-            log.info("33333333333333333333333333333333333333333333333333");
-            return chatMessageRepository.save(new ChatMessage(message));
-        }
     }
 
 }

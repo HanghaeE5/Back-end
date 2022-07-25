@@ -73,7 +73,10 @@ public class StompHandler implements ChannelInterceptor {
             // sessionId 로 맵핑된 participant 알 수 있음. 해당 participant 의 exitTime 변경
             String roomId = chatMessageService2.exitParticipant(sessionId);
             // participant 로 ChatRoom 의 roomId 알 수 있음. 해당 roomId 로 채팅방 사람 수 --
-            chatMessageService2.minusParticipantCount(roomId);
+            if (roomId != null){
+                chatMessageService2.minusParticipantCount(roomId);
+            }
+
 
         }
         return message;
