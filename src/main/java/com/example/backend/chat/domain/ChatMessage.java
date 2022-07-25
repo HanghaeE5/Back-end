@@ -33,13 +33,13 @@ public class ChatMessage extends BaseTime {
     // 처음 생성 시 participantCount 를 전체 인원에서 빼서 넣음
     // 새로운 사람이 연결되면 그 사람 exitTime 을 고려해서 변경
     @Column
-    private long notRead;
+    private Long notRead;
 
     @ManyToOne
     @JoinColumn
     private User user;
 
-    public ChatMessage(ChatMessageRequestDto requestDto, User user, long notRead) {
+    public ChatMessage(ChatMessageRequestDto requestDto, User user, Long notRead) {
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();
         this.sender = user.getUsername();
