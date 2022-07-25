@@ -22,7 +22,6 @@ public class RedisSub implements MessageListener {
     private final ObjectMapper objectMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessageSendingOperations messageSendingOperations;
-    private final ChatMessageService chatMessageService;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -30,9 +29,7 @@ public class RedisSub implements MessageListener {
         try {
             String publishMessage = redisTemplate.getStringSerializer().deserialize(message.getBody());
             ChatMessageRequestDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDto.class);
-            ChatMessage saved = chatMessageService.saveChatMessage(chatMessage);
-            ChatMessageResponseDto responseDto = new ChatMessageResponseDto(saved);
-            messageSendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), responseDto);
+            messageSendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             log.error("chat.redis.RedisSub.onMessage.error");

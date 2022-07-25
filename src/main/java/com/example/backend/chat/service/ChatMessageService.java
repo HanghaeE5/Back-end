@@ -54,6 +54,8 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
+        this.saveChatMessage(message);
+        // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
         log.info("chat.service.ChatMessageService.sendChatMessage().end");
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
