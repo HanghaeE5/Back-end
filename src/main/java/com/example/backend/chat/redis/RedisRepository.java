@@ -18,7 +18,7 @@ public class RedisRepository {
 
     private final RedisSub redisSub;
     private final RedisMessageListenerContainer redisMessageListenerContainer;
-    private final RedisTemplate<?, ?> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private Map<String, ChannelTopic> topicMap;
 
     @PostConstruct
@@ -38,6 +38,7 @@ public class RedisRepository {
     }
 
     public ChannelTopic getTopic(String roomId) {
+        log.info("chat.redis.RedisRepository.getTopic()");
         return topicMap.get(roomId);
     }
 

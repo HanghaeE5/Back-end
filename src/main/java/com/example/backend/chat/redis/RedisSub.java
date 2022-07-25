@@ -1,6 +1,7 @@
 package com.example.backend.chat.redis;
 
 import com.example.backend.chat.domain.ChatMessage;
+import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class RedisSub implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final RedisTemplate<?, ?> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessageSendingOperations messageSendingOperations;
 
     @Override
@@ -25,7 +26,7 @@ public class RedisSub implements MessageListener {
         log.info("chat.redis.RedisSub.onMessage()");
         try {
             String publishMessage = redisTemplate.getStringSerializer().deserialize(message.getBody());
-            ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
+            ChatMessageRequestDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDto.class);
             messageSendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
