@@ -54,10 +54,8 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
-        ChatMessage chatMessage = this.saveChatMessage(message);
-        ChatMessageResponseDto responseDto = new ChatMessageResponseDto(chatMessage);
         log.info("chat.service.ChatMessageService.sendChatMessage().end");
-        redisPub.publish(redisRepository.getTopic(room.getRoomId()), responseDto);
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
     // 페이징으로 받아서 무한 스크롤 가능할듯
