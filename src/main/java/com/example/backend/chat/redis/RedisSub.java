@@ -1,7 +1,5 @@
 package com.example.backend.chat.redis;
 
-import com.example.backend.chat.domain.ChatMessage;
-import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
