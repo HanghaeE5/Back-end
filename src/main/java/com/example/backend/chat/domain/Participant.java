@@ -37,11 +37,11 @@ public class Participant {
     public Participant(User user, ChatRoom room) {
         this.user = user;
         this.chatRoom = room;
-        this.exitTime = LocalDateTime.now(ZoneId.systemDefault());
+        this.exitTime = LocalDateTime.now();
     }
 
     public void exit() {
-        this.exitTime = LocalDateTime.now(ZoneId.systemDefault());
+        this.exitTime = LocalDateTime.now();
     }
 
 }
