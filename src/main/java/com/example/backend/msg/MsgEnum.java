@@ -63,7 +63,10 @@ public enum MsgEnum {
 
 
     // 알림
-    SSE_CONNECT_SUCCESS("SSE 연결 완료 ! ")
+    SSE_CONNECT_SUCCESS("SSE 연결 완료 ! "),
+    NOTIFICATION_LEVELUP("축하드려요 ! 레벨업입니다 😆 "),
+    NOTIFICATION_STEPUP("축하드려요 ! 스텝업입니다 😆 "),
+    NOTIFICATION_FRIEND("님께서 친구 요청을 하였습니다. ")
     ;
 
 

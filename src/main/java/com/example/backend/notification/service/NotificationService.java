@@ -1,10 +1,10 @@
 package com.example.backend.notification.service;
 
-import com.example.backend.notification.domain.Member;
 import com.example.backend.notification.domain.Notification;
 import com.example.backend.notification.domain.Review;
 import com.example.backend.notification.repository.EmitterRepository;
 import com.example.backend.notification.repository.EmitterRepositoryImpl;
+import com.example.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -20,15 +20,15 @@ public class NotificationService {
 
     private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
 
-    public void subscribe(String userId, String lastEventId, String email) {
+    public void subscribe(Long userId, String lastEventId) {
         // 1
         String id = userId + "_" + System.currentTimeMillis();
 
         // 2
         SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
 
-        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-        emitter.onTimeout(() -> emitterRepository.deleteById(id));
+        emitter.onCompletion(() -> emitterRepository.deleteById(id));   // 미수신 알림을 다 수신하면 삭제,,?
+        emitter.onTimeout(() -> emitterRepository.deleteById(id));  // timout 되면 삭제,,?
 
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
@@ -43,12 +43,12 @@ public class NotificationService {
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
         }
     }
-    public void send(Member receiver, Review review, String content) {
+    public void send(User receiver, Review review, String content) {
         Notification notification = createNotification(receiver, review, content);
-        String id = String.valueOf(receiver.getId());
+        Long id = receiver.getUserSeq();
 
         // 로그인 한 유저의 SseEmitter 모두 가져오기
-        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
+        Map<Long, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
         sseEmitters.forEach(
                 (key, emitter) -> {
                     // 데이터 캐시 저장(유실된 데이터 처리하기 위함)
@@ -59,11 +59,10 @@ public class NotificationService {
         );
     }
 
-    private Notification createNotification(Member receiver, Review review, String content) {
+    private Notification createNotification(User receiver, Review review, String content) {
         return Notification.builder()
                 .receiver(receiver)
                 .content(content)
-                .review(review)
                 .url("/reviews/" + review.getId())
                 .isRead(false)
                 .build();

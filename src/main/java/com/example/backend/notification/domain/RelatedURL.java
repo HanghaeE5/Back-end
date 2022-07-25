@@ -2,12 +2,13 @@ package com.example.backend.notification.domain;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor
 @Getter
-@Table(name = "related_url")
 public class RelatedURL {
 
     @Id
@@ -19,7 +20,5 @@ public class RelatedURL {
     private String  url;
     public RelatedURL(String url) {
         this.url = url;
-    }
-    public RelatedURL() {
     }
 }

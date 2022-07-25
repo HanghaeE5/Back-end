@@ -1,23 +1,21 @@
 package com.example.backend.notification.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
 @Getter
-@Table(name = "notification_content")
+@Entity
+@NoArgsConstructor
 public class NotificationContent {
+
     @Id
-    String id;
-    String content;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column
+    private String content;
     public NotificationContent(String content) {
         this.content = content;
-    }
-
-    public NotificationContent() {
-
     }
 }

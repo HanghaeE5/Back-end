@@ -1,9 +1,7 @@
 package com.example.backend.notification.controller;
 
 import com.example.backend.msg.MsgEnum;
-import com.example.backend.notification.domain.Member;
 import com.example.backend.notification.domain.Notification;
-import com.example.backend.notification.domain.Review;
 import com.example.backend.notification.service.NotificationService;
 import com.example.backend.user.common.LoadUser;
 import lombok.RequiredArgsConstructor;
@@ -25,22 +23,13 @@ public class NotificationController {
      */
     @GetMapping(value = "/subscribe/{id}", produces = "text/event-stream")
     public ResponseEntity<String> subscribe(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId
     ) {
         LoadUser.loginAndNickCheck();
-        notificationService.subscribe(id, lastEventId, LoadUser.getEmail());
+        notificationService.subscribe(id, lastEventId);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(new MediaType("application", "text", StandardCharsets.UTF_8))
                 .body(MsgEnum.SSE_CONNECT_SUCCESS.getMsg());
-    }
-    @PostMapping(value = "/reviews")
-    public void sendReview(@RequestBody Notification notification, @RequestParam String content) {
-        Member member = new Member();
-        member.setId("7");
-        Review review = new Review();
-        review.setReview("하이여");
-        review.setId("1");
-        notificationService.send(member, review, content);
     }
 }
