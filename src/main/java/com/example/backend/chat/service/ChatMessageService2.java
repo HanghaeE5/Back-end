@@ -87,8 +87,7 @@ public class ChatMessageService2 {
     public String exitParticipant(String sessionId) {
         log.info("chat.service.ChatMessageService2.exitParticipant");
         String Id = hashOperations.get(MsgEnum.SESSION_PARTICIPANT_MAPPING.getMsg(), sessionId);
-        assert Id != null;
-        if (Id.isEmpty() || Id.isBlank()) {
+        if (Id == null) {
             throw new CustomException(ErrorCode.NO_MAPPED_PARTICIPANT);
         } else {
             Long participantId = Long.parseLong(Id);

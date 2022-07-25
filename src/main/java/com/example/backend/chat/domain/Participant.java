@@ -1,5 +1,6 @@
 package com.example.backend.chat.domain;
 
+import com.example.backend.common.domain.BaseTime;
 import com.example.backend.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,7 @@ public class Participant {
     public Participant(User user, ChatRoom room) {
         this.user = user;
         this.chatRoom = room;
+        this.exitTime = LocalDateTime.now(ZoneId.systemDefault());
     }
 
     public void exit() {
