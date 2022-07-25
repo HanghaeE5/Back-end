@@ -21,13 +21,12 @@ public class RedisRepository {
 
     private final RedisSub redisSub;
     private final RedisMessageListenerContainer redisMessageListenerContainer;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final ChatRoomRepository chatRoomRepository;
     private Map<String, ChannelTopic> topicMap;
-    private ChatRoomRepository chatRoomRepository;
 
     // 임시로 설정
     @PostConstruct
-    private void init() {ㄱㄷ얀
+    private void init() {
         topicMap = new HashMap<>();
         List<ChatRoom> roomList = chatRoomRepository.findAll();
         for (ChatRoom c : roomList) {
