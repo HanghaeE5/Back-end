@@ -12,7 +12,17 @@ permissions:
     group: ubuntu
 
 hooks:
+#  ApplicationStart:
+#    - location: /scripts/deploy.sh
+#      timeout: 60
+#      runas: ubuntu
   ApplicationStart:
-    - location: /scripts/deploy.sh
-      timeout: 60
+    - location: scripts/run_new_was.sh
+      timeout: 120
+      runas: ubuntu
+    - location: scripts/health_check.sh
+      timeout: 120
+      runas: ubuntu
+    - location: scripts/switch.sh
+      timeout: 120
       runas: ubuntu
