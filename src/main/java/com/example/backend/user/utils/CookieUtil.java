@@ -28,7 +28,7 @@ public class CookieUtil {
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
-                .domain(".todowith.co.kr")
+//                .domain("todowith.co.kr")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(maxAge)
@@ -44,7 +44,7 @@ public class CookieUtil {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
                     ResponseCookie deleteCookie = ResponseCookie.from(name, "")
-                            .domain("todowith.co.kr")
+//                            .domain("todowith.co.kr")
                             .path("/")
                             .httpOnly(true)
                             .maxAge(0)

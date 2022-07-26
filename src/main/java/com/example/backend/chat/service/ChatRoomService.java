@@ -20,9 +20,7 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,6 @@ public class ChatRoomService {
     private final ParticipantRepository participantRepository;
     private final RedisRepository redisRepository;
 
-    // 일대일 채팅은 일단 보류
     @Transactional
     public ChatRoomResponseDto createPrivateRoom(ChatRoomPrivateRequestDto requestDto, String email) {
 
@@ -103,9 +100,15 @@ public class ChatRoomService {
             ChatRoom room = chatRoomRepository.findById(p.getChatRoom().getRoomId()).orElseThrow(
                     () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
             );
-            ChatRoomResponseDto responseDto = new ChatRoomResponseDto(room, user);
+            ChatRoomResponseDto responseDto;
+            if (p.getExitTime().isBefore(room.getLastMessage())) {
+                responseDto = new ChatRoomResponseDto(room, user, true);
+            } else {
+                responseDto = new ChatRoomResponseDto(room, user, false);
+            }
             responseDtoList.add(responseDto);
         }
+        Collections.sort(responseDtoList);
         return responseDtoList;
     }
 

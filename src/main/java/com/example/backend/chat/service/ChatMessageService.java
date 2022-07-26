@@ -30,14 +30,14 @@ public class ChatMessageService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatMessageService2 chatMessageService2;
     private final UserRepository userRepository;
     private final RedisRepository redisRepository;
     private final ParticipantRepository participantRepository;
     private final RedisPub redisPub;
 
+    @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
-        log.info("chat.controller.ChatMessageService.sendChatMessage()");
+        log.info("chat.service.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -53,14 +53,15 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
-        ChatMessage chatMessage = this.saveChatMessage(message);
-        //--- 여기서 종료 ---
-        log.info("chat.controller.ChatMessageService.sendChatMessage().end");
-        redisPub.publish(redisRepository.getTopic(room.getRoomId()), chatMessage);
+        // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
+        log.info("chat.service.ChatMessageService.sendChatMessage().end");
+        room.newMessage();
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
     // 페이징으로 받아서 무한 스크롤 가능할듯
     public Page<ChatMessageResponseDto> getSavedMessages(String roomId, String email) {
+        log.info("chat.service.ChatMessageService.getSavedMessages()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -74,38 +75,11 @@ public class ChatMessageService {
         Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
         Page<ChatMessageResponseDto> responseDtoPage = messagePage.map(ChatMessageResponseDto::new);
         for (ChatMessageResponseDto c : responseDtoPage) {
-            if (c.getCreatedDate().isBefore(participant.getExitTime())) {
-                continue;
-            } else {
+            if (c.getCreatedDate().isAfter(participant.getExitTime())) {
                 c.read();
             }
         }
         return responseDtoPage;
-    }
-
-    @Transactional
-    public ChatMessage saveChatMessage(ChatMessageRequestDto message) {
-
-        log.info("chat.controller.ChatMessageService.saveChatMessage()");
-        // if 문 안에서 participant 숫자로 read 숫자를 계산
-        long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
-        ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
-        log.info("1111111111111111111111111111111111111111111111111111111");
-        long notRead = chatRoom.getParticipantList().size() - participantCount - 1;
-        log.info("chat.controller.ChatMessageService.saveChatMessage().notRead = " + notRead);
-        if (!Objects.equals(message.getSender(), "[알림]")) {
-            log.info("2222222222222222222222222222222222222222222222222222222222222");
-            User user = userRepository.findByUsername(message.getSender()).orElseThrow(
-                    () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-            );
-            return chatMessageRepository.save(new ChatMessage(message, user, notRead));
-        }
-        else {
-            log.info("33333333333333333333333333333333333333333333333333");
-            return chatMessageRepository.save(new ChatMessage(message));
-        }
     }
 
 }
