@@ -1,7 +1,7 @@
 package com.example.backend.user.oauth.handler;
 
 import com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.backend.user.utils.CookieUtil;
+import com.example.backend.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;

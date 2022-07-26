@@ -47,7 +47,7 @@ public class EventService {
         User user = getUser(email);
         Stamp stamp = getStamp(user);
 
-        if (stamp.getStamp() < 5){
+        if (stamp.getStamp() < 3){
             throw new CustomException(ErrorCode.STAMP_CNT_LESS);
         }
 

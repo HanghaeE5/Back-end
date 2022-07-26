@@ -2,8 +2,7 @@ package com.example.backend.filter;
 
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
-import com.example.backend.user.utils.HeaderUtil;
-import io.jsonwebtoken.Claims;
+import com.example.backend.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -15,8 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 @Slf4j
 @RequiredArgsConstructor

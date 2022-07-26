@@ -200,10 +200,14 @@ public class BoardService {
             board.saveChatRoomId(chatRoom.getRoomId());
             participantRepository.save(new Participant(user, chatRoom));
         }
-
-        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 ){
+        
+        //저장되어 있는 이미지 URL이랑 다를 때 S3에서 삭제
+        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 &&
+            !board.getImageUrl().equals(requestDto.getBoard().getImageUrl())
+        ){
             awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
         }
+
         board.update(requestDto.getBoard(), user);
 
     }
