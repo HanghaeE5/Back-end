@@ -19,8 +19,8 @@ import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
-import com.example.backend.user.utils.CookieUtil;
-import com.example.backend.user.utils.HeaderUtil;
+import com.example.backend.utils.CookieUtil;
+import com.example.backend.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
