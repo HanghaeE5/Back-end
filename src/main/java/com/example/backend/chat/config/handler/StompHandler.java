@@ -49,32 +49,32 @@ public class StompHandler implements ChannelInterceptor {
             log.info(message.getHeaders().toString());
 
             // sessionId, userId 맵핑을 위해 user 필요
-            String tokenStr = accessor.getFirstNativeHeader("Authorization");
-            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
-            token.validate();
-            String email = token.getTokenClaims().getSubject();
-
-            String roomId = chatMessageService2.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")));
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            // 채팅방 사람 수 ++
-            chatMessageService2.plusParticipantCount(roomId);
-            // sessionId 와 participant(user와 roomId로 찾을 수 있음) 맵핑 진행
-            chatMessageService2.mapSessionAndParticipant(email, roomId, sessionId);
+//            String tokenStr = accessor.getFirstNativeHeader("Authorization");
+//            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+//            token.validate();
+//            String email = token.getTokenClaims().getSubject();
+//
+//            String roomId = chatMessageService2.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")));
+//            String sessionId = (String) message.getHeaders().get("simpSessionId");
+//            // 채팅방 사람 수 ++
+//            chatMessageService2.plusParticipantCount(roomId);
+//            // sessionId 와 participant(user와 roomId로 찾을 수 있음) 맵핑 진행
+//            chatMessageService2.mapSessionAndParticipant(email, roomId, sessionId);
 
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
 
             // disconnect 시 sessionId 정보
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            // sessionId 로 맵핑된 participant 알 수 있음. 해당 participant 의 exitTime 변경
-            String roomId = chatMessageService2.exitParticipant(sessionId);
-            // participant 로 ChatRoom 의 roomId 알 수 있음. 해당 roomId 로 채팅방 사람 수 --
-            if (roomId != null){
-                log.info("나는 StompCommand.DISCONNECT");
-                log.info(message.getHeaders().toString());
-                log.info("sessionId : " + sessionId);
-                log.info("roomId : " + roomId);
-                chatMessageService2.minusParticipantCount(roomId);
-            }
+//            String sessionId = (String) message.getHeaders().get("simpSessionId");
+//            // sessionId 로 맵핑된 participant 알 수 있음. 해당 participant 의 exitTime 변경
+//            String roomId = chatMessageService2.exitParticipant(sessionId);
+//            // participant 로 ChatRoom 의 roomId 알 수 있음. 해당 roomId 로 채팅방 사람 수 --
+//            if (roomId != null){
+//                log.info("나는 StompCommand.DISCONNECT");
+//                log.info(message.getHeaders().toString());
+//                log.info("sessionId : " + sessionId);
+//                log.info("roomId : " + roomId);
+//                chatMessageService2.minusParticipantCount(roomId);
+//            }
 
         }
         return message;

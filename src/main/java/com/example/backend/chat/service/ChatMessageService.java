@@ -66,13 +66,15 @@ public class ChatMessageService {
 
         log.info("chat.service.ChatMessageService.saveChatMessage()");
         // if 문 안에서 participant 숫자로 read 숫자를 계산
-        Long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
-        log.info("chat.service.ChatMessageService.saveChatMessage().participantCount = " + participantCount);
-        ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
-        Long notRead = chatRoom.getParticipantList().size() - participantCount;
-        log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
+//        Long participantCount = chatMessageService2.getParticipantCount(message.getRoomId());
+//        log.info("chat.service.ChatMessageService.saveChatMessage().participantCount = " + participantCount);
+//        ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId()).orElseThrow(
+//                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
+//        );
+//        Long notRead = chatRoom.getParticipantList().size() - participantCount;
+//        log.info("chat.service.ChatMessageService.saveChatMessage().notRead = " + notRead);
+        Long notRead = 0L;
+
         if (!Objects.equals(message.getSender(), "[알림]")) {
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
                     () -> new CustomException(ErrorCode.USER_NOT_FOUND)
