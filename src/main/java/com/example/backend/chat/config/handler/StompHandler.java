@@ -26,8 +26,6 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
-        log.info("StompHandler preSend 접근");
-
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         // Subscribe 시
@@ -65,18 +63,18 @@ public class StompHandler implements ChannelInterceptor {
 
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
 
-            log.info("나는 StompCommand.DISCONNECT");
-            log.info(message.getHeaders().toString());
             // disconnect 시 sessionId 정보
             String sessionId = (String) message.getHeaders().get("simpSessionId");
-            System.out.println(sessionId);
             // sessionId 로 맵핑된 participant 알 수 있음. 해당 participant 의 exitTime 변경
             String roomId = chatMessageService2.exitParticipant(sessionId);
             // participant 로 ChatRoom 의 roomId 알 수 있음. 해당 roomId 로 채팅방 사람 수 --
             if (roomId != null){
+                log.info("나는 StompCommand.DISCONNECT");
+                log.info(message.getHeaders().toString());
+                log.info("sessionId : " + sessionId);
+                log.info("roomId : " + roomId);
                 chatMessageService2.minusParticipantCount(roomId);
             }
-
 
         }
         return message;
