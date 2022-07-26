@@ -23,24 +23,20 @@ public class NotificationController {
     /**
      * @title 로그인 한 유저 sse 연결
      */
-    @GetMapping(value = "/subscribe/{id}", produces = "text/event-stream")
+    @GetMapping(value = "/subscribe/{email}", produces = "text/event-stream")
     public ResponseEntity<SseEmitter> subscribe(
-            @PathVariable Long id,
+            @PathVariable String email,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId
     ) {
-//        LoadUser.loginAndNickCheck();
-        SseEmitter sseEmitter = notificationService.subscribe(id, lastEventId);
+        SseEmitter sseEmitter = notificationService.subscribe(email, lastEventId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(sseEmitter);
     }
 
     @GetMapping("/subscribe/test")
     public ResponseEntity<String> subscribeTest() {
-        notificationService.send(123L, new Review(123L, "리뷰에용"), "이제 되게찌?");
+        notificationService.send("happygimy97@naver.com", new Review(123L, "리뷰에용"), "이제 되게찌?");
         return ResponseEntity.status(HttpStatus.OK)
                 .body("안농?");
     }
-
-
-
 }

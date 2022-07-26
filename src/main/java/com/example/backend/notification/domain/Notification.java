@@ -32,10 +32,10 @@ public class Notification {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn
 //    @NotNull
-    private Long receiver;
+    private String receiver;
 
     @Builder
-    public Notification(Long receiver, String content, String url, Boolean isRead) {
+    public Notification(String receiver, String content, String url, Boolean isRead) {
         this.receiver = receiver;
         this.content = new NotificationContent(content);
         this.url = new RelatedURL(url);
