@@ -194,7 +194,10 @@ public class FriendRequestService {
         List<UserResponseDto> responseDtoList = new ArrayList<>();
         for (FriendRequest friendRequest : friendRequestRepository.findAllByUserToUserSeq(user.getUserSeq())) {
             if (!friendRequest.isState()) {
-                UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserFrom());
+                Characters c = characterRepository.findById(friendRequest.getUserFrom().getUserSeq()).orElseThrow(
+                        () -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND)
+                );
+                UserResponseDto responseDto = new UserResponseDto(friendRequest.getUserFrom(), c);
                 responseDtoList.add(responseDto);
             }
         }

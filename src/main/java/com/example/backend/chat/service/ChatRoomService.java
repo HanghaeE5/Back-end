@@ -100,7 +100,12 @@ public class ChatRoomService {
             ChatRoom room = chatRoomRepository.findById(p.getChatRoom().getRoomId()).orElseThrow(
                     () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
             );
-            ChatRoomResponseDto responseDto = new ChatRoomResponseDto(room, user);
+            ChatRoomResponseDto responseDto;
+            if (p.getExitTime().isBefore(room.getLastMessage())) {
+                responseDto = new ChatRoomResponseDto(room, user, true);
+            } else {
+                responseDto = new ChatRoomResponseDto(room, user, false);
+            }
             responseDtoList.add(responseDto);
         }
         Collections.sort(responseDtoList);
