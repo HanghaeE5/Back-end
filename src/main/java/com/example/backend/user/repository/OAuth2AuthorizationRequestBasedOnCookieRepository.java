@@ -1,6 +1,6 @@
 package com.example.backend.user.repository;
 
-import com.example.backend.user.utils.CookieUtil;
+import com.example.backend.utils.CookieUtil;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;

@@ -37,7 +37,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
 
     @Override
     public Slice<Board> search(Pageable pageable, BoardSearchCondition searchCondition) {
-
         List<Board> content = queryFactory.
                 selectFrom(board)
                 .where(

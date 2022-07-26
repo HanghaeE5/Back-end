@@ -1,4 +1,4 @@
-package com.example.backend.user.utils;
+package com.example.backend.utils;
 
 import javax.servlet.http.HttpServletRequest;
 

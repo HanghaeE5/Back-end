@@ -13,7 +13,7 @@ import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
-import com.example.backend.user.utils.CookieUtil;
+import com.example.backend.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
