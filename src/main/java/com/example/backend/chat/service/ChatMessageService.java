@@ -55,6 +55,7 @@ public class ChatMessageService {
         }
         // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
         log.info("chat.service.ChatMessageService.sendChatMessage().end");
+        room.newMessage();
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
