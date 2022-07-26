@@ -27,7 +27,6 @@ public class ChatMessageController {
 
     private final ChatMessageService chatMessageService;
     private final AuthTokenProvider tokenProvider;
-    private final UserRepository userRepository;
 
     @ApiOperation(value = "메세지 전송(/pub)")
     @MessageMapping("/chat/message")
