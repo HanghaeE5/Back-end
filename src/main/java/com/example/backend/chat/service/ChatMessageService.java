@@ -35,7 +35,6 @@ public class ChatMessageService {
 
     @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
-        log.info("chat.service.ChatMessageService.sendChatMessage()");
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -52,7 +51,14 @@ public class ChatMessageService {
             }
         }
         // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
-        log.info("chat.service.ChatMessageService.sendChatMessage().end");
+        room.newMessage();
+        this.saveChatMessage(message);
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
+    }
+
+    @Transactional
+    public void sendEnterMessage(ChatRoom room, User user) {
+        ChatMessageRequestDto message = new ChatMessageRequestDto(room, user);
         room.newMessage();
         this.saveChatMessage(message);
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
@@ -60,8 +66,6 @@ public class ChatMessageService {
 
     @Transactional
     public void saveChatMessage(ChatMessageRequestDto message) {
-
-        log.info("chat.service.ChatMessageService.saveChatMessage()");
 
         if (!Objects.equals(message.getSender(), "[알림]")) {
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
@@ -72,14 +76,16 @@ public class ChatMessageService {
         else {
             chatMessageRepository.save(new ChatMessage(message));
         }
+
     }
 
     // 페이징으로 받아서 무한 스크롤 가능할듯
-    public Page<ChatMessageResponseDto> getSavedMessages(String roomId, String email) {
-        log.info("chat.service.ChatMessageService.getSavedMessages()");
+    public Page<ChatMessageResponseDto> getSavedMessages(String roomId) {
+
         Pageable pageable = PageRequest.of(0, 100, Sort.by("createdDate").descending());
         Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
         return messagePage.map(ChatMessageResponseDto::new);
+
     }
 
 }

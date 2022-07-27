@@ -22,7 +22,6 @@ public class RedisSub implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        log.info("chat.redis.RedisSub.onMessage()");
         try {
             String publishMessage = redisTemplate.getStringSerializer().deserialize(message.getBody());
             ChatMessageRequestDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDto.class);
