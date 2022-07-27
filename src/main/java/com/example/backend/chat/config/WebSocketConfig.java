@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @RequiredArgsConstructor
-@EnableWebSocketMessageBroker // 웹소켓 + Stomp 사용
+@EnableWebSocketMessageBroker
 @Configuration
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
@@ -16,7 +16,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
 
         registry.enableSimpleBroker("/sub");
-        registry.setApplicationDestinationPrefixes("/pub"); // @MessageRequest 로 라우팅
+        registry.setApplicationDestinationPrefixes("/pub");
 
     }
 

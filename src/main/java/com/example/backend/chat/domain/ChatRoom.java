@@ -1,7 +1,6 @@
 package com.example.backend.chat.domain;
 
 import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
-import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
 import com.example.backend.common.domain.BaseTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,13 +36,6 @@ public class ChatRoom extends BaseTime {
         this.roomId = UUID.randomUUID().toString();
         this.name = requestDto.getName();
         this.type = Type.PRIVATE;
-        this.lastMessage = LocalDateTime.now();
-    }
-
-    public ChatRoom(ChatRoomPublicRequestDto requestDto) {
-        this.roomId = UUID.randomUUID().toString();
-        this.name = requestDto.getName();
-        this.type = Type.PUBLIC;
         this.lastMessage = LocalDateTime.now();
     }
 

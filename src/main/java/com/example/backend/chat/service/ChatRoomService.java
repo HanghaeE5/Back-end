@@ -6,7 +6,6 @@ import com.example.backend.chat.domain.Type;
 import com.example.backend.chat.dto.request.ChatRoomEnterRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomExitRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
-import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
 import com.example.backend.chat.dto.response.ChatRoomResponseDto;
 import com.example.backend.chat.redis.RedisRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
@@ -30,6 +29,7 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
     private final RedisRepository redisRepository;
+    private final ChatMessageService chatMessageService;
 
     @Transactional
     public ChatRoomResponseDto createPrivateRoom(ChatRoomPrivateRequestDto requestDto, String email) {
@@ -67,6 +67,8 @@ public class ChatRoomService {
         user.addParticipant(participantMe);
         friend.addParticipant(participantYou);
         redisRepository.subscribe(room.getRoomId());
+        chatMessageService.sendEnterMessage(room, user);
+        chatMessageService.sendEnterMessage(room, friend);
         return new ChatRoomResponseDto(room, user);
     }
 
@@ -111,7 +113,7 @@ public class ChatRoomService {
         for (Participant p : participantList) {
             if (p.getUser() == user) {
                 participantRepository.delete(p);
-                return;
+                break;
             }
         }
         if (room.getParticipantList().isEmpty()) {
@@ -128,5 +130,6 @@ public class ChatRoomService {
                 () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
         );
         participantRepository.save(new Participant(user, room));
+        chatMessageService.sendEnterMessage(room, user);
     }
 }
