@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -31,7 +32,7 @@ public class RegisterController {
 
     @ApiOperation(value = "이메일 인증하기")
     @PostMapping("/register/email")
-    public ResponseEntity<String> emailCertification(@Valid @RequestBody EmailRequestDto emailRequestDto){
+    public ResponseEntity<String> emailCertification(@Valid @RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
         return ResponseEntity.ok()
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(userService.emailCertification(emailRequestDto.getEmail()));

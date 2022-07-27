@@ -2,8 +2,8 @@ package com.example.backend.msg;
 
 public enum MsgEnum {
     //USER
-    EMAIL_TITLE("이메일 인증"),
-    EMAIL_CONTENT_FRONT("인증번호: "),
+    EMAIL_TITLE("TODOWITH 이메일 인증"),
+//    EMAIL_CONTENT_FRONT("인증번호: "),
     EMAIL_SEND("인증 메일을 전송 하였습니다."),
     CORRECT_EMAIL_CODE("인증에 성공하였습니다."),
     AVAILABLE_NICK("사용 가능한 닉네임 입니다."),

@@ -30,7 +30,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -44,7 +48,6 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 public class UserService {
 
     private final CharacterService characterService;
-    private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final EmailCheckRepository emailCheckRepository;
@@ -61,32 +64,33 @@ public class UserService {
 
     @Value("${spring.mail.username}")
     private String adminMail;
+    private final JavaMailSender emailSender;
+    private final SpringTemplateEngine templateEngine;
 
-    public String emailCertification(String email) {
+    public String emailCertification(String email) throws MessagingException {
 
         //중복이메일 체크
         dupleEmailCheck(email);
 
         //SMTP 이메일 전송 셋팅 / 인증번호 생성
-        SimpleMailMessage simpleMessage = new SimpleMailMessage();
-        simpleMessage.setFrom(adminMail);
-        simpleMessage.setTo(email);
-        simpleMessage.setSubject(MsgEnum.EMAIL_TITLE.getMsg());
-
+        MimeMessage message = emailSender.createMimeMessage();
         String code = ThreadLocalRandom.current().nextInt(100000, 1000000)+"";
 
-        EmailCheck emailCheck = EmailCheck.builder()
-                .email(email)
-                .code(code)
-                .build();
+        message.addRecipients(MimeMessage.RecipientType.TO, email); // 보낼 이메일 설정
+        message.setSubject(MsgEnum.EMAIL_TITLE.getMsg()); // 이메일 제목
+        message.setText(setContext(code), "utf-8", "html"); // 내용 설정(Template Process)
 
-        emailCheckRepository.save(emailCheck);
+        emailCheckRepository.save(new EmailCheck(email, code));
 
-        simpleMessage.setText(MsgEnum.EMAIL_CONTENT_FRONT.getMsg()+ code);
-
-        javaMailSender.send(simpleMessage);
+        emailSender.send(message);
 
         return MsgEnum.EMAIL_SEND.getMsg();
+    }
+
+    private String setContext(String code) { // 타임리프 설정하는 코드
+        Context context = new Context();
+        context.setVariable("code", code); // Template에 전달할 데이터 설정
+        return templateEngine.process("mail", context); // mail.html
     }
 
     @Transactional
