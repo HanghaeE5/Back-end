@@ -32,7 +32,7 @@ public class RegisterController {
 
     @ApiOperation(value = "이메일 인증하기")
     @PostMapping("/register/email")
-    public ResponseEntity<String> emailCertification(@Valid @RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
+    public ResponseEntity<String> emailCertification(@Valid @RequestBody EmailRequestDto emailRequestDto) {
         return ResponseEntity.ok()
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(userService.emailCertification(emailRequestDto.getEmail()));
