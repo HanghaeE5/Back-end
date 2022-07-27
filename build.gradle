@@ -40,6 +40,8 @@ dependencies {
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:4.36.0' // 스케줄러 락
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:4.22.1' // 스케줄러 락
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3'
 
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
