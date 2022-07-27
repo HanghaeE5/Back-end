@@ -6,6 +6,7 @@ import com.example.backend.event.domain.Stamp;
 import com.example.backend.event.repository.StampRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.mail.EmailService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,40 +60,25 @@ public class UserService {
     private final static long THREE_DAYS_MSEC = 259200000;
     private final AwsS3Service awsS3Service;
     private final TodoRepository todoRepository;
+    private final EmailService emailService;
 
     @Value("${basic.profile.img}")
     private String basicImg;
 
-    @Value("${spring.mail.username}")
-    private String adminMail;
-    private final JavaMailSender emailSender;
-    private final SpringTemplateEngine templateEngine;
-
-    public String emailCertification(String email) throws MessagingException {
+    public String emailCertification(String email) {
 
         //중복이메일 체크
         dupleEmailCheck(email);
-
-        //SMTP 이메일 전송 셋팅 / 인증번호 생성
-        MimeMessage message = emailSender.createMimeMessage();
         String code = ThreadLocalRandom.current().nextInt(100000, 1000000)+"";
-
-        message.addRecipients(MimeMessage.RecipientType.TO, email); // 보낼 이메일 설정
-        message.setSubject(MsgEnum.EMAIL_TITLE.getMsg()); // 이메일 제목
-        message.setText(setContext(code), "utf-8", "html"); // 내용 설정(Template Process)
-
         emailCheckRepository.save(new EmailCheck(email, code));
 
-        emailSender.send(message);
+        emailService.sendEmail(email, code);
 
         return MsgEnum.EMAIL_SEND.getMsg();
     }
 
-    private String setContext(String code) { // 타임리프 설정하는 코드
-        Context context = new Context();
-        context.setVariable("code", code); // Template에 전달할 데이터 설정
-        return templateEngine.process("mail", context); // mail.html
-    }
+
+
 
     @Transactional
     public String emailCertificationCheck(EmailCheckRequestDto emailCheckDto) {
