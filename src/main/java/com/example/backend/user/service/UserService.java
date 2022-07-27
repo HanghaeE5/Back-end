@@ -201,9 +201,9 @@ public class UserService {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
+//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
 
         return accessToken.getToken();
     }
@@ -253,9 +253,9 @@ public class UserService {
             // DB에 refresh 토큰 업데이트 해주기
             userRefreshToken.setRefreshToken(authRefreshToken.getToken());
 
-            int cookieMaxAge = (int) refreshTokenExpiry / 60;
-            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
+//            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
 
         }
         return newAccessToken.getToken();

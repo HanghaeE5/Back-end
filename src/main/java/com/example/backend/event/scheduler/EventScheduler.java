@@ -14,6 +14,7 @@ import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ public class EventScheduler {
 //    @Scheduled(cron = "*/10 * * * * ?")
 
     @Scheduled(cron = "0 5 0,2,3 * * ?")
+    @SchedulerLock(name = "eventSchedulerLock", lockAtLeastFor = "5m", lockAtMostFor = "14m")
     @Transactional
     public void eventJob() throws ParseException {
 
