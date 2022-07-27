@@ -15,9 +15,6 @@ public class RedisPub {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void publish(ChannelTopic topic, ChatMessageRequestDto message) {
-        log.info("chat.redis.RedisPub.publish()");
-        log.info("topic.getTopic() = " + topic.getTopic());
-        log.info("ChatMessageResponseDto message = " + message);
         redisTemplate.convertAndSend(topic.getTopic(), message);
     }
 

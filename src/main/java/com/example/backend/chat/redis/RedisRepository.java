@@ -38,7 +38,6 @@ public class RedisRepository {
 
     // 채팅방 생성 시 사용해야함
     public void subscribe(String roomId) {
-        log.info("chat.redis.RedisRepository.subscribe()");
         ChannelTopic topic = topicMap.get(roomId);
         if (topic == null) {
             topic = ChannelTopic.of(roomId);
@@ -48,7 +47,6 @@ public class RedisRepository {
     }
 
     public ChannelTopic getTopic(String roomId) {
-        log.info("chat.redis.RedisRepository.getTopic()");
         return topicMap.get(roomId);
     }
 

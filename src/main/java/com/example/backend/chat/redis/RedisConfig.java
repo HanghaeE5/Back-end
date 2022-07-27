@@ -23,14 +23,12 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        log.info("chat.redis.RedisConfig.redisConnectionFactory()");
         return new LettuceConnectionFactory(host, port);
     }
 
     // pub/sub 처리 listener
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer() {
-        log.info("chat.redis.RedisConfig.redisMessageListenerContainer()");
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory());
         return container;
@@ -38,7 +36,6 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
-        log.info("chat.redis.RedisConfig.redisTemplate()");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
