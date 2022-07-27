@@ -81,6 +81,8 @@ public class SecurityConfig {
                 .antMatchers("/refresh").permitAll()
                 .antMatchers("/register/**").permitAll()
 
+                .antMatchers("/health").permitAll()
+
                 .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())

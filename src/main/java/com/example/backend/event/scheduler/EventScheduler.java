@@ -14,6 +14,7 @@ import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ public class EventScheduler {
 //    @Scheduled(cron = "*/10 * * * * ?")
 
     @Scheduled(cron = "0 5 0,2,3 * * ?")
+    @SchedulerLock(name = "eventSchedulerLock", lockAtLeastFor = "5m", lockAtMostFor = "14m")
     @Transactional
     public void eventJob() throws ParseException {
 
@@ -113,6 +115,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("황금올리브")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/Chicken.png")
                         .percentage("0.5")
                         .price(19800)
                         .build()
@@ -120,6 +123,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("베스킨라빈스 더블 주니어")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/IceCream.png")
                         .percentage("0.75")
                         .price(4420)
                         .build()
@@ -127,6 +131,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("스타벅스 아메리카노")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/americano.png")
                         .percentage("0.75")
                         .price(3830)
                         .build()
@@ -134,6 +139,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("비타오백")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/vita500.png")
                         .percentage("16")
                         .price(840)
                         .build()
@@ -141,6 +147,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("육개장 사발면")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/Yukgaejang.png")
                         .percentage("16")
                         .price(840)
                         .build()
@@ -148,6 +155,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("마이쮸")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/maijjyu.png")
                         .percentage("16")
                         .price(740)
                         .build()
@@ -155,6 +163,7 @@ public class EventScheduler {
         productRepository.save(
                 Product.builder()
                         .name("춥팝춥스")
+                        .imgUrl("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/IventPrize/chupachups.png")
                         .percentage("50")
                         .price(240)
                         .build()
