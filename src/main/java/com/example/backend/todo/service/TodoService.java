@@ -47,16 +47,25 @@ public class TodoService {
         Pageable pageable;
 
         if (Objects.equals(sort, "asc")) {
-            pageable = PageRequest.of(page, size, Sort.by("todoDate").ascending());
+            pageable = PageRequest.of(page, size, Sort.by("state").ascending().and(Sort.by("todoDate").ascending())); // 오래된 순
         } else if (Objects.equals(sort, "desc")){
-            pageable = PageRequest.of(page, size, Sort.by("todoDate").descending());
-        } else {
+            pageable = PageRequest.of(page, size, Sort.by("state").ascending().and(Sort.by("todoDate").descending())); // 최신순
+        } else if (Objects.equals(sort, "today")) {
+            pageable = PageRequest.of(page, size, Sort.by("state").ascending());
+        }
+        else {
             throw new CustomException(ErrorCode.INVALID_SORTING_OPTION);
         }
         Page<Todo> todoPage;
 
         if (Objects.equals(filter, "all")) {
-            todoPage = todoRepository.findAllTodo(pageable, user);
+            if(Objects.equals(sort,"today")) {
+                todoPage = todoRepository.findAllTodayTodo(pageable, user);
+            }
+            else {
+                todoPage = todoRepository.findAllTodo(pageable, user);
+            }
+
         } else if (Objects.equals(filter, "doingList")) {
             todoPage = todoRepository.findAllByTodoStateFalse(pageable, user);
         } else if (Objects.equals(filter, "doneList")){
