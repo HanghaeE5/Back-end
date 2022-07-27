@@ -109,9 +109,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             userRefreshTokenRepository.saveAndFlush(userRefreshToken);
         }
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
         String nickCheck = (username == null) ? "N" : "Y";
         return UriComponentsBuilder.fromUriString(targetUrl)
