@@ -6,6 +6,7 @@ import com.example.backend.event.domain.Stamp;
 import com.example.backend.event.repository.StampRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.mail.EmailService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
@@ -27,10 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -44,7 +50,6 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 public class UserService {
 
     private final CharacterService characterService;
-    private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final EmailCheckRepository emailCheckRepository;
@@ -55,39 +60,25 @@ public class UserService {
     private final static long THREE_DAYS_MSEC = 259200000;
     private final AwsS3Service awsS3Service;
     private final TodoRepository todoRepository;
+    private final EmailService emailService;
 
     @Value("${basic.profile.img}")
     private String basicImg;
-
-    @Value("${spring.mail.username}")
-    private String adminMail;
 
     public String emailCertification(String email) {
 
         //중복이메일 체크
         dupleEmailCheck(email);
-
-        //SMTP 이메일 전송 셋팅 / 인증번호 생성
-        SimpleMailMessage simpleMessage = new SimpleMailMessage();
-        simpleMessage.setFrom(adminMail);
-        simpleMessage.setTo(email);
-        simpleMessage.setSubject(MsgEnum.EMAIL_TITLE.getMsg());
-
         String code = ThreadLocalRandom.current().nextInt(100000, 1000000)+"";
+        emailCheckRepository.save(new EmailCheck(email, code));
 
-        EmailCheck emailCheck = EmailCheck.builder()
-                .email(email)
-                .code(code)
-                .build();
-
-        emailCheckRepository.save(emailCheck);
-
-        simpleMessage.setText(MsgEnum.EMAIL_CONTENT_FRONT.getMsg()+ code);
-
-        javaMailSender.send(simpleMessage);
+        emailService.sendEmail(email, code);
 
         return MsgEnum.EMAIL_SEND.getMsg();
     }
+
+
+
 
     @Transactional
     public String emailCertificationCheck(EmailCheckRequestDto emailCheckDto) {
