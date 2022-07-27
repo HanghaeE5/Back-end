@@ -70,25 +70,6 @@ public class ChatRoomService {
         return new ChatRoomResponseDto(room, user);
     }
 
-    // 단체 톡방
-    @Transactional
-    public ChatRoomResponseDto createPublicRoom(ChatRoomPublicRequestDto requestDto, String email) {
-        ChatRoom room = new ChatRoom(requestDto);
-        chatRoomRepository.save(room);
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-        ChatRoom chatRoom = chatRoomRepository.findById(room.getRoomId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
-        );
-        Participant participant = new Participant(user, chatRoom);
-        participantRepository.save(participant);
-        chatRoom.addParticipant(participant);
-        user.addParticipant(participant);
-        redisRepository.subscribe(chatRoom.getRoomId());
-        return new ChatRoomResponseDto(chatRoom, user);
-    }
-
     @Transactional
     public List<ChatRoomResponseDto> findAllRoom(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
@@ -100,12 +81,7 @@ public class ChatRoomService {
             ChatRoom room = chatRoomRepository.findById(p.getChatRoom().getRoomId()).orElseThrow(
                     () -> new CustomException(ErrorCode.ROOM_NOT_FOUND)
             );
-            ChatRoomResponseDto responseDto;
-            if (p.getExitTime().isBefore(room.getLastMessage())) {
-                responseDto = new ChatRoomResponseDto(room, user, true);
-            } else {
-                responseDto = new ChatRoomResponseDto(room, user, false);
-            }
+            ChatRoomResponseDto responseDto = new ChatRoomResponseDto(room, user);
             responseDtoList.add(responseDto);
         }
         Collections.sort(responseDtoList);
@@ -137,6 +113,9 @@ public class ChatRoomService {
                 participantRepository.delete(p);
                 return;
             }
+        }
+        if (room.getParticipantList().isEmpty()) {
+            chatRoomRepository.delete(room);
         }
     }
 

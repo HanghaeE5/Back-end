@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -21,24 +22,20 @@ public class ChatMessageResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
     private String profileImageUrl;
-    private Long notRead;
 
     public ChatMessageResponseDto(ChatMessage message) {
         this.type = message.getType();
         this.roomId = message.getRoomId();
-        this.sender = message.getUser().getUsername();
+        if (Objects.equals(message.getSender(), "[알림]")) {
+            this.sender = message.getSender();
+        } else {
+            this.sender = message.getUser().getUsername();
+        }
         this.message = message.getMessage();
         this.createdDate = message.getCreatedDate();
         if (message.getUser() != null) {
             this.profileImageUrl = message.getUser().getProfileImageUrl();
         }
-        if (message.getNotRead() != null) {
-            this.notRead = message.getNotRead();
-        }
-    }
-
-    public void read() {
-        notRead--;
     }
 
 }

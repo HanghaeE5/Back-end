@@ -36,15 +36,6 @@ public class ChatRoomController {
     }
 
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @ApiOperation(value = "단체 채팅방 생성")
-    @PostMapping("/room/public")
-    public ResponseEntity<ChatRoomResponseDto> createPublicRoom(@RequestBody ChatRoomPublicRequestDto requestDto) {
-        LoadUser.loginAndNickCheck();
-        ChatRoomResponseDto responseDto = chatRoomService.createPublicRoom(requestDto, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @ApiOperation(value = "단체 채팅방 입장")
     @PostMapping("/room/enter/public")
     public ResponseEntity<String> enterPublicRoom(@RequestBody ChatRoomEnterRequestDto requestDto) {
