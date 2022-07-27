@@ -4,7 +4,6 @@ import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.service.ChatMessageService;
 import com.example.backend.user.common.LoadUser;
-import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import io.swagger.annotations.ApiOperation;
