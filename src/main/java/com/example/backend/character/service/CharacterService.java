@@ -51,7 +51,7 @@ public class CharacterService {
     @Transactional
     public TodoDoneResponseDto upgrade(String email, Todo todo) {
 
-        boolean overTen = false;
+        Integer todayDone;
         boolean levelUp = false;
         boolean stepUp = false;
         User user = userRepository.findByEmail(email).orElseThrow(
@@ -60,7 +60,8 @@ public class CharacterService {
         Characters characters = characterRepository.findById(user.getUserSeq()).orElseThrow(
                 () -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND)
         );
-        if (todoRepository.findTodayDone(user).size() <= 10) {
+        todayDone = todoRepository.findTodayDone(user).size();
+        if (todayDone <= 10) {
             if (todo.getCategory() != Category.ETC) {
                 characters.upgradeMedal(todo.getCategory());
             }
@@ -73,12 +74,10 @@ public class CharacterService {
                 characters.stepUp();
                 stepUp = true;
             }
-        } else {
-            overTen = true;
         }
         todo.addCharacter(characters);
         characters.addTodo(todo);
-        CharacterResponseDto characterResponseDto = new CharacterResponseDto(characters, levelUp, stepUp, standard.getLevelExp().get(characters.getLevel()), overTen);
+        CharacterResponseDto characterResponseDto = new CharacterResponseDto(characters, levelUp, stepUp, standard.getLevelExp().get(characters.getLevel()), todayDone);
         TodoDoneResponseDto responseDto = new TodoDoneResponseDto(characterResponseDto);
 
         return responseDto;
