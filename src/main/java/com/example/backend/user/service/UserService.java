@@ -1,5 +1,7 @@
 package com.example.backend.user.service;
 
+import com.example.backend.board.domain.Board;
+import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.character.service.CharacterService;
 import com.example.backend.event.domain.Stamp;
@@ -61,6 +63,7 @@ public class UserService {
     private final AwsS3Service awsS3Service;
     private final TodoRepository todoRepository;
     private final EmailService emailService;
+    private final BoardRepository boardRepository;
 
     @Value("${basic.profile.img}")
     private String basicImg;
@@ -76,9 +79,6 @@ public class UserService {
 
         return MsgEnum.EMAIL_SEND.getMsg();
     }
-
-
-
 
     @Transactional
     public String emailCertificationCheck(EmailCheckRequestDto emailCheckDto) {
@@ -351,6 +351,16 @@ public class UserService {
 
         user.updatePassword(passwordEncoder.encode(passwordRequestDto.getNewPassword()));
     }
+
+    @Transactional
+    public void deleteUser(String email){
+        User user = getUser(email);
+
+        Long count = todoRepository.updateTodoByBoardIn(boardRepository.findByUser(user));
+
+        userRepository.delete(user);
+    }
+
 
     public SocialUserCheckResponseDto checkSocialUser(String email) {
         User user = getUser(email);
