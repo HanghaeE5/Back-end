@@ -81,4 +81,16 @@ public class UserController {
                 .body(userService.checkSocialUser(LoadUser.getEmail()));
     }
 
+    @ApiOperation(value = "회원 탈퇴")
+    @DeleteMapping
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    public ResponseEntity<String> deleteUser(){
+        LoadUser.loginAndNickCheck();
+        userService.deleteUser(LoadUser.getEmail());
+        return ResponseEntity
+                .ok()
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(MsgEnum.DELETE_USER.getMsg());
+    }
+
 }

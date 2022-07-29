@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
 
 //    @EntityGraph(attributePaths = {"user", "boardTodo"}, type = EntityGraph.EntityGraphType.LOAD)
@@ -16,6 +18,8 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
 //    Page<Board> findAllByTitleContaining(String keyword, Pageable pageable);
 
     Page<Board> findByUser(User user, Pageable pageable);
+
+    List<Board> findByUser(User user);
 
     Page<Board> findByTitleContainingAndUser(String keyword, User user, Pageable pageable);
 

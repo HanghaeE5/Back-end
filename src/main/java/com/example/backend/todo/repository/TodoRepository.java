@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-public interface TodoRepository extends JpaRepository<Todo, Long> {
+public interface TodoRepository extends JpaRepository<Todo, Long>, TodoRepositoryCustom {
 
     @Query("select t from Todo t where t.user=:user and ((t.todoDate>=CURRENT_DATE and t.state=true) or (t.state=false))")
     Page<Todo> findAllTodo(Pageable pageable, User user);
@@ -27,7 +27,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findAllByBoardAndUser(Board board, User user);
 
-    boolean existsByBoard(Board board);
+    List<Todo> findByBoardIn(List<Board> board);
 
     boolean existsByBoardAndUser(Board board, User user);
 

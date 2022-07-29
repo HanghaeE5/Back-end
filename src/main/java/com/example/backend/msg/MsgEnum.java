@@ -3,7 +3,6 @@ package com.example.backend.msg;
 public enum MsgEnum {
     //USER
     EMAIL_TITLE("TODOWITH 이메일 인증"),
-//    EMAIL_CONTENT_FRONT("인증번호: "),
     EMAIL_SEND("인증 메일을 전송 하였습니다."),
     CORRECT_EMAIL_CODE("인증에 성공하였습니다."),
     AVAILABLE_NICK("사용 가능한 닉네임 입니다."),
@@ -15,8 +14,8 @@ public enum MsgEnum {
     AUTHENTICATION_FAIL("Authentication failed, login or reissue token"),
     SOCIAL_REGISTER_SUCCESS("소셜 회원가입 완료"),
     PASSWORD_UPDATE_SUCCESS("비밀번호 변경 완료"),
-
     EVENT_PHONE_SUCCESS("휴대폰 번호 입력 완료"),
+    DELETE_USER("회원 탈퇴 완료"),
 
     //BOARD
     BOARD_SAVE_SUCCESS("파일 업로드 및 게시글 작성 완료"),
