@@ -215,27 +215,26 @@ public class FriendRequestService {
         );
         CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(userFriend.getEmail());
         // 공개 범위 및 친구 관계 확인
+        List<TodoResponseDto> responseDtoList = new ArrayList<>();
         if (userFriend.getPublicScope() == PublicScope.FRIEND) {
             // 친구인지 확인
             Optional<FriendRequest> f = friendRequestRepository.findRelation(user, userFriend);
             Optional<FriendRequest> f2 = friendRequestRepository.findRelation(userFriend, user);
             if (f.isEmpty() || f2.isEmpty()) {
-                return new UserTodoResponseDto(userFriend, null, characterResponseDto);
+                return new UserTodoResponseDto(userFriend, responseDtoList, characterResponseDto);
             } else {
                 // 오늘의 todo필요
                 List<Todo> todoList = todoRepository.findAllByTodoDate(userFriend);
-                List<TodoResponseDto> responseDtoList = new ArrayList<>();
                 for (Todo t : todoList) {
                     responseDtoList.add(new TodoResponseDto(t));
                 }
                 return new UserTodoResponseDto(userFriend, responseDtoList, characterResponseDto);
             }
         } else if (userFriend.getPublicScope() == PublicScope.NONE) {
-            return new UserTodoResponseDto(userFriend, null, characterResponseDto);
+            return new UserTodoResponseDto(userFriend, responseDtoList, characterResponseDto);
         } else {
             // 오늘의 todo필요
             List<Todo> todoList = todoRepository.findAllByTodoDate(userFriend);
-            List<TodoResponseDto> responseDtoList = new ArrayList<>();
             for (Todo t : todoList) {
                 responseDtoList.add(new TodoResponseDto(t));
             }
