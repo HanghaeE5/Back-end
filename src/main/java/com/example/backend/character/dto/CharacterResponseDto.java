@@ -25,7 +25,7 @@ public class CharacterResponseDto {
     private Integer shopping;
     private String characterUrl;
     private String characterName;
-    private boolean overTen;
+    private Integer todayDone;
 
     public CharacterResponseDto(Characters characters, Integer expNeed) {
         this.type = characters.getType();
@@ -63,7 +63,7 @@ public class CharacterResponseDto {
         }
     }
 
-    public CharacterResponseDto(Characters characters, boolean levelUp, boolean stepUp, Integer expNeed, boolean overTen) {
+    public CharacterResponseDto(Characters characters, boolean levelUp, boolean stepUp, Integer expNeed, Integer todayDone) {
         this.type = characters.getType();
         this.step = characters.getStep();
         this.level = characters.getLevel();
@@ -76,7 +76,7 @@ public class CharacterResponseDto {
         this.exercise = characters.getExercise();
         this.promise = characters.getPromise();
         this.shopping = characters.getShopping();
-        this.overTen = overTen;
+        this.todayDone = todayDone;
         if (characters.getType().equals(Type.거북이)) {
             if (characters.getStep().equals(Step.FIRST)) {
                 this.characterUrl = MsgEnum.TURTLE_ONE_URL.getMsg();
