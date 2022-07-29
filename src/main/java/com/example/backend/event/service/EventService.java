@@ -84,11 +84,14 @@ public class EventService {
     @Transactional
     public String eventPhoneRegister(String email, EventRequestDto eventRequestDto){
         User user = getUser(email);
+        System.out.println(email);
+        System.out.println("seq : "+user.getUserSeq());
         Winning winning = winningRepository.findById(eventRequestDto.getEventId()).orElseThrow(
                 () -> new CustomException(ErrorCode.WINNING_NOT_FOUNT)
         );
-
+        System.out.println("userId : "+winning.getUserId());
         if (user.getUserSeq() == winning.getUserId()){
+            System.out.println("여기2");
             winning.addPhone(eventRequestDto.getPhone());
         }else{
             throw new CustomException(ErrorCode.WINNING_NOT_FOUNT);
