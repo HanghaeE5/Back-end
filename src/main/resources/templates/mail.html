@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <body>
-<div style="font-size: 15px; text-align: center;">
-    <img src="https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/f67d835a-5dd6-47f4-b710-15dbb3c53132.png" width="400" alt=""/>
-    <br><br>
-    <span style="border: 1px solid; padding: 8px;font-size: 20px;" th:text="${code}">인증번호 : </span>
-</div>
+    <div style="display: flex;flex-direction: column;align-items: center;">
+        <div style="font-size: 15px;text-align: center;width: 400px;">
+            <div>
+                <img src="https://geonoo.s3.ap-northeast-2.amazonaws.com/mail1.jpeg" width="400" alt=""/>
+            </div>
+        </div>
+        <div style="background: #FFD600;width: 395px;">
+            <div style="padding-top: 65px;font-size: 30px;font-weight: 600;text-align: center;">
+                <span th:text="${code}"></span>
+            </div>
+            <br><br>
+            <div>
+                <img src="https://geonoo.s3.ap-northeast-2.amazonaws.com/mail2.jpeg" width="395" alt=""/>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
