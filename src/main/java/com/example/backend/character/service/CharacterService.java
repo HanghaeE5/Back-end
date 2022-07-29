@@ -51,6 +51,7 @@ public class CharacterService {
     @Transactional
     public TodoDoneResponseDto upgrade(String email, Todo todo) {
 
+        boolean overTen = false;
         boolean levelUp = false;
         boolean stepUp = false;
         User user = userRepository.findByEmail(email).orElseThrow(
@@ -72,10 +73,12 @@ public class CharacterService {
                 characters.stepUp();
                 stepUp = true;
             }
+        } else {
+            overTen = true;
         }
         todo.addCharacter(characters);
         characters.addTodo(todo);
-        CharacterResponseDto characterResponseDto = new CharacterResponseDto(characters, levelUp, stepUp, standard.getLevelExp().get(characters.getLevel()));
+        CharacterResponseDto characterResponseDto = new CharacterResponseDto(characters, levelUp, stepUp, standard.getLevelExp().get(characters.getLevel()), overTen);
         TodoDoneResponseDto responseDto = new TodoDoneResponseDto(characterResponseDto);
 
         return responseDto;
