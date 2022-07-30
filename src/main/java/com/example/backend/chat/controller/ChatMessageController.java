@@ -42,6 +42,7 @@ public class ChatMessageController {
             @RequestParam String roomId
     ) {
         LoadUser.loginAndNickCheck();
+        System.out.println("메세지");
         Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
