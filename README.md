@@ -38,10 +38,10 @@ TODO 와 WITH 을 합쳐 혼자만이 아닌 함께하는 즐거움을 주고, �
 <br/>
 
 ## 🧙 Team
-|김지환|양희수|이건우|
-|---|---|---|
-|[Github](https://github.com/Kimjipang)|[Github](https://github.com/hee1su123)|[Github](https://github.com/geonoo)|
-|BE / Spring|BE / Spring|BE / Spring|
+|김지환|양희수|이건우|심아영|조윤경
+|---|---|---|---|---|
+|[Github](https://github.com/Kimjipang)|[Github](https://github.com/hee1su123)|[Github](https://github.com/geonoo)|[Github](https://github.com/ccimayoung)|[Github](https://github.com/yooooonk)|
+|BE / Spring|BE / Spring|BE / Spring|FE / React|FE / React|
 
 <br/>
 
