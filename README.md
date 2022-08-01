@@ -20,3 +20,9 @@
 <img src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white">
 <img src="https://img.shields.io/badge/socket-010101?style=for-the-badge&logo=socket.io&logoColor=white">
 
+
+# 팀소개
+|김지환|양희수|이건우|
+|---|---|---|
+|[Github](https://github.com/Kimjipang)|[Github](https://github.com/hee1su123)|[Github](https://github.com/geonoo)|
+|BE / Spring|BE / Spring|BE / Spring|
