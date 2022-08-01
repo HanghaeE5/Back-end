@@ -1,6 +1,8 @@
 <img width="272" alt="todowith" src="https://user-images.githubusercontent.com/39722357/182074339-6ad06851-2ffa-4510-a788-38dc9f7a28df.png">
 
 ## 투두작성을 통해 목표를 달성할 수 있게 도와주는 서비스
+TODO 와 WITH 을 합쳐 혼자만이 아닌 함께하는 즐거움을 주고, 이를 통해 재미있게 목표를 계획하고 달성할 수 있도록 도와주는 서비스
+<br/>
 <br/>
 
 ## 🔗 Site
@@ -36,10 +38,10 @@
 <br/>
 
 ## 🧙 Team
-|김지환|양희수|이건우|
-|---|---|---|
-|[Github](https://github.com/Kimjipang)|[Github](https://github.com/hee1su123)|[Github](https://github.com/geonoo)|
-|BE / Spring|BE / Spring|BE / Spring|
+|김지환|양희수|이건우|심아영|조윤경
+|---|---|---|---|---|
+|[Github](https://github.com/Kimjipang)|[Github](https://github.com/hee1su123)|[Github](https://github.com/geonoo)|[Github](https://github.com/ccimayoung)|[Github](https://github.com/yooooonk)|
+|BE / Spring|BE / Spring|BE / Spring|FE / React|FE / React|
 
 <br/>
 
