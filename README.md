@@ -59,7 +59,7 @@ ETC : AWS S3, Redis <br/>
 ## 📝 Common doc
 
 - ERD(Entity Relationship Diagram) - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/ERD)
-- API(Application Programming Interface) - [상세보기 - WIKI 이동]()
+- API(Application Programming Interface) - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/API)
 
 <br/> 
 
