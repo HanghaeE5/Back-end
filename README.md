@@ -74,7 +74,7 @@ ETC : AWS S3, Redis <br/>
 - NGINX - 오류 및 설정 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/NGINX---%EC%98%A4%EB%A5%98-%EB%B0%8F-%EC%84%A4%EC%A0%95)
 - 다중 서버 환경에서 스케줄러 락 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/%EB%8B%A4%EC%A4%91-%EC%84%9C%EB%B2%84-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC-%EB%9D%BD)
 - 두개의 채팅 메세지가 저장되는 현상 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/%EB%91%90%EA%B0%9C%EC%9D%98-%EC%B1%84%ED%8C%85-%EB%A9%94%EC%84%B8%EC%A7%80%EA%B0%80-%EC%A0%80%EC%9E%A5%EB%90%98%EB%8A%94-%ED%98%84%EC%83%81)
-- Web Socket 요청 Authentication 실패 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Web-Socket-%EC%9A%94%EC%B2%AD-Authentication-%EC%8B%A4%ED%8C%A8)
+- Web Socket 요청 Authentication 실패 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/failed-to-lazily-initialize-a-collection-of-role-%EC%98%A4%EB%A5%98)
 - Stomp 강제 Disconnect - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Stomp-%EA%B0%95%EC%A0%9C-Disconnect)
 - failed to lazily initialize a collection of role 오류 - [상세보기 - WIKI 이동]()
 - Slack Webhook 도입 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Slack-Webhook-%EB%8F%84%EC%9E%85)
