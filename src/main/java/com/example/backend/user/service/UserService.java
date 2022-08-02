@@ -10,6 +10,7 @@ import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.mail.EmailService;
 import com.example.backend.msg.MsgEnum;
+import com.example.backend.notification.service.EmitterService;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.response.TodoResponseDto;
@@ -64,6 +65,7 @@ public class UserService {
     private final TodoRepository todoRepository;
     private final EmailService emailService;
     private final BoardRepository boardRepository;
+    private final EmitterService emitterService;
 
     @Value("${basic.profile.img}")
     private String basicImg;
@@ -153,7 +155,6 @@ public class UserService {
         return emailCheck;
     }
 
-
     @Transactional
     public String login(LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
         //회원 있는지 없는지 체크
@@ -196,10 +197,11 @@ public class UserService {
 //        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
 
+        //알림 연결
+        emitterService.createEmitter(user.getUserSeq());
+
         return accessToken.getToken();
     }
-
-
 
     @Transactional
     public String refresh(HttpServletRequest request, HttpServletResponse response){
@@ -249,6 +251,11 @@ public class UserService {
 //            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
 
         }
+
+        //알림 연결
+        User user = getUser(email);
+        emitterService.createEmitter(user.getUserSeq());
+
         return newAccessToken.getToken();
     }
 

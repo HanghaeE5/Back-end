@@ -9,6 +9,10 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.friend.domain.FriendRequest;
 import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.repository.FriendRequestRepository;
+import com.example.backend.notification.domain.Type;
+import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.service.EmitterService;
+import com.example.backend.notification.service.NotificationService;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
@@ -34,6 +38,8 @@ public class FriendRequestService {
     private final CharacterRepository characterRepository;
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
+    private final NotificationService notificationService;
+
 
     @Transactional
     public String requestFriend(FriendRequestDto requestDto, String email) {
@@ -44,6 +50,7 @@ public class FriendRequestService {
         User userTo = userRepository.findByUsername(requestDto.getNick()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+        String message;
 
         // 나에게 보내는 요청 예외처리
         if (user == userTo) {
@@ -66,6 +73,15 @@ public class FriendRequestService {
                 return "요청을 수락했습니다";
             }
         }
+
+        // 요청 받는 상대에게 알림 전송
+        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+                Type.FRIEND_REQUEST,
+                user.getUsername()+"님이 "+userTo.getUsername()+"님께 친구 신청을 하셨습니다!"
+                +"<br/>친구 페이지로 이동하셔서 수락 또는 거절 하실 수 있어요!"
+        );
+
+        notificationService.sendNotification(userTo.getUserSeq(), notificationRequestDto);
 
         friendRequestRepository.save(new FriendRequest(user, userTo));
         return "친구 요청을 보냈습니다";
@@ -95,6 +111,14 @@ public class FriendRequestService {
                 friendRequest.linked();
             }
         }
+
+        // 처음 요청 보낸 사람에게 알림 전송
+        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+                Type.FRIEND_REQUEST,
+                user.getUsername()+"님이 친구 요청을 수락하셨습니다."
+        );
+        notificationService.sendNotification(friend.getUserSeq(), notificationRequestDto);
+
         friendRequestRepository.save(request);
     }
 
@@ -139,6 +163,13 @@ public class FriendRequestService {
                 friendRequestRepository.delete(friendRequest);
             }
         }
+
+        // 처음 요청 보낸 사람에게 알림 전송
+        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+                Type.FRIEND_REQUEST,
+                user.getUsername()+"님이 친구 요청을 거절하셨습니다."
+        );
+        notificationService.sendNotification(friend.getUserSeq(), notificationRequestDto);
     }
 
     @Transactional

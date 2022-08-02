@@ -2,6 +2,7 @@ package com.example.backend.user.config;
 
 import com.example.backend.exception.RestAuthenticationEntryPoint;
 import com.example.backend.filter.TokenAuthenticationFilter;
+import com.example.backend.notification.service.EmitterService;
 import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.backend.user.oauth.handler.OAuth2AuthenticationSuccessHandler;
@@ -37,7 +38,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService oAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
-
+    private final EmitterService emitterService;
     private final UserRepository userRepository;
 
     @Bean
@@ -49,7 +50,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf().disable()
-                .headers() 
+                .headers()
                 .frameOptions().sameOrigin().and() // SockJS는 기본적으로 HTML iframe 요소를 통한 전송을 허용하지 않도록 설정되는데 해당 내용을 해제한다.
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -59,6 +60,16 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+
+                .antMatchers("/subscribe/**").permitAll()
+                .antMatchers("/subscribe").permitAll()
+                .antMatchers("/api/subscribe").permitAll()
+                .antMatchers("/api/subscribe/**").permitAll()
+                .antMatchers("/publish/**").permitAll()
+                .antMatchers("/publish").permitAll()
+                .antMatchers("/api/publish").permitAll()
+                .antMatchers("/api/publish/**").permitAll()
+
                 .antMatchers("/sub/**").permitAll()
                 .antMatchers("/pub/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
@@ -148,6 +159,7 @@ public class SecurityConfig {
                 appProperties,
                 userRefreshTokenRepository,
                 userRepository,
+                emitterService,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
     }
