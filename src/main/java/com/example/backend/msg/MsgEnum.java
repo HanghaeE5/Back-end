@@ -62,6 +62,10 @@ public enum MsgEnum {
     COUNT_PARTICIPANT("COUNT_PARTICIPANT"),
     SESSION_PARTICIPANT_MAPPING("SESSION_PARTICIPANT_MAPPING"),
 
+
+    //알람
+    DELETE_ALARM("삭제 완료")
+
     ;
 
 
