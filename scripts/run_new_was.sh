@@ -30,6 +30,7 @@ JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
 #nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_PATH} &
+#nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_PATH} > /dev/null 2> /dev/null < /dev/null &
 nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_PATH} > /home/ubuntu/Back-end/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0

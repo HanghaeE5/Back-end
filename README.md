@@ -70,7 +70,7 @@ ETC : AWS S3, Redis <br/>
 - CI/CD 적용(Continuous Integration/Continuous Deployment) - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/CI-CD-%EC%A0%81%EC%9A%A9(Continuous-Integration-Continuous-Deployment))
 - OAuth2.0 프로세스 변경 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/OAuth2.0-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EB%B3%80%EA%B2%BD)
 - Swagger 적용 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Swagger-%EC%A0%81%EC%9A%A9)
-- JPA N+1 문제 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/JPA-N-1-%EB%AC%B8%EC%A0%9C)
+- JPA N+1 문제 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/JPA-N%E2%9E%951-%EB%AC%B8%EC%A0%9C)
 - LIKE 개선 & 리팩터링 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/LIKE-%EA%B0%9C%EC%84%A0-&-%EB%A6%AC%ED%8C%A9%ED%84%B0%EB%A7%81)
 - 인증 메일 발송 속도 개선 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/%EC%9D%B8%EC%A6%9D-%EB%A9%94%EC%9D%BC-%EB%B0%9C%EC%86%A1-%EC%86%8D%EB%8F%84-%EA%B0%9C%EC%84%A0)
 - NGINX - 오류 및 설정 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/NGINX---%EC%98%A4%EB%A5%98-%EB%B0%8F-%EC%84%A4%EC%A0%95)
