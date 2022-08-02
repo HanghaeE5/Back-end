@@ -2,9 +2,11 @@ package com.example.backend.user.oauth.handler;
 
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.notification.service.EmitterService;
 import com.example.backend.user.config.AppProperties;
 import com.example.backend.user.domain.ProviderType;
 import com.example.backend.user.domain.RoleType;
+import com.example.backend.user.domain.User;
 import com.example.backend.user.domain.UserRefreshToken;
 import com.example.backend.user.oauth.info.OAuth2UserInfo;
 import com.example.backend.user.oauth.info.OAuth2UserInfoFactory;
@@ -34,7 +36,6 @@ import java.util.Date;
 import java.util.Optional;
 
 import static com.example.backend.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -44,7 +45,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AppProperties appProperties;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final UserRepository userRepository;
+    private final EmitterService emitterService;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+
 
     @Override
     @Transactional
@@ -82,13 +85,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
 
-        String username = userRepository.findByUserId(userInfo.getId()).getUsername();
+        Optional<User> userOptional = userRepository.findByEmail(userInfo.getEmail());
+        if (!userOptional.isPresent()){
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
 
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getEmail(),
                 roleType.getCode(),
-                username,
+                userOptional.get().getUsername(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
@@ -113,7 +119,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 //        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        String nickCheck = (username == null) ? "N" : "Y";
+        //알림 연결
+        emitterService.createEmitter(userOptional.get().getUserSeq());
+
+        String nickCheck = (userOptional.get().getUsername() == null) ? "N" : "Y";
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("access", accessToken.getToken())
                 .queryParam("nick", nickCheck)
