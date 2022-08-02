@@ -1,4 +1,4 @@
-package com.example.backend.user.utils;
+package com.example.backend.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -25,21 +25,13 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-//        Cookie cookie = new Cookie(name, value);
-//        cookie.setPath("/");
-//        cookie.setHttpOnly(true);
-//        cookie.setMaxAge(maxAge);
-//
-//        response.addCookie(cookie);
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
-//                .domain(".todowith.co.kr")
+//                .domain("todowith.co.kr")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(maxAge)
-                .secure(true)
-                .sameSite("None")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
@@ -51,10 +43,14 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
+                    ResponseCookie deleteCookie = ResponseCookie.from(name, "")
+//                            .domain("todowith.co.kr")
+                            .path("/")
+                            .httpOnly(true)
+                            .maxAge(0)
+                            .build();
+
+                    response.addHeader("Set-Cookie", deleteCookie.toString());
                 }
             }
         }

@@ -1,14 +1,12 @@
 package com.example.backend.chat.service;
 
-import com.example.backend.chat.domain.ChatMessage;
-import com.example.backend.chat.domain.ChatRoom;
-import com.example.backend.chat.domain.MessageType;
-import com.example.backend.chat.domain.Type;
+import com.example.backend.chat.domain.*;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
+import com.example.backend.chat.redis.RedisPub;
+import com.example.backend.chat.redis.RedisRepository;
 import com.example.backend.chat.repository.ChatMessageRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
-import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.user.domain.User;
@@ -19,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,11 +27,13 @@ import java.util.Objects;
 @Slf4j
 public class ChatMessageService {
 
-    private final SimpMessageSendingOperations messageSendingOperations;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final RedisRepository redisRepository;
+    private final RedisPub redisPub;
 
+    @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
@@ -51,22 +50,22 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
             }
         }
+        // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
+        room.newMessage();
         this.saveChatMessage(message);
-        messageSendingOperations.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
-    // 페이징으로 받아서 무한 스크롤 가능할듯
-    public Page<ChatMessageResponseDto> getSavedMessages(String roomId) {
-        Pageable pageable = PageRequest.of(0, 100, Sort.by("createdDate").descending());
-        Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
-        return messagePage.map(ChatMessageResponseDto::new);
+    @Transactional
+    public void sendEnterMessage(ChatRoom room, User user) {
+        ChatMessageRequestDto message = new ChatMessageRequestDto(room, user);
+        room.newMessage();
+        this.saveChatMessage(message);
+        redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
     @Transactional
     public void saveChatMessage(ChatMessageRequestDto message) {
-
-        // if 문 안에서 participant 숫자로 read 숫자를 계산
-        // ChatMessage 생성 하면서 Reader 함께 생성 -아직 안함-
 
         if (!Objects.equals(message.getSender(), "[알림]")) {
             User user = userRepository.findByUsername(message.getSender()).orElseThrow(
@@ -77,5 +76,16 @@ public class ChatMessageService {
         else {
             chatMessageRepository.save(new ChatMessage(message));
         }
+
     }
+
+    // 페이징으로 받아서 무한 스크롤 가능할듯
+    public Page<ChatMessageResponseDto> getSavedMessages(String roomId) {
+
+        Pageable pageable = PageRequest.of(0, 100, Sort.by("createdDate").descending());
+        Page<ChatMessage> messagePage = chatMessageRepository.findAllByRoomId(pageable, roomId);
+        return messagePage.map(ChatMessageResponseDto::new);
+
+    }
+
 }

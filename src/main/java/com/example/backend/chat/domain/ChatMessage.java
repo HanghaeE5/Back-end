@@ -30,9 +30,6 @@ public class ChatMessage extends BaseTime {
     @Column
     private String message;
 
-//    @Column
-//    private Integer reader;
-
     @ManyToOne
     @JoinColumn
     private User user;

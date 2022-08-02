@@ -1,13 +1,9 @@
 package com.example.backend.chat.controller;
 
-import com.example.backend.chat.domain.MessageType;
 import com.example.backend.chat.dto.request.ChatMessageRequestDto;
 import com.example.backend.chat.dto.response.ChatMessageResponseDto;
 import com.example.backend.chat.service.ChatMessageService;
-import com.example.backend.exception.CustomException;
-import com.example.backend.exception.ErrorCode;
-import com.example.backend.user.domain.User;
-import com.example.backend.user.repository.UserRepository;
+import com.example.backend.user.common.LoadUser;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +26,6 @@ public class ChatMessageController {
 
     private final ChatMessageService chatMessageService;
     private final AuthTokenProvider tokenProvider;
-    private final UserRepository userRepository;
 
     @ApiOperation(value = "메세지 전송(/pub)")
     @MessageMapping("/chat/message")
@@ -46,6 +41,8 @@ public class ChatMessageController {
     public ResponseEntity<Page<ChatMessageResponseDto>> getSavedMessages(
             @RequestParam String roomId
     ) {
+        LoadUser.loginAndNickCheck();
+        System.out.println("메세지");
         Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }

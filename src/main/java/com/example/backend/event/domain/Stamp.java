@@ -44,7 +44,7 @@ public class Stamp extends BaseTime {
     }
 
     public void stampToCoupon(){
-        this.stamp -= 5;
+        this.stamp -= 1;
         this.coupon += 1;
     }
 

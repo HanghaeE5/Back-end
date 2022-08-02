@@ -47,7 +47,7 @@ public class EventService {
         User user = getUser(email);
         Stamp stamp = getStamp(user);
 
-        if (stamp.getStamp() < 5){
+        if (stamp.getStamp() < 1){
             throw new CustomException(ErrorCode.STAMP_CNT_LESS);
         }
 
@@ -87,8 +87,7 @@ public class EventService {
         Winning winning = winningRepository.findById(eventRequestDto.getEventId()).orElseThrow(
                 () -> new CustomException(ErrorCode.WINNING_NOT_FOUNT)
         );
-
-        if (user.getUserSeq() == winning.getUserId()){
+        if (user.getUserSeq().equals(winning.getUserId())){
             winning.addPhone(eventRequestDto.getPhone());
         }else{
             throw new CustomException(ErrorCode.WINNING_NOT_FOUNT);

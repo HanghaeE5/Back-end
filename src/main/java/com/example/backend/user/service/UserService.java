@@ -1,11 +1,14 @@
 package com.example.backend.user.service;
 
+import com.example.backend.board.domain.Board;
+import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.character.service.CharacterService;
 import com.example.backend.event.domain.Stamp;
 import com.example.backend.event.repository.StampRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.mail.EmailService;
 import com.example.backend.msg.MsgEnum;
 import com.example.backend.s3.AwsS3Service;
 import com.example.backend.todo.domain.Todo;
@@ -19,19 +22,23 @@ import com.example.backend.user.repository.UserRefreshTokenRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.token.AuthToken;
 import com.example.backend.user.token.AuthTokenProvider;
-import com.example.backend.user.utils.CookieUtil;
-import com.example.backend.user.utils.HeaderUtil;
+import com.example.backend.utils.CookieUtil;
+import com.example.backend.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import javax.servlet.http.Cookie;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -45,7 +52,6 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 public class UserService {
 
     private final CharacterService characterService;
-    private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final EmailCheckRepository emailCheckRepository;
@@ -56,36 +62,20 @@ public class UserService {
     private final static long THREE_DAYS_MSEC = 259200000;
     private final AwsS3Service awsS3Service;
     private final TodoRepository todoRepository;
+    private final EmailService emailService;
+    private final BoardRepository boardRepository;
 
     @Value("${basic.profile.img}")
     private String basicImg;
-
-    @Value("${spring.mail.username}")
-    private String adminMail;
 
     public String emailCertification(String email) {
 
         //중복이메일 체크
         dupleEmailCheck(email);
-
-        //SMTP 이메일 전송 셋팅 / 인증번호 생성
-        SimpleMailMessage simpleMessage = new SimpleMailMessage();
-        simpleMessage.setFrom(adminMail);
-        simpleMessage.setTo(email);
-        simpleMessage.setSubject(MsgEnum.EMAIL_TITLE.getMsg());
-
         String code = ThreadLocalRandom.current().nextInt(100000, 1000000)+"";
+        emailCheckRepository.save(new EmailCheck(email, code));
 
-        EmailCheck emailCheck = EmailCheck.builder()
-                .email(email)
-                .code(code)
-                .build();
-
-        emailCheckRepository.save(emailCheck);
-
-        simpleMessage.setText(MsgEnum.EMAIL_CONTENT_FRONT.getMsg()+ code);
-
-        javaMailSender.send(simpleMessage);
+        emailService.sendEmail(email, code);
 
         return MsgEnum.EMAIL_SEND.getMsg();
     }
@@ -202,9 +192,9 @@ public class UserService {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
         }
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
+//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
 
         return accessToken.getToken();
     }
@@ -254,9 +244,9 @@ public class UserService {
             // DB에 refresh 토큰 업데이트 해주기
             userRefreshToken.setRefreshToken(authRefreshToken.getToken());
 
-            int cookieMaxAge = (int) refreshTokenExpiry / 60;
-            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
+//            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
 
         }
         return newAccessToken.getToken();
@@ -304,7 +294,12 @@ public class UserService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+
+        if (user.getUsername() == null){
+            throw new CustomException(ErrorCode.NEED_NICK);
+        }
         CharacterResponseDto characterResponseDto = characterService.getCharacterInfo(email);
+
         List<Todo> todoList = todoRepository.findAllByTodoDate(user);
         List<TodoResponseDto> responseDtoList = new ArrayList<>();
         for (Todo t : todoList) {
@@ -356,6 +351,16 @@ public class UserService {
 
         user.updatePassword(passwordEncoder.encode(passwordRequestDto.getNewPassword()));
     }
+
+    @Transactional
+    public void deleteUser(String email){
+        User user = getUser(email);
+
+        Long count = todoRepository.updateTodoByBoardIn(boardRepository.findByUser(user));
+
+        userRepository.delete(user);
+    }
+
 
     public SocialUserCheckResponseDto checkSocialUser(String email) {
         User user = getUser(email);

@@ -2,8 +2,7 @@ package com.example.backend.board.dto.response;
 
 import com.example.backend.board.domain.Board;
 import lombok.Data;
-import lombok.Getter;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -13,11 +12,8 @@ public class PageBoardResponseDto {
 
     private boolean last;
 
-    private Long totalElements;
-
-    public PageBoardResponseDto(List<BoardResponseDto> content, Page<Board> boardPage){
+    public PageBoardResponseDto(List<BoardResponseDto> content, Slice<Board> boardPage){
         this.content = content;
         this.last = boardPage.isLast();
-        this.totalElements = boardPage.getTotalElements();
     }
 }

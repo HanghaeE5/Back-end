@@ -6,15 +6,17 @@ import com.example.backend.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class ChatRoomResponseDto {
+public class ChatRoomResponseDto implements Comparable<ChatRoomResponseDto> {
     private String roomId;
     private String name;
     private List<ParticipantResponseDto> participantList = new ArrayList<>();
+    private LocalDateTime lastMessage;
 
     public ChatRoomResponseDto(ChatRoom room, User user) {
         this.roomId = room.getRoomId();
@@ -26,5 +28,15 @@ public class ChatRoomResponseDto {
             }
             this.participantList.add(new ParticipantResponseDto(p));
         }
+        this.lastMessage = room.getLastMessage();
     }
+
+    @Override
+    public int compareTo(ChatRoomResponseDto dto) {
+        if (lastMessage == null || dto.getLastMessage() == null) {
+            return 0;
+        }
+        return dto.getLastMessage().compareTo(lastMessage);
+    }
+
 }

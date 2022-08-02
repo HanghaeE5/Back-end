@@ -14,6 +14,7 @@ import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.board.repository.BoardTodoRepository;
 import com.example.backend.chat.domain.ChatRoom;
 import com.example.backend.chat.domain.Participant;
+import com.example.backend.chat.redis.RedisRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.chat.repository.ParticipantRepository;
 import com.example.backend.exception.CustomException;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,16 +46,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class BoardService {
-
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
     private final TodoRepository todoRepository;
     private final BoardTodoRepository boardTodoRepository;
-
     private final ChatRoomRepository chatRoomRepository;
-
     private final ParticipantRepository participantRepository;
+    private final RedisRepository redisRepository;
 
     public String saveImage(MultipartFile file){
         if (file.isEmpty()){
@@ -74,6 +74,7 @@ public class BoardService {
             ChatRoom chatRoom = chatRoomRepository.save(new ChatRoom(saveBoard.getTitle()));
             saveBoard.saveChatRoomId(chatRoom.getRoomId());
             participantRepository.save(new Participant(user, chatRoom));
+            redisRepository.subscribe(chatRoom.getRoomId());
         }
     }
 
@@ -141,7 +142,7 @@ public class BoardService {
 
         BoardSearchCondition searchCondition = new BoardSearchCondition(sub, filter, keyword, email);
 
-        Page<Board> result = boardRepository.search(pageable, searchCondition);
+        Slice<Board> result = boardRepository.search(pageable, searchCondition);
 
         return new PageBoardResponseDto(
                 BoardResponseDto.getDtoList(result.getContent()),
@@ -199,10 +200,14 @@ public class BoardService {
             board.saveChatRoomId(chatRoom.getRoomId());
             participantRepository.save(new Participant(user, chatRoom));
         }
-
-        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 ){
+        
+        //저장되어 있는 이미지 URL이랑 다를 때 S3에서 삭제
+        if(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg()).length >= 2 &&
+            !board.getImageUrl().equals(requestDto.getBoard().getImageUrl())
+        ){
             awsS3Service.deleteImage(board.getImageUrl().split(MsgEnum.IMAGE_DOMAIN.getMsg())[1]);
         }
+
         board.update(requestDto.getBoard(), user);
 
     }

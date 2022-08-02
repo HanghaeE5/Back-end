@@ -3,7 +3,6 @@ package com.example.backend.chat.controller;
 import com.example.backend.chat.dto.request.ChatRoomEnterRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomExitRequestDto;
 import com.example.backend.chat.dto.request.ChatRoomPrivateRequestDto;
-import com.example.backend.chat.dto.request.ChatRoomPublicRequestDto;
 import com.example.backend.chat.dto.response.ChatRoomResponseDto;
 import com.example.backend.chat.service.ChatRoomService;
 import com.example.backend.msg.MsgEnum;
@@ -32,15 +31,6 @@ public class ChatRoomController {
     public ResponseEntity<ChatRoomResponseDto> createPrivateRoom(@RequestBody ChatRoomPrivateRequestDto requestDto) {
         LoadUser.loginAndNickCheck();
         ChatRoomResponseDto responseDto = chatRoomService.createPrivateRoom(requestDto, LoadUser.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @ApiOperation(value = "단체 채팅방 생성")
-    @PostMapping("/room/public")
-    public ResponseEntity<ChatRoomResponseDto> createPublicRoom(@RequestBody ChatRoomPublicRequestDto requestDto) {
-        LoadUser.loginAndNickCheck();
-        ChatRoomResponseDto responseDto = chatRoomService.createPublicRoom(requestDto, LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

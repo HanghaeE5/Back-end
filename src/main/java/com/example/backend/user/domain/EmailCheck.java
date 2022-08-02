@@ -19,17 +19,16 @@ public class EmailCheck extends BaseTime {
     @Column(columnDefinition = "varchar(2) default 'N'")
     private String confirmYn;
 
-    @Builder
     public EmailCheck(String email, String code){
         this.email = email;
         this.code = code;
     }
 
-    public void verificationCompleted(String confirmYn){
-        this.confirmYn = confirmYn;
-    }
-
     public EmailCheck() {
 
+    }
+
+    public void verificationCompleted(String confirmYn){
+        this.confirmYn = confirmYn;
     }
 }
