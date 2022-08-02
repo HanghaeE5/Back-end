@@ -37,4 +37,8 @@ public class Notification {
         this.user = user;
     }
 
+    public void changeState() {
+        this.readState = true;
+    }
+
 }
