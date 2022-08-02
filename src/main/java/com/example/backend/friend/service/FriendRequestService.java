@@ -9,6 +9,7 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.friend.domain.FriendRequest;
 import com.example.backend.friend.dto.FriendRequestDto;
 import com.example.backend.friend.repository.FriendRequestRepository;
+import com.example.backend.notification.dto.NotificationRequestDto;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.dto.response.TodoResponseDto;
 import com.example.backend.todo.repository.TodoRepository;
@@ -67,7 +68,8 @@ public class FriendRequestService {
             }
         }
 
-        // 받는 상대에게 알림 전송
+        // 요청 받는 상대에게 알림 전송
+
         friendRequestRepository.save(new FriendRequest(user, userTo));
         return "친구 요청을 보냈습니다";
     }
@@ -96,7 +98,9 @@ public class FriendRequestService {
                 friendRequest.linked();
             }
         }
-        // 처음 보낸 사람에게 알림 전송
+
+        // 처음 요청 보낸 사람에게 알림 전송
+
         friendRequestRepository.save(request);
     }
 
@@ -141,6 +145,9 @@ public class FriendRequestService {
                 friendRequestRepository.delete(friendRequest);
             }
         }
+
+        // 처음 요청 보낸 사람에게 알림 전송
+
     }
 
     @Transactional

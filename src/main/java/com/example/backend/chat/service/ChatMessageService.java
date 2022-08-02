@@ -61,7 +61,10 @@ public class ChatMessageService {
         ChatMessageRequestDto message = new ChatMessageRequestDto(room, user);
         room.newMessage();
         this.saveChatMessage(message);
-        // 채팅방 인원(자신 제외) 알림 보내기
+
+        // 채팅방 인원(자신 제외)에게 알림 보내기
+
+
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
