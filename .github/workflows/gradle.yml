@@ -27,14 +27,14 @@ jobs:
        
        ## gitignore한 파일 생성해주기
        ## create application.properties
-      - name: make application-aws.properties
+      - name: make application.properties
         if: true # branch가 develop일 때
         run: |
           # spring의 resources 경로로 이동 
           cd ./src/main/resources
-          touch ./application-aws.properties
-          # GitHub-Actions에서 설정한 값을 application-aws.properties 파일에 쓰기
-          echo "${{ secrets.PROPERTIES }}" > ./application-aws.properties
+          touch ./application.properties
+          # GitHub-Actions에서 설정한 값을 application.properties 파일에 쓰기
+          echo "${{ secrets.PROPERTIES }}" > ./application.properties
         shell: bash
 
         #gradlew 파일 실행권한 설정
