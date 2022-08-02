@@ -2,6 +2,7 @@ package com.example.backend.user.config;
 
 import com.example.backend.exception.RestAuthenticationEntryPoint;
 import com.example.backend.filter.TokenAuthenticationFilter;
+import com.example.backend.notification.service.EmitterService;
 import com.example.backend.user.domain.RoleType;
 import com.example.backend.user.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.backend.user.oauth.handler.OAuth2AuthenticationSuccessHandler;
@@ -37,7 +38,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService oAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
-
+    private final EmitterService emitterService;
     private final UserRepository userRepository;
 
     @Bean
@@ -158,6 +159,7 @@ public class SecurityConfig {
                 appProperties,
                 userRefreshTokenRepository,
                 userRepository,
+                emitterService,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
     }
