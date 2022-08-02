@@ -63,6 +63,7 @@ public class NotificationService {
         List<NotificationResponseDto> responseDtoList = new ArrayList<>();
         List<Notification> notificationList = notificationRepository.findAllById(Collections.singleton(user.getUserSeq()));
         for (Notification n : notificationList) {
+            n.changeState();
             responseDtoList.add(new NotificationResponseDto(n));
         }
         return responseDtoList;
