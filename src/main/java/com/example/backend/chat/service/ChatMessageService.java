@@ -9,6 +9,8 @@ import com.example.backend.chat.repository.ChatMessageRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.service.NotificationService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -32,6 +36,7 @@ public class ChatMessageService {
     private final UserRepository userRepository;
     private final RedisRepository redisRepository;
     private final RedisPub redisPub;
+    private final NotificationService notificationService;
 
     @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
@@ -53,6 +58,19 @@ public class ChatMessageService {
         // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
         room.newMessage();
         this.saveChatMessage(message);
+        // 자신 제외 알림 전송
+        List<User> userList = new ArrayList<>();
+        for (Participant p : room.getParticipantList()) {
+            userList.add(p.getUser());
+        }
+        for (User u : userList) {
+            if (u == user) {
+                continue;
+            }
+            String notification = room.getName() + "에서 새로운 메시지가 도착했습니다";
+            NotificationRequestDto requestDto = new NotificationRequestDto(com.example.backend.notification.domain.Type.CHAT, notification);
+            notificationService.sendNotification(u.getUserSeq(), requestDto);
+        }
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
@@ -61,10 +79,6 @@ public class ChatMessageService {
         ChatMessageRequestDto message = new ChatMessageRequestDto(room, user);
         room.newMessage();
         this.saveChatMessage(message);
-
-        // 채팅방 인원(자신 제외)에게 알림 보내기
-
-
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }
 
@@ -76,8 +90,7 @@ public class ChatMessageService {
                     () -> new CustomException(ErrorCode.USER_NOT_FOUND)
             );
             chatMessageRepository.save(new ChatMessage(message, user));
-        }
-        else {
+        } else {
             chatMessageRepository.save(new ChatMessage(message));
         }
 
