@@ -67,6 +67,7 @@ public class FriendRequestService {
             }
         }
 
+        // 받는 상대에게 알림 전송
         friendRequestRepository.save(new FriendRequest(user, userTo));
         return "친구 요청을 보냈습니다";
     }
@@ -95,6 +96,7 @@ public class FriendRequestService {
                 friendRequest.linked();
             }
         }
+        // 처음 보낸 사람에게 알림 전송
         friendRequestRepository.save(request);
     }
 

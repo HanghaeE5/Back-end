@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf().disable()
-                .headers() 
+                .headers()
                 .frameOptions().sameOrigin().and() // SockJS는 기본적으로 HTML iframe 요소를 통한 전송을 허용하지 않도록 설정되는데 해당 내용을 해제한다.
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -59,6 +59,16 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+
+                .antMatchers("/subscribe/**").permitAll()
+                .antMatchers("/subscribe").permitAll()
+                .antMatchers("/api/subscribe").permitAll()
+                .antMatchers("/api/subscribe/**").permitAll()
+                .antMatchers("/publish/**").permitAll()
+                .antMatchers("/publish").permitAll()
+                .antMatchers("/api/publish").permitAll()
+                .antMatchers("/api/publish/**").permitAll()
+
                 .antMatchers("/sub/**").permitAll()
                 .antMatchers("/pub/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
