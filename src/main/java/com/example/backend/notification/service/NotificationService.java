@@ -51,7 +51,7 @@ public class NotificationService {
             } catch (IOException | IllegalStateException e) {
                 emitterRepository.remove(id);
             }
-        }, () -> log.error("sendNotification Error"));
+        }, () -> log.info("sendNotification Error"));
 
         notificationRepository.save(new Notification(requestDto, user));
     }
