@@ -1,5 +1,6 @@
 package com.example.backend.notification.domain;
 
+import com.example.backend.common.domain.BaseTime;
 import com.example.backend.notification.dto.NotificationRequestDto;
 import com.example.backend.user.domain.User;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Notification {
+public class Notification extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
