@@ -8,8 +8,10 @@ import com.example.backend.event.repository.EventRepository;
 import com.example.backend.event.repository.ProductRepository;
 import com.example.backend.event.repository.StampDateRepository;
 import com.example.backend.event.repository.StampRepository;
+import com.example.backend.notification.domain.Notification;
 import com.example.backend.notification.domain.Type;
 import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.repository.NotificationRepository;
 import com.example.backend.notification.service.NotificationService;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.repository.TodoRepository;
@@ -37,7 +39,7 @@ public class EventScheduler {
     private final StampDateRepository stampDateRepository;
     private final EventRepository eventRepository;
     private final ProductRepository productRepository;
-    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     //초, 분, 시, 일, 월, 요
     //요일에서 0과 7은 일요일이며, 1부터 월요일이고 6이 토요일이다.
@@ -74,6 +76,7 @@ public class EventScheduler {
         if(!eventRepository.findByRunTime(yesterdayTypeDate).isPresent()){
             List<User> users = userRepository.findAll();
             log.info("회원 수 : " + users.size());
+            List<Notification> notificationList = new ArrayList<>();
             for (User user: users) {
                 List<Todo> todoList = todoRepository.findByUserAndTodoDate(user, yesterdayTypeDate);
                 //어제 해야할 Todo 가 없을 때 다른 User로 넘어감
@@ -104,9 +107,16 @@ public class EventScheduler {
                         StampDate stampDate = stampDateRepository.save(new StampDate(yesterdayTypeDate, stamp));
                         stamp.addStamp(stampDate);
                     }
+
+                    NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+                            Type.이벤트,
+                            "출석 도장이 지급되었습니다!"
+                    );
+                    notificationList.add(new Notification(notificationRequestDto, user));
                 //어제 해야할 Todo 중에 하나라도 완료 안된게 있으면, 패스
                 }
             }
+            notificationRepository.saveAll(notificationList);
 
             eventRepository.save(new Event(yesterdayTypeDate));
         }else{
