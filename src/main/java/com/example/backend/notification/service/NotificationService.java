@@ -12,9 +12,11 @@ import com.example.backend.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,12 +63,23 @@ public class NotificationService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         List<NotificationResponseDto> responseDtoList = new ArrayList<>();
-        List<Notification> notificationList = notificationRepository.findByUser(user);
+        List<Notification> notificationList = notificationRepository.findByUserOrderByCreatedDateDesc(user);
         for (Notification n : notificationList) {
             n.changeState();
             responseDtoList.add(new NotificationResponseDto(n));
         }
         return responseDtoList;
+    }
+
+    @Transactional
+    public String deleteNotification(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        notificationRepository.deleteByUser(user);
+
+        return "알림 삭제 완료";
     }
 
 }
