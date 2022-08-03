@@ -8,6 +8,9 @@ import com.example.backend.event.repository.EventRepository;
 import com.example.backend.event.repository.ProductRepository;
 import com.example.backend.event.repository.StampDateRepository;
 import com.example.backend.event.repository.StampRepository;
+import com.example.backend.notification.domain.Type;
+import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.service.NotificationService;
 import com.example.backend.todo.domain.Todo;
 import com.example.backend.todo.repository.TodoRepository;
 import com.example.backend.user.domain.User;
@@ -34,6 +37,7 @@ public class EventScheduler {
     private final StampDateRepository stampDateRepository;
     private final EventRepository eventRepository;
     private final ProductRepository productRepository;
+    private final NotificationService notificationService;
 
     //초, 분, 시, 일, 월, 요
     //요일에서 0과 7은 일요일이며, 1부터 월요일이고 6이 토요일이다.

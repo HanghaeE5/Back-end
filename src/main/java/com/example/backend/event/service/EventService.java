@@ -12,6 +12,9 @@ import com.example.backend.event.repository.WinningRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.msg.MsgEnum;
+import com.example.backend.notification.domain.Type;
+import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.service.NotificationService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ public class EventService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final WinningRepository winningRepository;
+    private final NotificationService notificationService;
 
 
     public EventResponseDto getEventInfo(String email){
@@ -52,6 +56,12 @@ public class EventService {
         }
 
         stamp.stampToCoupon();
+
+        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+                Type.이벤트,
+                "이벤트 쿠폰이 지급되었습니다!"
+        );
+        notificationService.sendNotification(user.getUserSeq(), notificationRequestDto);
 
         return new EventResponseDto(stamp);
     }
