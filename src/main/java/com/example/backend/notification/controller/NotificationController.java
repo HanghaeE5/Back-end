@@ -30,14 +30,14 @@ public class NotificationController {
     private final EmitterService emitterService;
     private final NotificationService notificationService;
 
-    @ApiOperation(value = "알림 목록 조회")
+    /*@ApiOperation(value = "알림 목록 조회")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = false, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @GetMapping("/subscribe/{id}")
     public SseEmitter subsribe(
             @PathVariable Long id
     ) {
         return emitterService.createEmitter(id);
-    }
+    }*/
 
     @ApiOperation(value = "알림 목록 조회")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
@@ -57,13 +57,13 @@ public class NotificationController {
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
-    @PostMapping("/publish/notification/{id}")
+    /*@PostMapping("/publish/notification/{id}")
     public void publish(
             @PathVariable Long id,
             @RequestBody NotificationRequestDto requestDto
     ) {
         notificationService.sendNotification(id, requestDto);
-    }
+    }*/
 
 
 }
