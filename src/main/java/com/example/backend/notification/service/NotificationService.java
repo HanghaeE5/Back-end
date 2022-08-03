@@ -61,7 +61,7 @@ public class NotificationService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         List<NotificationResponseDto> responseDtoList = new ArrayList<>();
-        List<Notification> notificationList = notificationRepository.findAllById(Collections.singleton(user.getUserSeq()));
+        List<Notification> notificationList = notificationRepository.findByUser(user);
         for (Notification n : notificationList) {
             n.changeState();
             responseDtoList.add(new NotificationResponseDto(n));
