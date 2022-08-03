@@ -77,8 +77,7 @@ public class FriendRequestService {
         // 요청 받는 상대에게 알림 전송
         NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
                 Type.FRIEND_REQUEST,
-                user.getUsername()+"님이 "+userTo.getUsername()+"님께 친구 신청을 하셨습니다!"
-                +"<br/>친구 페이지로 이동하셔서 수락 또는 거절 하실 수 있어요!"
+                user.getUsername()+"님이 "+userTo.getUsername()+"님께 친구 신청을 하셨습니다! 친구 페이지로 이동하셔서 수락 또는 거절 하실 수 있어요!"
         );
 
         notificationService.sendNotification(userTo.getUserSeq(), notificationRequestDto);
