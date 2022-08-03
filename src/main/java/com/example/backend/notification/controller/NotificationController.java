@@ -48,6 +48,15 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
+    @ApiOperation(value = "알림 전체 삭제")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @DeleteMapping("/notification")
+    public ResponseEntity<String> deleteNotification() {
+        LoadUser.loginAndNickCheck();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(notificationService.deleteNotification(LoadUser.getEmail()));
+    }
+
     @PostMapping("/publish/notification/{id}")
     public void publish(
             @PathVariable Long id,
@@ -55,4 +64,6 @@ public class NotificationController {
     ) {
         notificationService.sendNotification(id, requestDto);
     }
+
+
 }

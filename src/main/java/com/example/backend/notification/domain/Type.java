@@ -1,8 +1,8 @@
 package com.example.backend.notification.domain;
 
 public enum Type {
-    CHAT,
-    FRIEND_REQUEST,
-    FRIEND_ACCEPT,
-    FRIEND_REJECT
+    채팅,
+    친구,
+    캐릭터,
+    이벤트
 }

@@ -95,7 +95,7 @@ public class SecurityConfig {
                 .antMatchers("/register/**").permitAll()
 
                 .antMatchers("/health").permitAll()
-
+                .antMatchers("/notification/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())

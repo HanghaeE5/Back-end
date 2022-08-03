@@ -76,7 +76,8 @@ public class FriendRequestService {
 
         // 요청 받는 상대에게 알림 전송
         NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
-                Type.FRIEND_REQUEST,
+        feature/notifications
+                Type.친구,
                 user.getUsername()+"님이 "+userTo.getUsername()+"님께 친구 신청을 하셨습니다! 친구 페이지로 이동하셔서 수락 또는 거절 하실 수 있어요!"
         );
 
@@ -113,7 +114,7 @@ public class FriendRequestService {
 
         // 처음 요청 보낸 사람에게 알림 전송
         NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
-                Type.FRIEND_REQUEST,
+                Type.친구,
                 user.getUsername()+"님이 친구 요청을 수락하셨습니다."
         );
         notificationService.sendNotification(friend.getUserSeq(), notificationRequestDto);
@@ -165,7 +166,7 @@ public class FriendRequestService {
 
         // 처음 요청 보낸 사람에게 알림 전송
         NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
-                Type.FRIEND_REQUEST,
+                Type.친구,
                 user.getUsername()+"님이 친구 요청을 거절하셨습니다."
         );
         notificationService.sendNotification(friend.getUserSeq(), notificationRequestDto);
