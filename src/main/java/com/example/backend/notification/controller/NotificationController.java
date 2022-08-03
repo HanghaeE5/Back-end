@@ -40,6 +40,15 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
+    @ApiOperation(value = "알림 전체 읽음 처리")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @GetMapping("/notifications/read")
+    public ResponseEntity<String> readOk() {
+        LoadUser.loginAndNickCheck();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(notificationService.readOk(LoadUser.getEmail()));
+    }
+
     @ApiOperation(value = "알림 전체 삭제")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @DeleteMapping("/notifications")

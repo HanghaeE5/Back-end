@@ -65,11 +65,24 @@ public class NotificationService {
         List<NotificationResponseDto> responseDtoList = new ArrayList<>();
         List<Notification> notificationList = notificationRepository.findByUserOrderByCreatedDateDesc(user);
         for (Notification n : notificationList) {
-            n.changeState();
             responseDtoList.add(new NotificationResponseDto(n));
         }
         return responseDtoList;
     }
+
+
+    public String readOk(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        List<Notification> notificationList = notificationRepository.findByUserOrderByCreatedDateDesc(user);
+        for (Notification n : notificationList) {
+            n.changeState();
+        }
+
+        return "읽음 처리 완료";
+    }
+
 
     @Transactional
     public String deleteNotification(String email){
