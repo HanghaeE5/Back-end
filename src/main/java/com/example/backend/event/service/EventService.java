@@ -57,12 +57,6 @@ public class EventService {
 
         stamp.stampToCoupon();
 
-        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
-                Type.이벤트,
-                "이벤트 쿠폰이 지급되었습니다!"
-        );
-        notificationService.sendNotification(user.getUserSeq(), notificationRequestDto);
-
         return new EventResponseDto(stamp);
     }
 

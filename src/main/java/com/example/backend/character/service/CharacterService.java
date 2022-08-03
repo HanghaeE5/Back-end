@@ -75,7 +75,7 @@ public class CharacterService {
                 levelUp = true;
                 // 알림
                 NotificationRequestDto requestDto = new NotificationRequestDto(
-                        Type.캐릭터, "레벨업을 축하드립니다"
+                        Type.캐릭터, "레벨업을 축하드립니다."
                 );
                 notificationService.sendNotification(user.getUserSeq(), requestDto);
             }
@@ -84,7 +84,7 @@ public class CharacterService {
                 stepUp = true;
                 // 알림
                 NotificationRequestDto requestDto = new NotificationRequestDto(
-                        Type.캐릭터, "스텝업을 축하드립니다"
+                        Type.캐릭터, "스텝업을 축하드립니다."
                 );
                 notificationService.sendNotification(user.getUserSeq(), requestDto);
             }

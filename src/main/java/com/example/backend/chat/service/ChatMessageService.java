@@ -52,7 +52,7 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다. 새로운 채팅방에서 채팅을 진행해 주세요!");
             } else {
                 message.setSender("[알림]");
-                message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
+                message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다.");
             }
         }
         // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
