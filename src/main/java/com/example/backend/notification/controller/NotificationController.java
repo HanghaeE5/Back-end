@@ -54,10 +54,10 @@ public class NotificationController {
         return emitterService.createEmitter(id);
     }
 
-    @PostMapping("/publish/notification/{id}")
-    public void publish(@PathVariable Long id, @RequestBody NotificationRequestDto requestDto) {
-        notificationService.sendNotification(id, requestDto);
-    }
+//    @PostMapping("/publish/notification/{id}")
+//    public void publish(@PathVariable Long id, @RequestBody NotificationRequestDto requestDto) {
+//        notificationService.sendNotification(id, requestDto);
+//    }
 
 
 }

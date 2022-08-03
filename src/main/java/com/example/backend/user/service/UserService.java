@@ -197,9 +197,6 @@ public class UserService {
 //        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
 
-        //알림 연결
-        emitterService.createEmitter(user.getUserSeq());
-
         return accessToken.getToken();
     }
 
@@ -251,10 +248,6 @@ public class UserService {
 //            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
 
         }
-
-        //알림 연결
-        User user = getUser(email);
-        emitterService.createEmitter(user.getUserSeq());
 
         return newAccessToken.getToken();
     }
