@@ -64,13 +64,7 @@ public class SecurityConfig {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
                 .antMatchers("/subscribe/**").permitAll()
-                .antMatchers("/subscribe").permitAll()
-                .antMatchers("/api/subscribe").permitAll()
-                .antMatchers("/api/subscribe/**").permitAll()
-                .antMatchers("/publish/**").permitAll()
-                .antMatchers("/publish").permitAll()
-                .antMatchers("/api/publish").permitAll()
-                .antMatchers("/api/publish/**").permitAll()
+                .antMatchers("/publish/notification/**").permitAll()
 
                 .antMatchers("/sub/**").permitAll()
                 .antMatchers("/pub/**").permitAll()
@@ -95,7 +89,7 @@ public class SecurityConfig {
                 .antMatchers("/register/**").permitAll()
 
                 .antMatchers("/health").permitAll()
-                .antMatchers("/notification/**").hasAnyAuthority(RoleType.USER.getCode())
+                .antMatchers("/notifications/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/register/social").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/todo/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/board/**").hasAnyAuthority(RoleType.USER.getCode())
