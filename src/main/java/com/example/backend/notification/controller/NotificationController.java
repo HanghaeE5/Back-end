@@ -30,18 +30,10 @@ public class NotificationController {
     private final EmitterService emitterService;
     private final NotificationService notificationService;
 
-    @ApiOperation(value = "알림 목록 조회")
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = false, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @GetMapping("/subscribe/{id}")
-    public SseEmitter subsribe(
-            @PathVariable Long id
-    ) {
-        return emitterService.createEmitter(id);
-    }
 
     @ApiOperation(value = "알림 목록 조회")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @GetMapping("/notification")
+    @GetMapping("/notifications")
     public ResponseEntity<List<NotificationResponseDto>> getNotification() {
         LoadUser.loginAndNickCheck();
         List<NotificationResponseDto> responseDtoList = notificationService.getNotification(LoadUser.getEmail());
@@ -50,18 +42,20 @@ public class NotificationController {
 
     @ApiOperation(value = "알림 전체 삭제")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
-    @DeleteMapping("/notification")
+    @DeleteMapping("/notifications")
     public ResponseEntity<String> deleteNotification() {
         LoadUser.loginAndNickCheck();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
+    @GetMapping("/subscribe/{id}")
+    public SseEmitter subscribe(@PathVariable Long id) {
+        return emitterService.createEmitter(id);
+    }
+
     @PostMapping("/publish/notification/{id}")
-    public void publish(
-            @PathVariable Long id,
-            @RequestBody NotificationRequestDto requestDto
-    ) {
+    public void publish(@PathVariable Long id, @RequestBody NotificationRequestDto requestDto) {
         notificationService.sendNotification(id, requestDto);
     }
 
