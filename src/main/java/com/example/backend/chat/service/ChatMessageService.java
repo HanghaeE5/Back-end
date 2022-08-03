@@ -67,7 +67,7 @@ public class ChatMessageService {
             if (u == user) {
                 continue;
             }
-            String notification = room.getName() + "에서 새로운 메시지가 도착했습니다";
+            String notification = room.getRoomId();
             NotificationRequestDto requestDto = new NotificationRequestDto(com.example.backend.notification.domain.Type.채팅, notification);
             notificationService.sendNotification(u.getUserSeq(), requestDto);
         }
