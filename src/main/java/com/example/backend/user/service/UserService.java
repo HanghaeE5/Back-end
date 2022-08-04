@@ -217,6 +217,9 @@ public class UserService {
 
         // refresh token
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmail(email);
+        if (userRefreshToken == null){
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(userRefreshToken.getRefreshToken());
         if (!authRefreshToken.validate()) {
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
