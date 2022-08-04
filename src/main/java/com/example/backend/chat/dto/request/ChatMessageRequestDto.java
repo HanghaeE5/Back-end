@@ -31,7 +31,7 @@ public class ChatMessageRequestDto {
         this.type = MessageType.QUIT;
         this.roomId = room.getRoomId();
         this.sender = "[알림]";
-        this.message = user.getUsername() + "님이 채팅방에 입장 하셨습니다";
+        this.message = user.getUsername() + "님이 채팅방에 입장 하셨습니다.";
     }
 
 }

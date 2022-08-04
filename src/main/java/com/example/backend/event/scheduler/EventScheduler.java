@@ -110,7 +110,7 @@ public class EventScheduler {
 
                     NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
                             Type.이벤트,
-                            "출석 도장이 지급되었습니다!"
+                            "출석 도장이 지급되었습니다! 럭키박스 이벤트를 참여해 보세요."
                     );
                     notificationList.add(new Notification(notificationRequestDto, user));
                 //어제 해야할 Todo 중에 하나라도 완료 안된게 있으면, 패스

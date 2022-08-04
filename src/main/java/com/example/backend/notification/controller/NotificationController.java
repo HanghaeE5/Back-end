@@ -40,12 +40,23 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
+    @ApiOperation(value = "알림 전체 읽음 처리")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
+    @GetMapping("/notifications/read")
+    public ResponseEntity<String> readOk() {
+        LoadUser.loginAndNickCheck();
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(notificationService.readOk(LoadUser.getEmail()));
+    }
+
     @ApiOperation(value = "알림 전체 삭제")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "access_token")
     @DeleteMapping("/notifications")
     public ResponseEntity<String> deleteNotification() {
         LoadUser.loginAndNickCheck();
         return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
@@ -54,10 +65,10 @@ public class NotificationController {
         return emitterService.createEmitter(id);
     }
 
-    @PostMapping("/publish/notification/{id}")
-    public void publish(@PathVariable Long id, @RequestBody NotificationRequestDto requestDto) {
-        notificationService.sendNotification(id, requestDto);
-    }
+//    @PostMapping("/publish/notification/{id}")
+//    public void publish(@PathVariable Long id, @RequestBody NotificationRequestDto requestDto) {
+//        notificationService.sendNotification(id, requestDto);
+//    }
 
 
 }

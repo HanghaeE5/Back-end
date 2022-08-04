@@ -7,8 +7,10 @@ import com.example.backend.character.dto.CharacterResponseDto;
 import com.example.backend.character.repository.CharacterRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.notification.domain.Notification;
 import com.example.backend.notification.domain.Type;
 import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.repository.NotificationRepository;
 import com.example.backend.notification.service.NotificationService;
 import com.example.backend.todo.domain.Category;
 import com.example.backend.todo.domain.Todo;
@@ -30,7 +32,7 @@ public class CharacterService {
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
     private final TodoRepository todoRepository;
-    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
 
     // 캐릭터 선택
@@ -75,18 +77,18 @@ public class CharacterService {
                 levelUp = true;
                 // 알림
                 NotificationRequestDto requestDto = new NotificationRequestDto(
-                        Type.캐릭터, "레벨업을 축하드립니다"
+                        Type.캐릭터, "레벨업을 축하드립니다."
                 );
-                notificationService.sendNotification(user.getUserSeq(), requestDto);
+                notificationRepository.save(new Notification(requestDto, user));
             }
             if (Objects.equals(characters.getLevel(), standard.getStepLevel().get(characters.getStep()))) {
                 characters.stepUp();
                 stepUp = true;
                 // 알림
                 NotificationRequestDto requestDto = new NotificationRequestDto(
-                        Type.캐릭터, "스텝업을 축하드립니다"
+                        Type.캐릭터, "스텝업을 축하드립니다."
                 );
-                notificationService.sendNotification(user.getUserSeq(), requestDto);
+                notificationRepository.save(new Notification(requestDto, user));
             }
         }
         todo.addCharacter(characters);

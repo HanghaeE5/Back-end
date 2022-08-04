@@ -9,7 +9,9 @@ import com.example.backend.chat.repository.ChatMessageRepository;
 import com.example.backend.chat.repository.ChatRoomRepository;
 import com.example.backend.exception.CustomException;
 import com.example.backend.exception.ErrorCode;
+import com.example.backend.notification.domain.Notification;
 import com.example.backend.notification.dto.NotificationRequestDto;
+import com.example.backend.notification.repository.NotificationRepository;
 import com.example.backend.notification.service.NotificationService;
 import com.example.backend.user.domain.User;
 import com.example.backend.user.repository.UserRepository;
@@ -36,7 +38,7 @@ public class ChatMessageService {
     private final UserRepository userRepository;
     private final RedisRepository redisRepository;
     private final RedisPub redisPub;
-    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public void sendChatMessage(ChatMessageRequestDto message, String email) {
@@ -52,7 +54,7 @@ public class ChatMessageService {
                 message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다. 새로운 채팅방에서 채팅을 진행해 주세요!");
             } else {
                 message.setSender("[알림]");
-                message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다");
+                message.setMessage(user.getUsername() + "님이 채팅방을 나가셨습니다.");
             }
         }
         // 중간에 ResponseDto 로 변경하는 부분 필요 -> 지금은 LocalDateTime 직렬화 오류 현상 때문에 생략
@@ -69,7 +71,7 @@ public class ChatMessageService {
             }
             String notification = room.getRoomId();
             NotificationRequestDto requestDto = new NotificationRequestDto(com.example.backend.notification.domain.Type.채팅, notification);
-            notificationService.sendNotification(u.getUserSeq(), requestDto);
+            notificationRepository.save(new Notification(requestDto, u));
         }
         redisPub.publish(redisRepository.getTopic(room.getRoomId()), message);
     }

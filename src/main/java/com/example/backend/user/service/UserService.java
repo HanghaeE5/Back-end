@@ -197,9 +197,6 @@ public class UserService {
 //        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, REFRESH_TOKEN, userRefreshToken.getRefreshToken(), cookieMaxAge);
 
-        //알림 연결
-        emitterService.createEmitter(user.getUserSeq());
-
         return accessToken.getToken();
     }
 
@@ -220,6 +217,9 @@ public class UserService {
 
         // refresh token
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByEmail(email);
+        if (userRefreshToken == null){
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(userRefreshToken.getRefreshToken());
         if (!authRefreshToken.validate()) {
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
@@ -251,10 +251,6 @@ public class UserService {
 //            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
 
         }
-
-        //알림 연결
-        User user = getUser(email);
-        emitterService.createEmitter(user.getUserSeq());
 
         return newAccessToken.getToken();
     }

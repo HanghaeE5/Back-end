@@ -119,9 +119,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 //        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        //알림 연결
-        emitterService.createEmitter(userOptional.get().getUserSeq());
-
         String nickCheck = (userOptional.get().getUsername() == null) ? "N" : "Y";
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("access", accessToken.getToken())
