@@ -60,7 +60,7 @@ public class NotificationController {
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
-    @CrossOrigin(value = { "https://todowith.co.kr" },
+    @CrossOrigin(value = { "*" },
             allowedHeaders = { "*" },
             maxAge = 900
     )
