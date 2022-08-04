@@ -60,10 +60,6 @@ public class NotificationController {
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
-    @CrossOrigin(value = { "*" },
-            allowedHeaders = { "*" },
-            maxAge = 900
-    )
     @GetMapping("/subscribe/{id}")
     public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
                                 @PathVariable Long id ) {

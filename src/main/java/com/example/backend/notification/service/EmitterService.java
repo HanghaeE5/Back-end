@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class EmitterService {
 
     private final EmitterRepository emitterRepository;
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60 * 24;
 
     public SseEmitter createEmitter(Long id) {
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
