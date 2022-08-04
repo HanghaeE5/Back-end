@@ -65,7 +65,8 @@ public class NotificationController {
             maxAge = 900
     )
     @GetMapping("/subscribe/{id}")
-    public SseEmitter subscribe(@PathVariable Long id) {
+    public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
+                                @PathVariable Long id ) {
         return emitterService.createEmitter(id);
     }
 
