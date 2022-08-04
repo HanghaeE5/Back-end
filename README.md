@@ -79,3 +79,4 @@ ETC : AWS S3, Redis <br/>
 - Web Socket 요청 Authentication 실패 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Web-Socket-%EC%9A%94%EC%B2%AD-Authentication-%EC%8B%A4%ED%8C%A8)
 - Stomp 강제 Disconnect - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Stomp-%EA%B0%95%EC%A0%9C-Disconnect)
 - Slack Webhook 도입 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Slack-Webhook-%EB%8F%84%EC%9E%85)
+
