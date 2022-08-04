@@ -60,7 +60,10 @@ public class NotificationController {
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
-    @CrossOrigin(origins = "https://todowith.co.kr")
+    @CrossOrigin(value = { "https://todowith.co.kr" },
+            allowedHeaders = { "*" },
+            maxAge = 900
+    )
     @GetMapping("/subscribe/{id}")
     public SseEmitter subscribe(@PathVariable Long id) {
         return emitterService.createEmitter(id);
