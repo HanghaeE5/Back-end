@@ -136,10 +136,12 @@ public class SecurityConfig {
 //            "/subscribe/**"
 //    };
 //
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return (web) -> web.ignoring().antMatchers(PERMIT_URL_ARRAY);
-//    }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers(
+                "/subscribe/**"
+        );
+    }
 
     /*
      * security 설정 시, 사용할 인코더 설정
