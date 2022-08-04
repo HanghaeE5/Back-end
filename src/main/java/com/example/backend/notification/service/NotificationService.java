@@ -70,7 +70,7 @@ public class NotificationService {
         return responseDtoList;
     }
 
-
+    @Transactional
     public String readOk(String email){
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)

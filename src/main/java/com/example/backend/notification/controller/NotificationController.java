@@ -46,6 +46,7 @@ public class NotificationController {
     public ResponseEntity<String> readOk() {
         LoadUser.loginAndNickCheck();
         return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(notificationService.readOk(LoadUser.getEmail()));
     }
 
@@ -55,6 +56,7 @@ public class NotificationController {
     public ResponseEntity<String> deleteNotification() {
         LoadUser.loginAndNickCheck();
         return ResponseEntity.status(HttpStatus.OK)
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(notificationService.deleteNotification(LoadUser.getEmail()));
     }
 
