@@ -48,8 +48,8 @@ public class EventScheduler {
 //    10초마다 테스트용
 //    @Scheduled(cron = "*/10 * * * * ?")
 
-    @Scheduled(cron = "0 5 0,2,3 * * ?")
-    @SchedulerLock(name = "eventSchedulerLock", lockAtLeastFor = "5m", lockAtMostFor = "14m")
+//    @Scheduled(cron = "0 5 0,2,3 * * ?")
+//    @SchedulerLock(name = "eventSchedulerLock", lockAtLeastFor = "5m", lockAtMostFor = "14m")
     @Transactional
     public void eventJob() throws ParseException {
 
