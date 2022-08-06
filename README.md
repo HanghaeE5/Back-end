@@ -80,4 +80,3 @@ ETC : AWS S3, Redis <br/>
 - Stomp 강제 Disconnect - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Stomp-%EA%B0%95%EC%A0%9C-Disconnect)
 - Slack Webhook 도입 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/Slack-Webhook-%EB%8F%84%EC%9E%85)
 - EC2 램 초과로 인한 서버 다운 - [상세보기 - WIKI 이동](https://github.com/HanghaeE5/Back-end/wiki/EC2-%EB%9E%A8-%EC%B4%88%EA%B3%BC%EB%A1%9C-%EC%9D%B8%ED%95%9C-%EC%84%9C%EB%B2%84-%EB%8B%A4%EC%9A%B4)
-
