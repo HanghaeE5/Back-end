@@ -30,6 +30,9 @@ public class ChatMessage extends BaseTime {
     @Column
     private String message;
 
+    @Column
+    private Long notRead;
+
     @ManyToOne
     @JoinColumn
     private User user;
@@ -40,6 +43,15 @@ public class ChatMessage extends BaseTime {
         this.sender = user.getUsername();
         this.message = requestDto.getMessage();
         this.user = user;
+    }
+
+    public ChatMessage(ChatMessageRequestDto requestDto, User user, Long notRead) {
+        this.type = requestDto.getType();
+        this.roomId = requestDto.getRoomId();
+        this.sender = user.getUsername();
+        this.message = requestDto.getMessage();
+        this.user = user;
+        this.notRead = notRead;
     }
 
     public ChatMessage(ChatMessageRequestDto requestDto) {
