@@ -41,12 +41,12 @@ public enum MsgEnum {
 
     // 캐릭터
     CHARACTER_SELECTED("캐릭터를 선택했습니다"),
-    TURTLE_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gif/t1.gif"),
-    TURTLE_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gif/t2.gif"),
-    TURTLE_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gif/t3.gif"),
-    SLOTH_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gif/s1.gif"),
-    SLOTH_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gif/s2.gif"),
-    SLOTH_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gif/s3.gif"),
+    TURTLE_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gifcompressor/t1.gif"),
+    TURTLE_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gifcompressor/t2.gif"),
+    TURTLE_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gifcompressor/t3.gif"),
+    SLOTH_ONE_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gifcompressor/s1.gif"),
+    SLOTH_TWO_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gifcompressor/s2.gif"),
+    SLOTH_THIRD_URL("https://ohnigabucket.s3.ap-northeast-2.amazonaws.com/gifcompressor/s3.gif"),
 
     TURTLE_ONE_NAME("등껍질은 비니 침대"),
     TURTLE_TWO_NAME("달팽이보단 빠른 비니"),
