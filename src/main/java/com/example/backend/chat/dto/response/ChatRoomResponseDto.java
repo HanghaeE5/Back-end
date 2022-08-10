@@ -17,6 +17,7 @@ public class ChatRoomResponseDto implements Comparable<ChatRoomResponseDto> {
     private String name;
     private List<ParticipantResponseDto> participantList = new ArrayList<>();
     private LocalDateTime lastMessage;
+    private boolean newMessage;
 
     public ChatRoomResponseDto(ChatRoom room, User user) {
         this.roomId = room.getRoomId();
@@ -29,6 +30,20 @@ public class ChatRoomResponseDto implements Comparable<ChatRoomResponseDto> {
             this.participantList.add(new ParticipantResponseDto(p));
         }
         this.lastMessage = room.getLastMessage();
+    }
+
+    public ChatRoomResponseDto(ChatRoom room, User user, boolean newMessage) {
+        this.roomId = room.getRoomId();
+        this.name = room.getName();
+        for (Participant p : room.getParticipantList()) {
+            // Front 에서 채팅방 사진 설정을 위해 자기 자신의 정보는 Response 에서 제외 요청
+            if (p.getUser() == user) {
+                continue;
+            }
+            this.participantList.add(new ParticipantResponseDto(p));
+        }
+        this.lastMessage = room.getLastMessage();
+        this.newMessage = newMessage;
     }
 
     @Override

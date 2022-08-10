@@ -43,7 +43,7 @@ public class ChatMessageController {
     ) {
         LoadUser.loginAndNickCheck();
         System.out.println("메세지");
-        Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId);
+        Page<ChatMessageResponseDto> responseDtoList = chatMessageService.getSavedMessages(roomId, LoadUser.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 }
